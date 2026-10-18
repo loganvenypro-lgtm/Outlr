@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { FloatingAiAssistant } from "@/components/FloatingAiAssistant";
 import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { ClientShell } from "@/app/client-shell";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "NewIQ — YouTube Analytics & Sponsor Intelligence",
-  description: "Plateforme de Creator Intelligence & Sponsor Discovery inspirée de ViewStats et MeetSponsors.",
+  title: "Outlr — Trouvez votre prochaine vidéo atypique",
+  description: "Découvrez les pépites YouTube hors-norme, analysez les outliers et trouvez des idées de contenu viral.",
 };
-
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function RootLayout({
   children,
@@ -19,11 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={cn("h-full antialiased dark", "font-sans", geist.variable)}>
-      <body className="min-h-full flex flex-col bg-[#080c14] text-slate-100 font-sans">
+    <html lang="fr" className={`h-full antialiased font-sans ${geist.variable}`}>
+      <body className="min-h-full flex flex-col font-sans">
         <TooltipProvider>
-          {children}
-          <FloatingAiAssistant />
+          <ClientShell>{children}</ClientShell>
         </TooltipProvider>
       </body>
     </html>
