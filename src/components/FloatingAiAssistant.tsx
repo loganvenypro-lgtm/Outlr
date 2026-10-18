@@ -1,0 +1,262 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { 
+  Bot, 
+  Send, 
+  X, 
+  MessageSquare, 
+  Sparkles, 
+  Maximize2, 
+  Minimize2, 
+  Building, 
+  Mail, 
+  DollarSign, 
+  ChevronRight,
+  Loader2
+} from "lucide-react";
+
+interface ChatMessage {
+  id: string;
+  sender: "user" | "ai";
+  text: string;
+  time: string;
+}
+
+export function FloatingAiAssistant() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "init",
+      sender: "ai",
+      text: "Bonjour ! Je suis l'assistant IA Sponsor & Creator Intelligence. Posez-moi des questions sur les marques, les tarifs CPM de sponsoring, ou demandez-moi de vous trouver un email de contact !",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    },
+  ]);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isOpen]);
+
+  const handleSend = async (customText?: string) => {
+    const textToSend = customText || input;
+    if (!textToSend.trim() || loading) return;
+
+    const userMsg: ChatMessage = {
+      id: Date.now().toString(),
+      sender: "user",
+      text: textToSend.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    if (!customText) setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].map((m) => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            content: m.text,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.reply) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            sender: "ai",
+            text: data.reply,
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
+      } else {
+        throw new Error(data.error || "Erreur de réponse");
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: "ai",
+          text: "Désolé, je rencontre un problème de connexion temporaire. Réessayez dans un instant.",
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuickPrompt = (prompt: string) => {
+    handleSend(prompt);
+  };
+
+  return (
+    <>
+      {/* Floating Toggle Button */}
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-2xl shadow-blue-600/40 border border-blue-400/30 transition-all hover:scale-105"
+        >
+          <div className="relative">
+            <Bot className="w-5 h-5" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5 animate-pulse" />
+          </div>
+          <span className="hidden sm:inline">Discuter avec l'IA Sponsors</span>
+        </button>
+      )}
+
+      {/* Floating Chat Drawer */}
+      {isOpen && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 bg-[#0e1628] border-2 border-blue-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+            isExpanded ? "w-[92vw] sm:w-[600px] h-[80vh]" : "w-[92vw] sm:w-[420px] h-[550px]"
+          }`}
+        >
+          {/* Header */}
+          <div className="p-4 bg-[#11192e] border-b border-[#1c2944] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-white text-sm flex items-center gap-1.5">
+                  <span>IA Sponsor & Creator Intel</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                </h3>
+                <span className="text-[10px] text-slate-400 block -mt-0.5">
+                  Conseil en sponsoring, CPM & contacts
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors"
+                title={isExpanded ? "Réduire" : "Agrandir"}
+              >
+                {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors"
+                title="Fermer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Suggestions Chips */}
+          <div className="px-4 py-2 bg-[#090f1d] border-b border-[#18233a] flex items-center gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap">
+            <span className="text-slate-500 font-medium">Idées :</span>
+            <button
+              type="button"
+              onClick={() => handleQuickPrompt("Quel est le contact chez NordVPN ?")}
+              className="px-2.5 py-1 rounded-md bg-[#141e33] hover:bg-[#1a2742] text-slate-300 hover:text-blue-400 transition-colors"
+            >
+              Contact NordVPN
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickPrompt("Quels sont les tarifs CPM usuels sur YouTube ?")}
+              className="px-2.5 py-1 rounded-md bg-[#141e33] hover:bg-[#1a2742] text-slate-300 hover:text-blue-400 transition-colors"
+            >
+              Tarifs & CPM
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickPrompt("Comment rédiger un bon mail de démarchage de marque ?")}
+              className="px-2.5 py-1 rounded-md bg-[#141e33] hover:bg-[#1a2742] text-slate-300 hover:text-blue-400 transition-colors"
+            >
+              Structure Pitch Mail
+            </button>
+          </div>
+
+          {/* Messages Container */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+              >
+                {msg.sender === "ai" && (
+                  <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                )}
+                <div
+                  className={`max-w-[85%] p-3.5 rounded-2xl text-xs leading-relaxed ${
+                    msg.sender === "user"
+                      ? "bg-blue-600 text-white rounded-br-none shadow-md shadow-blue-600/20"
+                      : "bg-[#11192e] border border-[#1e2b47] text-slate-200 rounded-bl-none shadow-md"
+                  }`}
+                >
+                  <p className="whitespace-pre-line">{msg.text}</p>
+                  <span
+                    className={`text-[9px] block text-right mt-1.5 ${
+                      msg.sender === "user" ? "text-blue-200" : "text-slate-500"
+                    }`}
+                  >
+                    {msg.time}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {loading && (
+              <div className="flex gap-2.5 items-center text-xs text-slate-400 bg-[#11192e] p-3 rounded-2xl w-32 border border-[#1e2b47]">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                <span>Réflexion...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Box */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="p-3 bg-[#11192e] border-t border-[#1c2944] flex items-center gap-2"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Posez une question sur les sponsors, les marques, les tarifs..."
+              className="flex-1 bg-[#090f1d] border border-[#1c2944] focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white transition-all shadow-md shadow-blue-600/30"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}

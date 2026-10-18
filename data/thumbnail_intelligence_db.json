@@ -1,0 +1,1875 @@
+{
+  "version": "1.0.0",
+  "monitoredVideos": {
+    "dZAYsJpVawk": {
+      "id": "dZAYsJpVawk",
+      "channelId": "UC29NO0UgUjeyBTYiiv-XRGA",
+      "channelTitle": "Lauren G",
+      "channelAvatar": "https://yt3.ggpht.com/BAnRUrCM6VeN3e_mptMRfgIsMFN3uuoceE2meFAsK6Fyu8hLcP0Y_lo03rtX9CXjUC6cqBF-6Js=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 24500,
+      "publishedAt": "2026-06-24T05:50:03Z",
+      "currentTitle": "5 Disturbing Things on the Internet",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/dZAYsJpVawk/hqdefault.jpg",
+      "currentViewCount": 434630,
+      "currentLikeCount": 13766,
+      "currentCommentCount": 892,
+      "versions": [
+        {
+          "id": "3f524ce5-9611-4249-a55c-7d0f339e4fe5",
+          "versionNumber": 1,
+          "title": "5 Disturbing Things on Internet (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/dZAYsJpVawk/0.jpg",
+          "thumbnailHash": "17f73a5599f52c38",
+          "firstObservedAt": "2026-06-24T05:50:03.000Z",
+          "lastObservedAt": "2026-06-25T05:50:03.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-06-25T05:50:03.000Z",
+            "viewCount": 108658,
+            "likeCount": 3029,
+            "commentCount": 178
+          }
+        },
+        {
+          "id": "25a7720b-fa81-47b8-83eb-23478b8f1359",
+          "versionNumber": 2,
+          "title": "5 Disturbing Things on the Internet",
+          "thumbnailUrl": "https://i.ytimg.com/vi/dZAYsJpVawk/hqdefault.jpg",
+          "thumbnailHash": "8dbb9c91381a5fa5",
+          "firstObservedAt": "2026-06-27T05:50:03.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.893Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-06-27T05:50:03.000Z",
+            "viewCount": 434630,
+            "likeCount": 13766,
+            "commentCount": 892
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-06-24T05:50:03.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.893Z",
+      "lastChangeDetectedAt": "2026-06-27T05:50:03.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 325972,
+        "preChangeViewsPerHour": 4527.4,
+        "postChangeWindowHours": 2705,
+        "postChangeViewsGained": 86926,
+        "postChangeViewsPerHour": 32.1,
+        "velocityDeltaPercent": -99.3,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "YiZsxyPFmL0": {
+      "id": "YiZsxyPFmL0",
+      "channelId": "UC45OWitn6BWG20rxLCL109A",
+      "channelTitle": "Snook",
+      "channelAvatar": "https://yt3.ggpht.com/LwZSPzRej8M_Ot3O-ZMH-Eh39-j2rh0uIFWjy1GWCRdrasMPbtCct7odL8DIRGVs1OlmcXeUgaY=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 843000,
+      "publishedAt": "2025-10-15T16:01:07Z",
+      "currentTitle": "Disturbing Internet Stories",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/YiZsxyPFmL0/maxresdefault.jpg",
+      "currentViewCount": 362933,
+      "currentLikeCount": 7127,
+      "currentCommentCount": 536,
+      "versions": [
+        {
+          "id": "4298247c-d6dd-4403-916b-3f6c68dea748",
+          "versionNumber": 1,
+          "title": "Disturbing Internet Stories",
+          "thumbnailUrl": "https://i.ytimg.com/vi/YiZsxyPFmL0/0.jpg",
+          "thumbnailHash": "18e6344819bc670c",
+          "firstObservedAt": "2025-10-15T16:01:07.000Z",
+          "lastObservedAt": "2025-10-16T16:01:07.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-10-16T16:01:07.000Z",
+            "viewCount": 90733,
+            "likeCount": 1568,
+            "commentCount": 107
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-10-15T16:01:07.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.897Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "cOAaonpTLlc": {
+      "id": "cOAaonpTLlc",
+      "channelId": "UCb9gttCzPcabOnq1nFYPwsw",
+      "channelTitle": "Cryton",
+      "channelAvatar": "https://yt3.ggpht.com/ZcJX2xAyksCCllSvRO_jWE8dxGy3YVOQ0RdVaAf5j9azyU4kJfp7C3B8lv-pZaieOhJiXUjUvQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 118000,
+      "publishedAt": "2026-03-02T12:01:05Z",
+      "currentTitle": "The Hunt for Lux: The Internet’s Most Disturbed User",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/cOAaonpTLlc/maxresdefault.jpg",
+      "currentViewCount": 3521141,
+      "currentLikeCount": 61545,
+      "currentCommentCount": 9361,
+      "versions": [
+        {
+          "id": "501d13c4-c760-461a-9644-ef015724fb1b",
+          "versionNumber": 1,
+          "title": "Hunt for Lux: The Internet’s Most Disturbed User (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/cOAaonpTLlc/0.jpg",
+          "thumbnailHash": "930e235b8bc2ea4c",
+          "firstObservedAt": "2026-03-02T12:01:05.000Z",
+          "lastObservedAt": "2026-03-03T12:01:05.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-03-03T12:01:05.000Z",
+            "viewCount": 880285,
+            "likeCount": 13540,
+            "commentCount": 1872
+          }
+        },
+        {
+          "id": "898eb7ec-3602-4975-af5f-5f9d3bd61b33",
+          "versionNumber": 2,
+          "title": "The Hunt for Lux: The Internet’s Most Disturbed User",
+          "thumbnailUrl": "https://i.ytimg.com/vi/cOAaonpTLlc/maxresdefault.jpg",
+          "thumbnailHash": "d6db11cbd08be33b",
+          "firstObservedAt": "2026-03-05T12:01:05.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.898Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-03-05T12:01:05.000Z",
+            "viewCount": 3521141,
+            "likeCount": 61545,
+            "commentCount": 9361
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-03-02T12:01:05.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "lastChangeDetectedAt": "2026-03-05T12:01:05.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 2640856,
+        "preChangeViewsPerHour": 36678.6,
+        "postChangeWindowHours": 5435,
+        "postChangeViewsGained": 704228,
+        "postChangeViewsPerHour": 129.6,
+        "velocityDeltaPercent": -99.6,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "cErjQYqOEnw": {
+      "id": "cErjQYqOEnw",
+      "channelId": "UCsCAWoG-SagS7aFuWT1IZPw",
+      "channelTitle": "Horror Shorts Party",
+      "channelAvatar": "https://yt3.ggpht.com/CZ92Y7yeopsBQn6hHqjpVuR2m0Bm061rZ94wDPbqapq1Mkxzj-0tjaKwD6TFI4IR8KNwJsKwG0w=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 1690000,
+      "publishedAt": "2023-02-01T22:11:13Z",
+      "currentTitle": "18 TRUE SCARY HORROR STORIES ANIMATED COMPILATION",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/cErjQYqOEnw/maxresdefault.jpg",
+      "currentViewCount": 7047738,
+      "currentLikeCount": 45019,
+      "currentCommentCount": 3064,
+      "versions": [
+        {
+          "id": "a213ce4b-72f9-4114-8ce6-84bbfaf77c3b",
+          "versionNumber": 1,
+          "title": "18 TRUE SCARY HORROR STORIES ANIMATED COMPILATION",
+          "thumbnailUrl": "https://i.ytimg.com/vi/cErjQYqOEnw/0.jpg",
+          "thumbnailHash": "42313302ea3ecae4",
+          "firstObservedAt": "2023-02-01T22:11:13.000Z",
+          "lastObservedAt": "2023-02-02T22:11:13.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2023-02-02T22:11:13.000Z",
+            "viewCount": 1761935,
+            "likeCount": 9904,
+            "commentCount": 613
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2023-02-01T22:11:13.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "-ss-nFYvptM": {
+      "id": "-ss-nFYvptM",
+      "channelId": "UCZITkCJEfWt4sVq9c4QnoHg",
+      "channelTitle": "Kuhlaki",
+      "channelAvatar": "https://yt3.ggpht.com/LFK-JI32vTP7gva0hr_5o4H2VnJsBSUyUqUmCaaW1Xyc9uwEr9tkLHPBI6mW0kP0TcZNnCNsow=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 45500,
+      "publishedAt": "2026-02-20T21:56:55Z",
+      "currentTitle": "danieltommy616: A Disturbing Internet Rabbit Hole",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/-ss-nFYvptM/maxresdefault.jpg",
+      "currentViewCount": 888562,
+      "currentLikeCount": 23187,
+      "currentCommentCount": 1802,
+      "versions": [
+        {
+          "id": "7c2e9b0e-3a48-465b-87ae-6c871ee562ac",
+          "versionNumber": 1,
+          "title": "danieltommy616: A Disturbing Internet Rabbit Hole (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/-ss-nFYvptM/0.jpg",
+          "thumbnailHash": "4c75797c86e2b297",
+          "firstObservedAt": "2026-02-20T21:56:55.000Z",
+          "lastObservedAt": "2026-02-21T21:56:55.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-02-21T21:56:55.000Z",
+            "viewCount": 222141,
+            "likeCount": 5101,
+            "commentCount": 360
+          }
+        },
+        {
+          "id": "778b53af-98b7-420f-aff7-0defc8e314ef",
+          "versionNumber": 2,
+          "title": "danieltommy616: A Disturbing Internet Rabbit Hole",
+          "thumbnailUrl": "https://i.ytimg.com/vi/-ss-nFYvptM/maxresdefault.jpg",
+          "thumbnailHash": "25f9eab4f476633b",
+          "firstObservedAt": "2026-02-23T21:56:55.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.898Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-02-23T21:56:55.000Z",
+            "viewCount": 888562,
+            "likeCount": 23187,
+            "commentCount": 1802
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-02-20T21:56:55.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "lastChangeDetectedAt": "2026-02-23T21:56:55.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 666421,
+        "preChangeViewsPerHour": 9255.8,
+        "postChangeWindowHours": 5665,
+        "postChangeViewsGained": 177712,
+        "postChangeViewsPerHour": 31.4,
+        "velocityDeltaPercent": -99.7,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "dUaRirv_D7s": {
+      "id": "dUaRirv_D7s",
+      "channelId": "UCHpGOTBGfltnrLqxfJn6zog",
+      "channelTitle": "MrBallen Shorts",
+      "channelAvatar": "https://yt3.ggpht.com/adi4O2MBiBmocoagCIGCfU7Na0H5g1eIO_KyHRPPglGYSX-AvhJLe8U4wWjm2nGVlf9g0Qf1=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 3230000,
+      "publishedAt": "2021-01-10T04:45:31Z",
+      "currentTitle": "Most horrifying TRUE story",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/dUaRirv_D7s/maxresdefault.jpg",
+      "currentViewCount": 11265919,
+      "currentLikeCount": 555125,
+      "currentCommentCount": 6077,
+      "versions": [
+        {
+          "id": "fd6bb208-e869-418c-8c98-030ad871543e",
+          "versionNumber": 1,
+          "title": "Most horrifying TRUE story",
+          "thumbnailUrl": "https://i.ytimg.com/vi/dUaRirv_D7s/0.jpg",
+          "thumbnailHash": "33aa4fc2bfe97c88",
+          "firstObservedAt": "2021-01-10T04:45:31.000Z",
+          "lastObservedAt": "2021-01-11T04:45:31.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2021-01-11T04:45:31.000Z",
+            "viewCount": 2816480,
+            "likeCount": 122128,
+            "commentCount": 1215
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2021-01-10T04:45:31.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "hKt6eNbJVwk": {
+      "id": "hKt6eNbJVwk",
+      "channelId": "UCoWzOwX2N94_PNI7xkfTWSw",
+      "channelTitle": "MrWendy",
+      "channelAvatar": "https://yt3.ggpht.com/mRrNKQ2ewLufB6VLj5kTP0K1Qp3qtFiNuW_aH-f5YY2LQC_PQ8GhRm3rCMmke3aHL6Y22QJHfA=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 18200,
+      "publishedAt": "2025-03-25T10:56:00Z",
+      "currentTitle": "Scary Videos Found on the Dark Web",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/hKt6eNbJVwk/maxresdefault.jpg",
+      "currentViewCount": 871056,
+      "currentLikeCount": 5425,
+      "currentCommentCount": 181,
+      "versions": [
+        {
+          "id": "99f9d610-68fa-4f70-b391-a142981a53d9",
+          "versionNumber": 1,
+          "title": "Scary Videos Found on Dark Web (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/hKt6eNbJVwk/0.jpg",
+          "thumbnailHash": "889633d76c7be84a",
+          "firstObservedAt": "2025-03-25T10:56:00.000Z",
+          "lastObservedAt": "2025-03-26T10:56:00.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-03-26T10:56:00.000Z",
+            "viewCount": 217764,
+            "likeCount": 1194,
+            "commentCount": 36
+          }
+        },
+        {
+          "id": "3ba9f578-455a-4c93-8226-f6aeec2aac2e",
+          "versionNumber": 2,
+          "title": "Scary Videos Found on the Dark Web",
+          "thumbnailUrl": "https://i.ytimg.com/vi/hKt6eNbJVwk/maxresdefault.jpg",
+          "thumbnailHash": "817204bd5a649422",
+          "firstObservedAt": "2025-03-28T10:56:00.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.898Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-03-28T10:56:00.000Z",
+            "viewCount": 871056,
+            "likeCount": 5425,
+            "commentCount": 181
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2025-03-25T10:56:00.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "lastChangeDetectedAt": "2025-03-28T10:56:00.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 653292,
+        "preChangeViewsPerHour": 9073.5,
+        "postChangeWindowHours": 13644,
+        "postChangeViewsGained": 174211,
+        "postChangeViewsPerHour": 12.8,
+        "velocityDeltaPercent": -99.9,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "r1K0UDc229o": {
+      "id": "r1K0UDc229o",
+      "channelId": "UCtJeJRkKITAoi4KnjWp_ydw",
+      "channelTitle": "Couple of horrorz",
+      "channelAvatar": "https://yt3.ggpht.com/3_vuj3ZIIw56lSocOwCGhTaSOmr9Aj4J5g3lve2ms3VOvm-mc5UTYkKicZdfKKrB-Pay075f=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 446000,
+      "publishedAt": "2025-09-01T17:32:14Z",
+      "currentTitle": "Based on a two sentence horror story by u/Tatsuya- #Horror #Horrorstory #Horrorstories #Creepy",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/r1K0UDc229o/maxresdefault.jpg",
+      "currentViewCount": 6530880,
+      "currentLikeCount": 72498,
+      "currentCommentCount": 1063,
+      "versions": [
+        {
+          "id": "ef404216-b112-4413-b35d-07d60326d2d1",
+          "versionNumber": 1,
+          "title": "Based on a two sentence horror story by u/Tatsuya- #Horror #Horrorstory #Horrorstories #Creepy",
+          "thumbnailUrl": "https://i.ytimg.com/vi/r1K0UDc229o/0.jpg",
+          "thumbnailHash": "2aaae85fa7a4f483",
+          "firstObservedAt": "2025-09-01T17:32:14.000Z",
+          "lastObservedAt": "2025-09-02T17:32:14.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-09-02T17:32:14.000Z",
+            "viewCount": 1632720,
+            "likeCount": 15950,
+            "commentCount": 213
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-09-01T17:32:14.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "maCh8fMYLY4": {
+      "id": "maCh8fMYLY4",
+      "channelId": "UChdlb6PNmNiv3KlfiMMsoiA",
+      "channelTitle": "Heidi Wong",
+      "channelAvatar": "https://yt3.ggpht.com/sUAn4ha_Y0Qeui5n78q7UvHfV2yZRxqGmduQSCpzK9z3avkw6gjNlOvylTzT0EFrcniEYmNeYg=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 1950000,
+      "publishedAt": "2022-03-17T22:00:31Z",
+      "currentTitle": "where is her sister? scary story #shorts",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/maCh8fMYLY4/maxresdefault.jpg",
+      "currentViewCount": 19292947,
+      "currentLikeCount": 287389,
+      "currentCommentCount": 5415,
+      "versions": [
+        {
+          "id": "d6df62cf-0a22-4037-bbbf-cb7164f6283e",
+          "versionNumber": 1,
+          "title": "where is her sister? scary story #shorts (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/maCh8fMYLY4/0.jpg",
+          "thumbnailHash": "87713fcaee6978d9",
+          "firstObservedAt": "2022-03-17T22:00:31.000Z",
+          "lastObservedAt": "2022-03-18T22:00:31.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2022-03-18T22:00:31.000Z",
+            "viewCount": 4823237,
+            "likeCount": 63226,
+            "commentCount": 1083
+          }
+        },
+        {
+          "id": "7d058f79-7cea-40f5-8ec4-b3d47bb09472",
+          "versionNumber": 2,
+          "title": "where is her sister? scary story #shorts",
+          "thumbnailUrl": "https://i.ytimg.com/vi/maCh8fMYLY4/maxresdefault.jpg",
+          "thumbnailHash": "fec2f15fc96f17a8",
+          "firstObservedAt": "2022-03-20T22:00:31.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.898Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2022-03-20T22:00:31.000Z",
+            "viewCount": 19292947,
+            "likeCount": 287389,
+            "commentCount": 5415
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2022-03-17T22:00:31.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.898Z",
+      "lastChangeDetectedAt": "2022-03-20T22:00:31.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 14469710,
+        "preChangeViewsPerHour": 200968.2,
+        "postChangeWindowHours": 40129,
+        "postChangeViewsGained": 3858589,
+        "postChangeViewsPerHour": 96.2,
+        "velocityDeltaPercent": -100,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "EwKAE9pqOGU": {
+      "id": "EwKAE9pqOGU",
+      "channelId": "UCImisRlZTVQ0vblWjjYih4Q",
+      "channelTitle": "Spencer Lackey",
+      "channelAvatar": "https://yt3.ggpht.com/YRN8NP4ladTePnr1pYc562ylDz3eSEAgSLd8bj_UD9gwFAY3cV0xsN18T5fgxs4oDFsZbsC2L-U=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 701000,
+      "publishedAt": "2025-06-01T17:46:40Z",
+      "currentTitle": "My basement is not safe #horror #horrorstories #ghost #scary #spooky #creepy #spooky #jumpscare",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/EwKAE9pqOGU/maxresdefault.jpg",
+      "currentViewCount": 38265945,
+      "currentLikeCount": 163477,
+      "currentCommentCount": 2057,
+      "versions": [
+        {
+          "id": "64844587-817d-42d4-9849-1d0ea597e865",
+          "versionNumber": 1,
+          "title": "My basement is not safe #horror #horrorstories #ghost #scary #spooky #creepy #spooky #jumpscare",
+          "thumbnailUrl": "https://i.ytimg.com/vi/EwKAE9pqOGU/0.jpg",
+          "thumbnailHash": "d17a91ad1a175219",
+          "firstObservedAt": "2025-06-01T17:46:40.000Z",
+          "lastObservedAt": "2025-06-02T17:46:40.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-06-02T17:46:40.000Z",
+            "viewCount": 9566486,
+            "likeCount": 35965,
+            "commentCount": 411
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-06-01T17:46:40.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "RH3hQ9lkm3M": {
+      "id": "RH3hQ9lkm3M",
+      "channelId": "UCyBeuNBOBjbCN0zdERiBBxQ",
+      "channelTitle": "Back 2 Drawing Board ",
+      "channelAvatar": "https://yt3.ggpht.com/tfaLNOsM4cVa13ruBwJ5gWwkE7iYGlvKIJM3cud6FkfAmueAkDIU07Fla7z4yxGXo10j7_ngWA=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 136000,
+      "publishedAt": "2025-07-04T20:00:15Z",
+      "currentTitle": "TikTok Darkest Rabbit Hole",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/RH3hQ9lkm3M/maxresdefault.jpg",
+      "currentViewCount": 982045,
+      "currentLikeCount": 15691,
+      "currentCommentCount": 643,
+      "versions": [
+        {
+          "id": "8da9b013-da44-42d0-9cb8-3137651387c0",
+          "versionNumber": 1,
+          "title": "TikTok Darkest Rabbit Hole (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/RH3hQ9lkm3M/0.jpg",
+          "thumbnailHash": "6bea7e787260d4cf",
+          "firstObservedAt": "2025-07-04T20:00:15.000Z",
+          "lastObservedAt": "2025-07-05T20:00:15.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-07-05T20:00:15.000Z",
+            "viewCount": 245511,
+            "likeCount": 3452,
+            "commentCount": 129
+          }
+        },
+        {
+          "id": "ec8a8e33-a3b5-4763-8fd0-dc7fed69b6d4",
+          "versionNumber": 2,
+          "title": "TikTok Darkest Rabbit Hole",
+          "thumbnailUrl": "https://i.ytimg.com/vi/RH3hQ9lkm3M/maxresdefault.jpg",
+          "thumbnailHash": "88a1bb80d7c38462",
+          "firstObservedAt": "2025-07-07T20:00:15.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-07-07T20:00:15.000Z",
+            "viewCount": 982045,
+            "likeCount": 15691,
+            "commentCount": 643
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2025-07-04T20:00:15.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2025-07-07T20:00:15.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 736534,
+        "preChangeViewsPerHour": 10229.6,
+        "postChangeWindowHours": 11211,
+        "postChangeViewsGained": 196409,
+        "postChangeViewsPerHour": 17.5,
+        "velocityDeltaPercent": -99.8,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories rabbit hole",
+      "isMonitoredExplicitly": true
+    },
+    "wevdWrx33zI": {
+      "id": "wevdWrx33zI",
+      "channelId": "UCqW-PuTMM73Ff6qR8k-8HGg",
+      "channelTitle": "Darkest Horrors",
+      "channelAvatar": "https://yt3.ggpht.com/vvt5PdPM7AFwOYoQRBW9mb5LLPBHC1vz-re5xJ0uLP-Re2sIQwbIh00oGF28mnzBpA9Fh9-Zvw=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 48400,
+      "publishedAt": "2026-01-17T17:15:07Z",
+      "currentTitle": "4 Most Disturbing Internet Mysteries",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/wevdWrx33zI/maxresdefault.jpg",
+      "currentViewCount": 1672931,
+      "currentLikeCount": 35822,
+      "currentCommentCount": 1947,
+      "versions": [
+        {
+          "id": "977f4bb4-64dd-45f2-b044-0723c69703d2",
+          "versionNumber": 1,
+          "title": "4 Most Disturbing Internet Mysteries",
+          "thumbnailUrl": "https://i.ytimg.com/vi/wevdWrx33zI/0.jpg",
+          "thumbnailHash": "73fc26a4f9562a04",
+          "firstObservedAt": "2026-01-17T17:15:07.000Z",
+          "lastObservedAt": "2026-01-18T17:15:07.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-01-18T17:15:07.000Z",
+            "viewCount": 418233,
+            "likeCount": 7881,
+            "commentCount": 389
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2026-01-17T17:15:07.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "ep3viuHVNRU": {
+      "id": "ep3viuHVNRU",
+      "channelId": "UC_e39rWdkQqo5-LbiLiU10g",
+      "channelTitle": "The Dark Somnium",
+      "channelAvatar": "https://yt3.ggpht.com/ytc/AIdro_lkBIgERvn4KvzZqM0dUX8Txfmo9IPbFHe6Xu0NPEYBrQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 883000,
+      "publishedAt": "2026-08-14T19:30:36Z",
+      "currentTitle": "The Internet’s Most Disturbing Technological Nightmares | A Compilation of Scary Stories",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/ep3viuHVNRU/maxresdefault.jpg",
+      "currentViewCount": 167756,
+      "currentLikeCount": 3821,
+      "currentCommentCount": 507,
+      "versions": [
+        {
+          "id": "9c6d9ff4-1802-41bc-8a52-b4ae0813bf6a",
+          "versionNumber": 1,
+          "title": "Internet’s Most Disturbing Technological Nightmares | A Compilation of Scary Stories (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/ep3viuHVNRU/0.jpg",
+          "thumbnailHash": "f7b38ced5d161951",
+          "firstObservedAt": "2026-08-14T19:30:36.000Z",
+          "lastObservedAt": "2026-08-15T19:30:36.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-08-15T19:30:36.000Z",
+            "viewCount": 41939,
+            "likeCount": 841,
+            "commentCount": 101
+          }
+        },
+        {
+          "id": "6573b2a9-d37a-432f-ab79-e8adcdee2484",
+          "versionNumber": 2,
+          "title": "The Internet’s Most Disturbing Technological Nightmares | A Compilation of Scary Stories",
+          "thumbnailUrl": "https://i.ytimg.com/vi/ep3viuHVNRU/maxresdefault.jpg",
+          "thumbnailHash": "e0d0158fa37a1b7c",
+          "firstObservedAt": "2026-08-17T19:30:36.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-08-17T19:30:36.000Z",
+            "viewCount": 167756,
+            "likeCount": 3821,
+            "commentCount": 507
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-08-14T19:30:36.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2026-08-17T19:30:36.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 125817,
+        "preChangeViewsPerHour": 1747.5,
+        "postChangeWindowHours": 1467,
+        "postChangeViewsGained": 33551,
+        "postChangeViewsPerHour": 22.9,
+        "velocityDeltaPercent": -98.7,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "RoW7yoi9kUs": {
+      "id": "RoW7yoi9kUs",
+      "channelId": "UCHvCKlL5hRRfAXE_7DCEt-g",
+      "channelTitle": "Pure Horror TV",
+      "channelAvatar": "https://yt3.ggpht.com/ZePmB-ax5wi0fkxpPtGldke_dxbI4pJBa5sQIv42AKEsRTBhIdYc6DoDmRsicUXmy91PQvXTFg=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 35300,
+      "publishedAt": "2025-02-23T21:32:17Z",
+      "currentTitle": "I Found the TERRIFYING AYUWOKI in My Trunk! - Horror Short Film",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/RoW7yoi9kUs/maxresdefault.jpg",
+      "currentViewCount": 8079574,
+      "currentLikeCount": 49260,
+      "currentCommentCount": 2126,
+      "versions": [
+        {
+          "id": "03eab725-2e6f-45e4-a3b1-e191f5fe5655",
+          "versionNumber": 1,
+          "title": "I Found the TERRIFYING AYUWOKI in My Trunk! - Horror Short Film",
+          "thumbnailUrl": "https://i.ytimg.com/vi/RoW7yoi9kUs/0.jpg",
+          "thumbnailHash": "9a09c9c01dd3b2fe",
+          "firstObservedAt": "2025-02-23T21:32:17.000Z",
+          "lastObservedAt": "2025-02-24T21:32:17.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-02-24T21:32:17.000Z",
+            "viewCount": 2019894,
+            "likeCount": 10837,
+            "commentCount": 425
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-02-23T21:32:17.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "ECW1_NpW6b8": {
+      "id": "ECW1_NpW6b8",
+      "channelId": "UCbEzitKNosuIcG4jqKtfrGQ",
+      "channelTitle": "Void the warlock",
+      "channelAvatar": "https://yt3.ggpht.com/XRz7-W4Ihqpj1003VCrG6GOD2lk2AFcdhr8xAz5RfUAgV8nZGft0how76DZqGSDQkhjdiBLEtQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 90200,
+      "publishedAt": "2026-01-17T21:11:33Z",
+      "currentTitle": "Disturbing Reddit threads Vol.1",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/ECW1_NpW6b8/maxresdefault.jpg",
+      "currentViewCount": 672862,
+      "currentLikeCount": 19092,
+      "currentCommentCount": 1096,
+      "versions": [
+        {
+          "id": "16f36918-ebaf-4947-aa30-96934b36e16e",
+          "versionNumber": 1,
+          "title": "Disturbing Reddit threads Vol.1 (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/ECW1_NpW6b8/0.jpg",
+          "thumbnailHash": "8b00647988cb38d6",
+          "firstObservedAt": "2026-01-17T21:11:33.000Z",
+          "lastObservedAt": "2026-01-18T21:11:33.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-01-18T21:11:33.000Z",
+            "viewCount": 168216,
+            "likeCount": 4200,
+            "commentCount": 219
+          }
+        },
+        {
+          "id": "dadb1d9e-caa4-407d-8455-ef17d0b80776",
+          "versionNumber": 2,
+          "title": "Disturbing Reddit threads Vol.1",
+          "thumbnailUrl": "https://i.ytimg.com/vi/ECW1_NpW6b8/maxresdefault.jpg",
+          "thumbnailHash": "5327bba1ceb7cb48",
+          "firstObservedAt": "2026-01-20T21:11:33.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-01-20T21:11:33.000Z",
+            "viewCount": 672862,
+            "likeCount": 19092,
+            "commentCount": 1096
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-01-17T21:11:33.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2026-01-20T21:11:33.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 504646,
+        "preChangeViewsPerHour": 7009,
+        "postChangeWindowHours": 6481,
+        "postChangeViewsGained": 134572,
+        "postChangeViewsPerHour": 20.8,
+        "velocityDeltaPercent": -99.7,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "pFvY2Tijs6A": {
+      "id": "pFvY2Tijs6A",
+      "channelId": "UCtJeJRkKITAoi4KnjWp_ydw",
+      "channelTitle": "Couple of horrorz",
+      "channelAvatar": "https://yt3.ggpht.com/3_vuj3ZIIw56lSocOwCGhTaSOmr9Aj4J5g3lve2ms3VOvm-mc5UTYkKicZdfKKrB-Pay075f=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 446000,
+      "publishedAt": "2024-06-24T18:16:15Z",
+      "currentTitle": "Based on a two sentence horror story on Reddit via u/dayerethDdraigson #horrorshorts #scary #creepy",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/pFvY2Tijs6A/maxresdefault.jpg",
+      "currentViewCount": 3891311,
+      "currentLikeCount": 56839,
+      "currentCommentCount": 2126,
+      "versions": [
+        {
+          "id": "b6d461fb-a9fb-4538-815d-885c60daf9a8",
+          "versionNumber": 1,
+          "title": "Based on a two sentence horror story on Reddit via u/dayerethDdraigson #horrorshorts #scary #creepy",
+          "thumbnailUrl": "https://i.ytimg.com/vi/pFvY2Tijs6A/0.jpg",
+          "thumbnailHash": "ac6438c8f4d591b6",
+          "firstObservedAt": "2024-06-24T18:16:15.000Z",
+          "lastObservedAt": "2024-06-25T18:16:15.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-06-25T18:16:15.000Z",
+            "viewCount": 972828,
+            "likeCount": 12505,
+            "commentCount": 425
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2024-06-24T18:16:15.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "oT_h9Ohcxps": {
+      "id": "oT_h9Ohcxps",
+      "channelId": "UCEyodonqP_80YrDvattntmw",
+      "channelTitle": "SmoshCast",
+      "channelAvatar": "https://yt3.ggpht.com/DCTe_G1gghiGEVUhOnH_ld_uFKh3XVSxRvcWWqTvadDJN_SKVTn2lBqxBZgqOMpeAmVgFod_vfk=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 1100000,
+      "publishedAt": "2023-10-30T16:00:40Z",
+      "currentTitle": "Reading The Internet's Scariest Stories | Smosh Mouth 19",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/oT_h9Ohcxps/maxresdefault.jpg",
+      "currentViewCount": 2990167,
+      "currentLikeCount": 89009,
+      "currentCommentCount": 6155,
+      "versions": [
+        {
+          "id": "e19be5db-37c2-4bd1-a1e6-28a562f7a515",
+          "versionNumber": 1,
+          "title": "Reading Internet's Scariest Stories | Smosh Mouth 19 (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/oT_h9Ohcxps/0.jpg",
+          "thumbnailHash": "daca4a02fbc93793",
+          "firstObservedAt": "2023-10-30T16:00:40.000Z",
+          "lastObservedAt": "2023-10-31T16:00:40.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2023-10-31T16:00:40.000Z",
+            "viewCount": 747542,
+            "likeCount": 19582,
+            "commentCount": 1231
+          }
+        },
+        {
+          "id": "0eefc9d6-0d1a-4255-98b6-d02ec2eedc2d",
+          "versionNumber": 2,
+          "title": "Reading The Internet's Scariest Stories | Smosh Mouth 19",
+          "thumbnailUrl": "https://i.ytimg.com/vi/oT_h9Ohcxps/maxresdefault.jpg",
+          "thumbnailHash": "b9cb4de02594dd96",
+          "firstObservedAt": "2023-11-02T16:00:40.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2023-11-02T16:00:40.000Z",
+            "viewCount": 2990167,
+            "likeCount": 89009,
+            "commentCount": 6155
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2023-10-30T16:00:40.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2023-11-02T16:00:40.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 2242625,
+        "preChangeViewsPerHour": 31147.6,
+        "postChangeWindowHours": 25927,
+        "postChangeViewsGained": 598033,
+        "postChangeViewsPerHour": 23.1,
+        "velocityDeltaPercent": -99.9,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "oaEaIsauToY": {
+      "id": "oaEaIsauToY",
+      "channelId": "UCqm0yUle42Z9duHhvvAOcJA",
+      "channelTitle": "Bila Asan",
+      "channelAvatar": "https://yt3.ggpht.com/5NIcmuNymSu70enBy_zgWMlwGbpm864q5FyU1m-LPPUl7XwzlYYev51RWUjgVTgv-ztE3VEO=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 89700,
+      "publishedAt": "2026-10-17T20:44:41Z",
+      "currentTitle": "The Internet’s Most DISTURBING Horror Stories",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/oaEaIsauToY/maxresdefault.jpg",
+      "currentViewCount": 647,
+      "currentLikeCount": 141,
+      "currentCommentCount": 44,
+      "versions": [
+        {
+          "id": "fdaaa59e-88f5-455a-a199-f1dce934a18b",
+          "versionNumber": 1,
+          "title": "The Internet’s Most DISTURBING Horror Stories",
+          "thumbnailUrl": "https://i.ytimg.com/vi/oaEaIsauToY/0.jpg",
+          "thumbnailHash": "d84210b366f75029",
+          "firstObservedAt": "2026-10-17T20:44:41.000Z",
+          "lastObservedAt": "2026-10-18T20:44:41.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-10-18T20:44:41.000Z",
+            "viewCount": 162,
+            "likeCount": 31,
+            "commentCount": 9
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2026-10-17T20:44:41.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "S3b9i5AgskM": {
+      "id": "S3b9i5AgskM",
+      "channelId": "UC45OWitn6BWG20rxLCL109A",
+      "channelTitle": "Snook",
+      "channelAvatar": "https://yt3.ggpht.com/LwZSPzRej8M_Ot3O-ZMH-Eh39-j2rh0uIFWjy1GWCRdrasMPbtCct7odL8DIRGVs1OlmcXeUgaY=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 843000,
+      "publishedAt": "2025-06-11T16:00:45Z",
+      "currentTitle": "Disturbing Internet Rabbit Holes",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/S3b9i5AgskM/maxresdefault.jpg",
+      "currentViewCount": 1241686,
+      "currentLikeCount": 28257,
+      "currentCommentCount": 1144,
+      "versions": [
+        {
+          "id": "9ad01903-32c7-4469-be43-f359ee40cb60",
+          "versionNumber": 1,
+          "title": "Disturbing Internet Rabbit Holes (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/S3b9i5AgskM/0.jpg",
+          "thumbnailHash": "3f5695bc78432f21",
+          "firstObservedAt": "2025-06-11T16:00:45.000Z",
+          "lastObservedAt": "2025-06-12T16:00:45.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-06-12T16:00:45.000Z",
+            "viewCount": 310422,
+            "likeCount": 6217,
+            "commentCount": 229
+          }
+        },
+        {
+          "id": "16799325-a4e7-471d-9ea2-ac63bdb648de",
+          "versionNumber": 2,
+          "title": "Disturbing Internet Rabbit Holes",
+          "thumbnailUrl": "https://i.ytimg.com/vi/S3b9i5AgskM/maxresdefault.jpg",
+          "thumbnailHash": "e159f381627ef22a",
+          "firstObservedAt": "2025-06-14T16:00:45.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-06-14T16:00:45.000Z",
+            "viewCount": 1241686,
+            "likeCount": 28257,
+            "commentCount": 1144
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2025-06-11T16:00:45.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2025-06-14T16:00:45.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 931264,
+        "preChangeViewsPerHour": 12934.2,
+        "postChangeWindowHours": 11767,
+        "postChangeViewsGained": 248337,
+        "postChangeViewsPerHour": 21.1,
+        "velocityDeltaPercent": -99.8,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "jTKLn6yLqik": {
+      "id": "jTKLn6yLqik",
+      "channelId": "UCGAmpBtWveYp0-3v9npnhvQ",
+      "channelTitle": "Chilling Scares",
+      "channelAvatar": "https://yt3.ggpht.com/Ifm-dk4uAOpMMZCk8fYdZvpWYjf6LszcTUanLq6nsj8HPyANu2w44NbDhcfsJ4t8mBBS8yqQOg=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 2880000,
+      "publishedAt": "2024-11-13T18:15:02Z",
+      "currentTitle": "5 Most Disturbing Internet Rabbit Holes",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/jTKLn6yLqik/maxresdefault.jpg",
+      "currentViewCount": 9824538,
+      "currentLikeCount": 155518,
+      "currentCommentCount": 9598,
+      "versions": [
+        {
+          "id": "1af68556-85f7-4d20-9bcd-35d026994b67",
+          "versionNumber": 1,
+          "title": "5 Most Disturbing Internet Rabbit Holes",
+          "thumbnailUrl": "https://i.ytimg.com/vi/jTKLn6yLqik/0.jpg",
+          "thumbnailHash": "7f3333a09b42fefc",
+          "firstObservedAt": "2024-11-13T18:15:02.000Z",
+          "lastObservedAt": "2024-11-14T18:15:02.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-11-14T18:15:02.000Z",
+            "viewCount": 2456135,
+            "likeCount": 34214,
+            "commentCount": 1920
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2024-11-13T18:15:02.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "YjplbuoYR8w": {
+      "id": "YjplbuoYR8w",
+      "channelId": "UCGAmpBtWveYp0-3v9npnhvQ",
+      "channelTitle": "Chilling Scares",
+      "channelAvatar": "https://yt3.ggpht.com/Ifm-dk4uAOpMMZCk8fYdZvpWYjf6LszcTUanLq6nsj8HPyANu2w44NbDhcfsJ4t8mBBS8yqQOg=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 2880000,
+      "publishedAt": "2023-12-15T18:15:02Z",
+      "currentTitle": "4 Most Disturbing Internet Rabbit Holes",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/YjplbuoYR8w/maxresdefault.jpg",
+      "currentViewCount": 6252767,
+      "currentLikeCount": 100275,
+      "currentCommentCount": 3100,
+      "versions": [
+        {
+          "id": "2f9b822c-82b1-47a4-9d58-3ebeada962a6",
+          "versionNumber": 1,
+          "title": "4 Most Disturbing Internet Rabbit Holes (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/YjplbuoYR8w/0.jpg",
+          "thumbnailHash": "bda8a80688ec84d3",
+          "firstObservedAt": "2023-12-15T18:15:02.000Z",
+          "lastObservedAt": "2023-12-16T18:15:02.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2023-12-16T18:15:02.000Z",
+            "viewCount": 1563192,
+            "likeCount": 22061,
+            "commentCount": 620
+          }
+        },
+        {
+          "id": "7f28de28-56aa-455e-8210-f5ee2b53de8f",
+          "versionNumber": 2,
+          "title": "4 Most Disturbing Internet Rabbit Holes",
+          "thumbnailUrl": "https://i.ytimg.com/vi/YjplbuoYR8w/maxresdefault.jpg",
+          "thumbnailHash": "57807cd27870a5b7",
+          "firstObservedAt": "2023-12-18T18:15:02.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2023-12-18T18:15:02.000Z",
+            "viewCount": 6252767,
+            "likeCount": 100275,
+            "commentCount": 3100
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2023-12-15T18:15:02.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2023-12-18T18:15:02.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 4689575,
+        "preChangeViewsPerHour": 65133,
+        "postChangeWindowHours": 24820,
+        "postChangeViewsGained": 1250553,
+        "postChangeViewsPerHour": 50.4,
+        "velocityDeltaPercent": -99.9,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories rabbit hole",
+      "isMonitoredExplicitly": true
+    },
+    "4XBJgPDBblg": {
+      "id": "4XBJgPDBblg",
+      "channelId": "UCW2G11dTUlkjZCW_0EaZK4Q",
+      "channelTitle": "Lets Read!",
+      "channelAvatar": "https://yt3.ggpht.com/ytc/AIdro_n-9V4hni3Wh77uAYasdPZ-Kx5bt1_VF5gw3voL82eudR8=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 1380000,
+      "publishedAt": "2025-12-09T02:00:05Z",
+      "currentTitle": "4 Disturbing Dark Web Stories that should've stayed hidden",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/4XBJgPDBblg/maxresdefault.jpg",
+      "currentViewCount": 483846,
+      "currentLikeCount": 10634,
+      "currentCommentCount": 624,
+      "versions": [
+        {
+          "id": "e71545cd-c09d-482b-a577-b08f92e9ff69",
+          "versionNumber": 1,
+          "title": "4 Disturbing Dark Web Stories that should've stayed hidden",
+          "thumbnailUrl": "https://i.ytimg.com/vi/4XBJgPDBblg/0.jpg",
+          "thumbnailHash": "f98bbc7fb1e542e9",
+          "firstObservedAt": "2025-12-09T02:00:05.000Z",
+          "lastObservedAt": "2025-12-10T02:00:05.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-12-10T02:00:05.000Z",
+            "viewCount": 120962,
+            "likeCount": 2339,
+            "commentCount": 125
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-12-09T02:00:05.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "tExo3ovEBWQ": {
+      "id": "tExo3ovEBWQ",
+      "channelId": "UCpFFItkfZz1qz5PpHpqzYBw",
+      "channelTitle": "Nexpo",
+      "channelAvatar": "https://yt3.ggpht.com/b9z-LrY5p97i8JlkOjGY0B2wdrUX79zD-mZcSkfEuY7drXXXQCEQDNkxvywbIVgpzxC2kS1sDQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 4000000,
+      "publishedAt": "2021-10-29T21:20:37Z",
+      "currentTitle": "Disturbing Things from Around the Internet [Vol. 13]",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/tExo3ovEBWQ/maxresdefault.jpg",
+      "currentViewCount": 9194948,
+      "currentLikeCount": 263287,
+      "currentCommentCount": 21156,
+      "versions": [
+        {
+          "id": "aaad8d7e-106d-4f46-9f30-f6092a975263",
+          "versionNumber": 1,
+          "title": "Disturbing Things from Around Internet [Vol. 13] (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/tExo3ovEBWQ/0.jpg",
+          "thumbnailHash": "3b0611e4336d0e2c",
+          "firstObservedAt": "2021-10-29T21:20:37.000Z",
+          "lastObservedAt": "2021-10-30T21:20:37.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2021-10-30T21:20:37.000Z",
+            "viewCount": 2298737,
+            "likeCount": 57923,
+            "commentCount": 4231
+          }
+        },
+        {
+          "id": "a8e5c70e-7d5e-4f1e-a412-8ec596e08eb5",
+          "versionNumber": 2,
+          "title": "Disturbing Things from Around the Internet [Vol. 13]",
+          "thumbnailUrl": "https://i.ytimg.com/vi/tExo3ovEBWQ/maxresdefault.jpg",
+          "thumbnailHash": "0f3f35158b58c6cc",
+          "firstObservedAt": "2021-11-01T21:20:37.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2021-11-01T21:20:37.000Z",
+            "viewCount": 9194948,
+            "likeCount": 263287,
+            "commentCount": 21156
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2021-10-29T21:20:37.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2021-11-01T21:20:37.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 6896211,
+        "preChangeViewsPerHour": 95780.7,
+        "postChangeWindowHours": 43465,
+        "postChangeViewsGained": 1838990,
+        "postChangeViewsPerHour": 42.3,
+        "velocityDeltaPercent": -100,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories rabbit hole",
+      "isMonitoredExplicitly": true
+    },
+    "oo6dWoh_tAk": {
+      "id": "oo6dWoh_tAk",
+      "channelId": "UCgT7YSxevs9LFP9YkpUiZjQ",
+      "channelTitle": "Chilling Scares Compilations",
+      "channelAvatar": "https://yt3.ggpht.com/VY4NMzxy8EKHgaUnSo4iGhPTZYSbxgc8z_o9Mb5jSirtk6CKbRvAtpJXEt6BVfo2e423M7tK=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 53800,
+      "publishedAt": "2026-08-25T16:15:10Z",
+      "currentTitle": "2 Hours of the Most Disturbing Internet Mysteries",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/oo6dWoh_tAk/maxresdefault.jpg",
+      "currentViewCount": 1580658,
+      "currentLikeCount": 11805,
+      "currentCommentCount": 852,
+      "versions": [
+        {
+          "id": "adde786c-d3cb-44c0-af99-e07f00d3b5e2",
+          "versionNumber": 1,
+          "title": "2 Hours of the Most Disturbing Internet Mysteries",
+          "thumbnailUrl": "https://i.ytimg.com/vi/oo6dWoh_tAk/0.jpg",
+          "thumbnailHash": "bd8967f2b179e7d0",
+          "firstObservedAt": "2026-08-25T16:15:10.000Z",
+          "lastObservedAt": "2026-08-26T16:15:10.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-08-26T16:15:10.000Z",
+            "viewCount": 395165,
+            "likeCount": 2597,
+            "commentCount": 170
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2026-08-25T16:15:10.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "toU44VOKRCs": {
+      "id": "toU44VOKRCs",
+      "channelId": "UC_e39rWdkQqo5-LbiLiU10g",
+      "channelTitle": "The Dark Somnium",
+      "channelAvatar": "https://yt3.ggpht.com/ytc/AIdro_lkBIgERvn4KvzZqM0dUX8Txfmo9IPbFHe6Xu0NPEYBrQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 883000,
+      "publishedAt": "2026-02-19T05:40:26Z",
+      "currentTitle": "Scary Stories from The Internet | The Nosleep Radio",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/toU44VOKRCs/maxresdefault_live.jpg",
+      "currentViewCount": 466136,
+      "currentLikeCount": 2146,
+      "currentCommentCount": 0,
+      "versions": [
+        {
+          "id": "00d06315-e241-40f6-be24-ad01097d5e16",
+          "versionNumber": 1,
+          "title": "Scary Stories from Internet | The Nosleep Radio (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/toU44VOKRCs/0.jpg",
+          "thumbnailHash": "b47d30cdf1f8c3d0",
+          "firstObservedAt": "2026-02-19T05:40:26.000Z",
+          "lastObservedAt": "2026-02-20T05:40:26.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-02-20T05:40:26.000Z",
+            "viewCount": 116534,
+            "likeCount": 472
+          }
+        },
+        {
+          "id": "6e21f930-74a1-4f88-85c8-70489e87603e",
+          "versionNumber": 2,
+          "title": "Scary Stories from The Internet | The Nosleep Radio",
+          "thumbnailUrl": "https://i.ytimg.com/vi/toU44VOKRCs/maxresdefault_live.jpg",
+          "thumbnailHash": "d700001702f1b7b5",
+          "firstObservedAt": "2026-02-22T05:40:26.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-02-22T05:40:26.000Z",
+            "viewCount": 466136,
+            "likeCount": 2146,
+            "commentCount": 0
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2026-02-19T05:40:26.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2026-02-22T05:40:26.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 349602,
+        "preChangeViewsPerHour": 4855.6,
+        "postChangeWindowHours": 5705,
+        "postChangeViewsGained": 93227,
+        "postChangeViewsPerHour": 16.3,
+        "velocityDeltaPercent": -99.7,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "WR73Dldyejo": {
+      "id": "WR73Dldyejo",
+      "channelId": "UCt3JiNkefsfbA2N4SgEkoiQ",
+      "channelTitle": "Visual Venture",
+      "channelAvatar": "https://yt3.ggpht.com/54__vw1l8UHq56FNauFWMCvXxj_Qi-0L6vkTBJj0WWeBOZwvtfZ1xnQritRnkAmuLH9ARHND=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 2010000,
+      "publishedAt": "2025-02-22T16:00:33Z",
+      "currentTitle": "Disturbing Reddit Stories That Actually Were TRUE",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/WR73Dldyejo/maxresdefault.jpg",
+      "currentViewCount": 2159530,
+      "currentLikeCount": 53351,
+      "currentCommentCount": 1850,
+      "versions": [
+        {
+          "id": "efafcd7e-e5a2-4db2-aa11-51297602cd04",
+          "versionNumber": 1,
+          "title": "Disturbing Reddit Stories That Actually Were TRUE",
+          "thumbnailUrl": "https://i.ytimg.com/vi/WR73Dldyejo/0.jpg",
+          "thumbnailHash": "ab6b903ff0be0c1f",
+          "firstObservedAt": "2025-02-22T16:00:33.000Z",
+          "lastObservedAt": "2025-02-23T16:00:33.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2025-02-23T16:00:33.000Z",
+            "viewCount": 539883,
+            "likeCount": 11737,
+            "commentCount": 370
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2025-02-22T16:00:33.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "bAoScMHPJ-4": {
+      "id": "bAoScMHPJ-4",
+      "channelId": "UCCXq_iM-YNIjX_lkyBIl4Sg",
+      "channelTitle": "Virtual Carbon",
+      "channelAvatar": "https://yt3.ggpht.com/DxITz76q7bwWn3QUFcsYNWOhrq9pan-tCgj91LC1vPuPsbCuqNakOFgq5LAPdMgFE0PHDi83=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 257000,
+      "publishedAt": "2024-01-13T14:25:44Z",
+      "currentTitle": "Disturbing Internet Rabbit Holes",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/bAoScMHPJ-4/maxresdefault.jpg",
+      "currentViewCount": 970847,
+      "currentLikeCount": 28710,
+      "currentCommentCount": 1750,
+      "versions": [
+        {
+          "id": "eb9034ce-df68-48c8-a973-3680cad7128c",
+          "versionNumber": 1,
+          "title": "Disturbing Internet Rabbit Holes (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/bAoScMHPJ-4/0.jpg",
+          "thumbnailHash": "699036b0e81c2d46",
+          "firstObservedAt": "2024-01-13T14:25:44.000Z",
+          "lastObservedAt": "2024-01-14T14:25:44.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-01-14T14:25:44.000Z",
+            "viewCount": 242712,
+            "likeCount": 6316,
+            "commentCount": 350
+          }
+        },
+        {
+          "id": "dfe1cc19-165f-4a58-b920-e98250a8d19a",
+          "versionNumber": 2,
+          "title": "Disturbing Internet Rabbit Holes",
+          "thumbnailUrl": "https://i.ytimg.com/vi/bAoScMHPJ-4/maxresdefault.jpg",
+          "thumbnailHash": "84253d0f160d4768",
+          "firstObservedAt": "2024-01-16T14:25:44.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-01-16T14:25:44.000Z",
+            "viewCount": 970847,
+            "likeCount": 28710,
+            "commentCount": 1750
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2024-01-13T14:25:44.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2024-01-16T14:25:44.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 728135,
+        "preChangeViewsPerHour": 10113,
+        "postChangeWindowHours": 24128,
+        "postChangeViewsGained": 194169,
+        "postChangeViewsPerHour": 8,
+        "velocityDeltaPercent": -99.9,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories rabbit hole",
+      "isMonitoredExplicitly": true
+    },
+    "kryyi-Ql9dY": {
+      "id": "kryyi-Ql9dY",
+      "channelId": "UCJawyJQfPe7bAJV-sbK2Hug",
+      "channelTitle": "CzieReacts ",
+      "channelAvatar": "https://yt3.ggpht.com/vcweDnK1BAMO7m6VxroZf9a9WLP12cTwkE9CJWWgIMoXZuAnWeBA8-7ye0s0keHiEQuAOuQ=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 7180,
+      "publishedAt": "2026-10-16T19:10:17Z",
+      "currentTitle": "I Reacted To The Most Disturbing Clips On The internet",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/kryyi-Ql9dY/maxresdefault.jpg",
+      "currentViewCount": 7470,
+      "currentLikeCount": 308,
+      "currentCommentCount": 80,
+      "versions": [
+        {
+          "id": "b85fdd3f-540f-45ce-8cf9-e8f008019b12",
+          "versionNumber": 1,
+          "title": "I Reacted To The Most Disturbing Clips On The internet",
+          "thumbnailUrl": "https://i.ytimg.com/vi/kryyi-Ql9dY/0.jpg",
+          "thumbnailHash": "0f67b7017d8f0b5f",
+          "firstObservedAt": "2026-10-16T19:10:17.000Z",
+          "lastObservedAt": "2026-10-17T19:10:17.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-10-17T19:10:17.000Z",
+            "viewCount": 1868,
+            "likeCount": 68,
+            "commentCount": 16
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2026-10-16T19:10:17.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "nhYltcw8WAA": {
+      "id": "nhYltcw8WAA",
+      "channelId": "UCGAmpBtWveYp0-3v9npnhvQ",
+      "channelTitle": "Chilling Scares",
+      "channelAvatar": "https://yt3.ggpht.com/Ifm-dk4uAOpMMZCk8fYdZvpWYjf6LszcTUanLq6nsj8HPyANu2w44NbDhcfsJ4t8mBBS8yqQOg=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 2880000,
+      "publishedAt": "2024-06-24T17:15:01Z",
+      "currentTitle": "Disturbing Internet Anomalies",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/nhYltcw8WAA/maxresdefault.jpg",
+      "currentViewCount": 3581026,
+      "currentLikeCount": 88748,
+      "currentCommentCount": 3384,
+      "versions": [
+        {
+          "id": "65e0b051-2aeb-44ba-82ff-b0b76118c198",
+          "versionNumber": 1,
+          "title": "Disturbing Internet Anomalies (Documentary)",
+          "thumbnailUrl": "https://i.ytimg.com/vi/nhYltcw8WAA/0.jpg",
+          "thumbnailHash": "49dd0d2923ed9df0",
+          "firstObservedAt": "2024-06-24T17:15:01.000Z",
+          "lastObservedAt": "2024-06-25T17:15:01.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-06-25T17:15:01.000Z",
+            "viewCount": 895257,
+            "likeCount": 19525,
+            "commentCount": 677
+          }
+        },
+        {
+          "id": "281b824c-a35e-4417-a6c6-27b9f893209f",
+          "versionNumber": 2,
+          "title": "Disturbing Internet Anomalies",
+          "thumbnailUrl": "https://i.ytimg.com/vi/nhYltcw8WAA/maxresdefault.jpg",
+          "thumbnailHash": "c50d0833ddd3f116",
+          "firstObservedAt": "2024-06-27T17:15:01.000Z",
+          "lastObservedAt": "2026-10-17T22:40:59.899Z",
+          "changeType": "both_changed",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2024-06-27T17:15:01.000Z",
+            "viewCount": 3581026,
+            "likeCount": 88748,
+            "commentCount": 3384
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 1,
+      "totalThumbnailChangesObserved": 1,
+      "totalChangesObserved": 2,
+      "firstDiscoveredAt": "2024-06-24T17:15:01.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "lastChangeDetectedAt": "2024-06-27T17:15:01.000Z",
+      "abTestClassification": "probable_ab_test",
+      "abTestConfidenceScore": 80,
+      "abTestEvidence": [
+        "Test combiné : Titre et miniature ont tous deux été réajustés pour maximiser le CTR."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "performanceAnalysis": {
+        "preChangeWindowHours": 72,
+        "preChangeViewsGained": 2685769,
+        "preChangeViewsPerHour": 37302.3,
+        "postChangeWindowHours": 20213,
+        "postChangeViewsGained": 716205,
+        "postChangeViewsPerHour": 35.4,
+        "velocityDeltaPercent": -99.9,
+        "summaryVerdict": "deceleration"
+      },
+      "nicheCategory": "disturbing internet stories",
+      "isMonitoredExplicitly": true
+    },
+    "ndZam_1JIe8": {
+      "id": "ndZam_1JIe8",
+      "channelId": "UCRVXfhLRsLWi3_IKnMDiI1Q",
+      "channelTitle": "poi",
+      "channelAvatar": "https://yt3.ggpht.com/5CzQfIKw1yXBg4n9F6D3_MoNXNjFtaSfqrZ0QcvRm2NPBAbTyX0mGwRL2TBqibHKzJ4iy5DXQFw=s240-c-k-c0x00ffffff-no-rj",
+      "channelSubscriberCount": 439000,
+      "publishedAt": "2026-07-11T17:00:32Z",
+      "currentTitle": "Disturbing Internet Rabbit Holes",
+      "currentThumbnailUrl": "https://i.ytimg.com/vi/ndZam_1JIe8/maxresdefault.jpg",
+      "currentViewCount": 291688,
+      "currentLikeCount": 6517,
+      "currentCommentCount": 492,
+      "versions": [
+        {
+          "id": "cfd2a52f-6376-47ec-ab4a-4fb055b3a934",
+          "versionNumber": 1,
+          "title": "Disturbing Internet Rabbit Holes",
+          "thumbnailUrl": "https://i.ytimg.com/vi/ndZam_1JIe8/0.jpg",
+          "thumbnailHash": "f16cebea4ec849b0",
+          "firstObservedAt": "2026-07-11T17:00:32.000Z",
+          "lastObservedAt": "2026-07-12T17:00:32.000Z",
+          "changeType": "initial_discovery",
+          "confidenceLevel": "verified_snapshot",
+          "metricsSnapshot": {
+            "timestamp": "2026-07-12T17:00:32.000Z",
+            "viewCount": 72922,
+            "likeCount": 1434,
+            "commentCount": 98
+          }
+        }
+      ],
+      "totalTitleChangesObserved": 0,
+      "totalThumbnailChangesObserved": 0,
+      "totalChangesObserved": 0,
+      "firstDiscoveredAt": "2026-07-11T17:00:32.000Z",
+      "lastObservedAt": "2026-10-17T22:40:59.899Z",
+      "abTestClassification": "insufficient_data",
+      "abTestConfidenceScore": 10,
+      "abTestEvidence": [
+        "Aucun changement de packaging observé depuis la première indexation."
+      ],
+      "uncertaintyReasons": [
+        "L'API YouTube publique ne diffuse pas directement les données privées du studio Test & Compare."
+      ],
+      "evidenceSource": "multi_snapshot_series",
+      "nicheCategory": "disturbing internet stories rabbit hole",
+      "isMonitoredExplicitly": true
+    }
+  },
+  "monitoredChannels": [],
+  "lastScanTimestamp": "2026-10-17T22:40:59.817Z",
+  "nextScheduledScan": "2026-10-17T23:40:59.817Z",
+  "stats": {
+    "totalVideosTracked": 30,
+    "totalVideosWithChanges": 15,
+    "totalThumbnailChangesRecorded": 15,
+    "totalTitleChangesRecorded": 15,
+    "probableAbTestsCount": 15,
+    "confirmedAbTestsCount": 0
+  }
+}
