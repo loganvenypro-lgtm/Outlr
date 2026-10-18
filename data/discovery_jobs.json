@@ -1,4 +1,26 @@
 {
+  "job_67f9e784-c": {
+    "jobId": "job_67f9e784-c",
+    "query": "YouTube documentary video essay",
+    "depth": "quick",
+    "status": "running",
+    "step": "calculating_outliers",
+    "message": "Calcul des ratios d'outliers et scores de pertinence...",
+    "targetVideoCount": 100,
+    "queriesGenerated": [
+      "YouTube documentary video essay",
+      "YouTube documentary video essay explained",
+      "YouTube documentary video essay documentary"
+    ],
+    "queriesExecutedCount": 2,
+    "rawDiscoveredCount": 70,
+    "uniqueVideosCount": 40,
+    "enrichedVideosCount": 40,
+    "reliableOutliersCount": 20,
+    "quotaUnitsUsed": 2,
+    "createdAt": "2026-10-18T21:51:47.929Z",
+    "updatedAt": "2026-10-18T21:52:08.053Z"
+  },
   "job_50fb19fa-e": {
     "jobId": "job_50fb19fa-e",
     "query": "disturbing internet stories",
@@ -2151,5 +2173,27 @@
     "quotaUnitsUsed": 2,
     "createdAt": "2026-10-18T19:51:52.978Z",
     "updatedAt": "2026-10-18T19:52:30.974Z"
+  },
+  "job_adde0c46-8": {
+    "jobId": "job_adde0c46-8",
+    "query": "Minecraft challenge documentary",
+    "depth": "quick",
+    "status": "running",
+    "step": "calculating_outliers",
+    "message": "Calcul des ratios d'outliers et scores de pertinence...",
+    "targetVideoCount": 100,
+    "queriesGenerated": [
+      "Minecraft challenge documentary",
+      "Minecraft challenge documentary 100 days",
+      "Minecraft challenge documentary hardcore"
+    ],
+    "queriesExecutedCount": 2,
+    "rawDiscoveredCount": 36,
+    "uniqueVideosCount": 18,
+    "enrichedVideosCount": 18,
+    "reliableOutliersCount": 8,
+    "quotaUnitsUsed": 2,
+    "createdAt": "2026-10-18T20:31:56.788Z",
+    "updatedAt": "2026-10-18T20:32:25.072Z"
   }
 }

@@ -128,17 +128,12 @@ export default function StatsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#070a0f] text-slate-100 font-sans antialiased overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex-1 min-w-0 bg-white min-h-screen text-slate-900 font-sans antialiased">
+      <TopNav />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <TopNav />
-
-        <main className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
-          {/* Header Banner */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#182130] pb-6">
+      <main className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8 bg-white">
+        {/* Header Banner */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
@@ -664,6 +659,5 @@ export default function StatsPage() {
           </div>
         </main>
       </div>
-    </div>
   );
 }

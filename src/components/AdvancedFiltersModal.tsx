@@ -93,23 +93,23 @@ export function AdvancedFiltersModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-[#10141c] border border-[#1f283a] rounded-2xl max-w-3xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+        className="bg-white border border-slate-200 rounded-2xl max-w-3xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-[#182130] flex items-center justify-between">
+        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
               <SlidersHorizontal className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                Advanced filters
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                Filtres Avancés
               </h2>
-              <p className="text-xs text-slate-400">
-                Everything that does not need to sit in the filter bar.
+              <p className="text-xs text-slate-500">
+                Ajustez précisément la taille de chaîne, les ratios de vues et l'âge de création.
               </p>
             </div>
           </div>
@@ -117,22 +117,22 @@ export function AdvancedFiltersModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-[#151c28] hover:bg-[#1e293b] text-slate-400 hover:text-white flex items-center justify-center transition-colors border border-[#222e42]"
+            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-colors border border-slate-200"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Filters Grid */}
-        <div className="p-5 overflow-y-auto space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-5 overflow-y-auto space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/50">
           {/* 1. VIDEO VIEWS */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                  Video Views
+                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                  Vues de la Vidéo
                 </span>
-                <span className="text-[11px] text-slate-400">Views on the video itself</span>
+                <span className="text-[11px] text-slate-500">Vues totales sur la vidéo</span>
               </div>
             </div>
 
@@ -140,9 +140,9 @@ export function AdvancedFiltersModal({
               <select
                 value={draft.minViews}
                 onChange={(e) => setDraft({ ...draft, minViews: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value={0}>0 views</option>
+                <option value={0}>0 vue</option>
                 <option value={5000}>5K</option>
                 <option value={10000}>10K</option>
                 <option value={50000}>50K</option>
@@ -150,11 +150,11 @@ export function AdvancedFiltersModal({
                 <option value={500000}>500K</option>
                 <option value={1000000}>1M</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxViews}
                 onChange={(e) => setDraft({ ...draft, maxViews: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>100M+</option>
                 <option value={50000}>50K</option>
@@ -169,49 +169,49 @@ export function AdvancedFiltersModal({
           </div>
 
           {/* 2. UPLOADED WITHIN */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Uploaded Within
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Période de Publication
               </span>
-              <span className="text-[11px] text-slate-400">How long ago the video went up</span>
+              <span className="text-[11px] text-slate-500">Depuis combien de temps elle est en ligne</span>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
-              <div className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-400 text-xs rounded-lg px-2.5 py-1.5 font-medium">
-                Today
+              <div className="flex-1 bg-slate-100 border border-slate-200 text-slate-500 text-xs rounded-lg px-2.5 py-1.5 font-medium">
+                Aujourd'hui
               </div>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.period}
                 onChange={(e) => setDraft({ ...draft, period: e.target.value as any })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value="today">Today</option>
-                <option value="7d">7 days</option>
-                <option value="21d">3 weeks</option>
-                <option value="30d">1 month</option>
-                <option value="90d">3 months</option>
-                <option value="1y">1 year</option>
-                <option value="all">All time</option>
+                <option value="today">Aujourd'hui</option>
+                <option value="7d">7 jours</option>
+                <option value="21d">3 semaines</option>
+                <option value="30d">1 mois</option>
+                <option value="90d">3 mois</option>
+                <option value="1y">1 an</option>
+                <option value="all">Tout l'historique</option>
               </select>
             </div>
           </div>
 
           {/* 3. CHANNEL SUBSCRIBERS */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Channel Subscribers
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Abonnés de la Chaîne
               </span>
-              <span className="text-[11px] text-slate-400">Size of the channel that posted it</span>
+              <span className="text-[11px] text-slate-500">Taille de l'audience de la chaîne</span>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
               <select
                 value={draft.minSubs}
                 onChange={(e) => setDraft({ ...draft, minSubs: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>0</option>
                 <option value={1000}>1K</option>
@@ -220,11 +220,11 @@ export function AdvancedFiltersModal({
                 <option value={50000}>50K</option>
                 <option value={100000}>100K</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxSubs}
                 onChange={(e) => setDraft({ ...draft, maxSubs: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>50M+</option>
                 <option value={10000}>10K</option>
@@ -239,13 +239,13 @@ export function AdvancedFiltersModal({
           </div>
 
           {/* 4. OUTLIER SCORE */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Outlier Score
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Score Outlier (Multiplicateur)
               </span>
-              <span className="text-[11px] text-slate-400">
-                Views against channel's usual video. 10x means ten times
+              <span className="text-[11px] text-slate-500">
+                Performance relative vs moyenne habituelle de la chaîne
               </span>
             </div>
 
@@ -253,7 +253,7 @@ export function AdvancedFiltersModal({
               <select
                 value={draft.minOutlier}
                 onChange={(e) => setDraft({ ...draft, minOutlier: parseFloat(e.target.value) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>0x</option>
                 <option value={1.5}>1.5x</option>
@@ -262,11 +262,11 @@ export function AdvancedFiltersModal({
                 <option value={5.0}>5.0x</option>
                 <option value={10.0}>10.0x</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxOutlier}
                 onChange={(e) => setDraft({ ...draft, maxOutlier: parseFloat(e.target.value) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>100x+</option>
                 <option value={5.0}>5.0x</option>
@@ -278,19 +278,19 @@ export function AdvancedFiltersModal({
           </div>
 
           {/* 5. VIDEO LENGTH */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Video Length
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Durée de la Vidéo
               </span>
-              <span className="text-[11px] text-slate-400">Running time of the video</span>
+              <span className="text-[11px] text-slate-500">Durée en minutes de lecture</span>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
               <select
                 value={draft.minDurationMinutes}
                 onChange={(e) => setDraft({ ...draft, minDurationMinutes: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>0 min</option>
                 <option value={1}>1 min</option>
@@ -300,11 +300,11 @@ export function AdvancedFiltersModal({
                 <option value={30}>30 min</option>
                 <option value={60}>1h</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxDurationMinutes}
                 onChange={(e) => setDraft({ ...draft, maxDurationMinutes: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>3h+</option>
                 <option value={5}>5 min</option>
@@ -317,19 +317,19 @@ export function AdvancedFiltersModal({
           </div>
 
           {/* 6. CHANNEL UPLOAD COUNT */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Channel Upload Count
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Nombre de Vidéos Publiées
               </span>
-              <span className="text-[11px] text-slate-400">How many videos the channel has posted</span>
+              <span className="text-[11px] text-slate-500">Total vidéos en ligne sur la chaîne</span>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
               <select
                 value={draft.minUploadCount}
                 onChange={(e) => setDraft({ ...draft, minUploadCount: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>0</option>
                 <option value={5}>5</option>
@@ -337,11 +337,11 @@ export function AdvancedFiltersModal({
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxUploadCount}
                 onChange={(e) => setDraft({ ...draft, maxUploadCount: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
                 <option value={0}>10K+</option>
                 <option value={20}>20</option>
@@ -354,66 +354,66 @@ export function AdvancedFiltersModal({
           </div>
 
           {/* 7. CHANNEL AGE */}
-          <div className="bg-[#0b0e14] border border-[#17202e] rounded-xl p-3.5 space-y-2 md:col-span-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 md:col-span-2 shadow-sm">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                Channel Age
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+                Âge de la Chaîne
               </span>
-              <span className="text-[11px] text-slate-400">Days since the channel started</span>
+              <span className="text-[11px] text-slate-500">Jours depuis la date de création</span>
             </div>
 
             <div className="flex items-center gap-2 pt-1 max-w-md">
               <select
                 value={draft.minChannelAgeDays}
                 onChange={(e) => setDraft({ ...draft, minChannelAgeDays: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value={0}>0 days</option>
-                <option value={30}>30 days</option>
-                <option value={90}>90 days</option>
-                <option value={115}>115 days</option>
-                <option value={180}>180 days</option>
-                <option value={365}>1 year</option>
+                <option value={0}>0 jour</option>
+                <option value={30}>30 jours</option>
+                <option value={90}>90 jours</option>
+                <option value={115}>115 jours</option>
+                <option value={180}>180 jours</option>
+                <option value={365}>1 an</option>
               </select>
-              <span className="text-slate-500 text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <select
                 value={draft.maxChannelAgeDays}
                 onChange={(e) => setDraft({ ...draft, maxChannelAgeDays: parseInt(e.target.value, 10) })}
-                className="flex-1 bg-[#121824] border border-[#1e283a] text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
+                className="flex-1 bg-white border border-slate-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-medium"
               >
-                <option value={0}>15.1y+</option>
-                <option value={90}>90 days</option>
-                <option value={115}>115 days</option>
-                <option value={180}>180 days (6 months)</option>
-                <option value={365}>1 year</option>
-                <option value={730}>2 years</option>
-                <option value={1825}>5 years</option>
+                <option value={0}>15.1 ans+</option>
+                <option value={90}>90 jours</option>
+                <option value={115}>115 jours</option>
+                <option value={180}>180 jours (6 mois)</option>
+                <option value={365}>1 an</option>
+                <option value={730}>2 ans</option>
+                <option value={1825}>5 ans</option>
               </select>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[#182130] bg-[#0c1017] flex items-center justify-between">
-          <span className="text-xs text-slate-400 font-medium">
-            {countActive()} filters applied
+        <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between">
+          <span className="text-xs text-slate-500 font-medium">
+            {countActive()} filtre{countActive() > 1 ? "s" : ""} actif{countActive() > 1 ? "s" : ""}
           </span>
 
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={handleReset}
-              className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+              className="px-3.5 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors"
             >
-              Reset all
+              Réinitialiser
             </button>
             <button
               type="button"
               onClick={handleApply}
-              className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-900/40 transition-all flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-semibold text-xs shadow-md transition-all flex items-center gap-1.5"
             >
               <Check className="w-3.5 h-3.5" />
-              <span>Apply filters</span>
+              <span>Appliquer les filtres</span>
             </button>
           </div>
         </div>

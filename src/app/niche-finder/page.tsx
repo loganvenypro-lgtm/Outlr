@@ -527,127 +527,125 @@ function NicheFinderContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#070a0f]">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <TopNav
-          title="Viral Videos Discovery"
-          breadcrumbs={[
-            { label: "Dashboard", href: "/" },
-            { label: "Viral Videos", href: "/niche-finder" },
-          ]}
-        />
+    <div className="flex-1 flex flex-col min-w-0 bg-white text-slate-900">
+      <TopNav
+        title="Viral Videos Discovery"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Viral Videos", href: "/niche-finder" },
+        ]}
+      />
 
-        <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 max-w-7xl mx-auto w-full space-y-6">
-          {/* Header Title & Subtitle */}
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Viral Videos</h1>
-            <p className="text-xs sm:text-sm text-slate-400">Discover videos breaking out right now.</p>
-          </div>
+      <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 max-w-7xl mx-auto w-full space-y-6 bg-white">
+        {/* Header Title & Subtitle */}
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Viral Videos</h1>
+          <p className="text-xs sm:text-sm text-slate-500">Discover videos breaking out right now.</p>
+        </div>
 
-          {/* Algrow-Style Modern Search Bar */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleInstantSearch(queryInput);
-            }}
-            className="relative"
-          >
-            <div className="flex items-center w-full bg-[#0c1017] border border-[#1b2230] hover:border-[#273247] focus-within:border-blue-500 rounded-xl px-4 py-2 sm:py-2.5 transition-all shadow-xl">
-              <Search className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
-              <input
-                type="text"
-                value={queryInput}
-                onChange={(e) => setQueryInput(e.target.value)}
-                placeholder="Search videos, channels, niches or topics..."
-                className="w-full bg-transparent text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none"
-              />
-              {queryInput && (
-                <button
-                  type="button"
-                  onClick={() => setQueryInput("")}
-                  className="text-slate-500 hover:text-slate-300 text-xs px-2 shrink-0 mr-2"
-                  title="Clear input"
-                >
-                  ✕
-                </button>
-              )}
-
-              {/* Scan Depth Selector */}
-              <div className="hidden sm:flex items-center border-l border-[#1f293d] pl-3 pr-2 mr-2">
-                <select
-                  value={depth}
-                  onChange={(e) => setDepth(e.target.value as SearchDepth)}
-                  className="bg-transparent text-xs text-slate-300 font-medium focus:outline-none cursor-pointer"
-                  title="Search Depth Engine"
-                >
-                  <option value="quick" className="bg-[#0e1628] text-slate-200">
-                    ⚡ Quick (~100 vids)
-                  </option>
-                  <option value="deep" className="bg-[#0e1628] text-slate-200">
-                    🔍 Deep (~300 vids)
-                  </option>
-                  <option value="extended" className="bg-[#0e1628] text-slate-200">
-                    🚀 Extended (~500 vids)
-                  </option>
-                  <option value="max" className="bg-[#0e1628] text-slate-200">
-                    👑 Max (~800 vids)
-                  </option>
-                </select>
-              </div>
-
-              {/* Blue Instant Search Button */}
-              <button
-                type="submit"
-                disabled={loading || !queryInput.trim()}
-                className="px-4 py-2 rounded-lg bg-[#2563eb] hover:bg-[#1d4ed8] disabled:opacity-50 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-1.5 shrink-0 shadow-md shadow-blue-900/30"
-              >
-                <span>Instant Search</span>
-              </button>
-
-              {/* Deep YouTube Crawl Button */}
+        {/* Modern White Search Bar */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleInstantSearch(queryInput);
+          }}
+          className="relative"
+        >
+          <div className="flex items-center w-full bg-white border border-slate-200 hover:border-slate-300 focus-within:border-blue-500 rounded-xl px-4 py-2 sm:py-2.5 transition-all shadow-sm">
+            <Search className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
+            <input
+              type="text"
+              value={queryInput}
+              onChange={(e) => setQueryInput(e.target.value)}
+              placeholder="Search videos, channels, niches or topics..."
+              className="w-full bg-transparent text-slate-900 text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none"
+            />
+            {queryInput && (
               <button
                 type="button"
-                onClick={() => startSearchJob(queryInput)}
-                disabled={loading || !queryInput.trim()}
-                className="hidden md:flex px-3 py-2 rounded-lg bg-[#141d2e] hover:bg-[#1c2940] border border-[#23334d] text-slate-300 hover:text-white text-xs font-semibold items-center gap-1.5 transition-colors shrink-0"
-                title="Lancer une exploration en profondeur sur YouTube (~30s)"
+                onClick={() => setQueryInput("")}
+                className="text-slate-400 hover:text-slate-600 text-xs px-2 shrink-0 mr-2"
+                title="Clear input"
               >
-                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" /> : <Sparkles className="w-3.5 h-3.5 text-blue-400" />}
-                <span>Deep Crawl</span>
+                ✕
               </button>
+            )}
+
+            {/* Scan Depth Selector */}
+            <div className="hidden sm:flex items-center border-l border-slate-200 pl-3 pr-2 mr-2">
+              <select
+                value={depth}
+                onChange={(e) => setDepth(e.target.value as SearchDepth)}
+                className="bg-transparent text-xs text-slate-700 font-medium focus:outline-none cursor-pointer"
+                title="Search Depth Engine"
+              >
+                <option value="quick" className="bg-white text-slate-900">
+                  ⚡ Quick (~100 vids)
+                </option>
+                <option value="deep" className="bg-white text-slate-900">
+                  🔍 Deep (~300 vids)
+                </option>
+                <option value="extended" className="bg-white text-slate-900">
+                  🚀 Extended (~500 vids)
+                </option>
+                <option value="max" className="bg-white text-slate-900">
+                  👑 Max (~800 vids)
+                </option>
+              </select>
             </div>
-          </form>
 
-          {/* Try Suggestions Pills */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-slate-400 font-medium mr-1">Try</span>
-            {trySuggestions.map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => {
-                  setQueryInput(item.query);
-                  handleInstantSearch(item.query);
-                }}
-                className={`px-3 py-1 rounded-full text-xs transition-all border ${
-                  activeQuery.toLowerCase() === item.query.toLowerCase()
-                    ? "bg-blue-600 text-white border-blue-500 font-semibold"
-                    : "bg-[#0c1017] text-slate-300 hover:text-white border-[#1c2433] hover:border-[#2b3952]"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+            {/* Blue Instant Search Button */}
+            <button
+              type="submit"
+              disabled={loading || !queryInput.trim()}
+              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
+            >
+              <span>Instant Search</span>
+            </button>
+
+            {/* Deep YouTube Crawl Button */}
+            <button
+              type="button"
+              onClick={() => startSearchJob(queryInput)}
+              disabled={loading || !queryInput.trim()}
+              className="hidden md:flex px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold items-center gap-1.5 transition-colors shrink-0"
+              title="Lancer une exploration en profondeur sur YouTube (~30s)"
+            >
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> : <Sparkles className="w-3.5 h-3.5 text-blue-600" />}
+              <span>Deep Crawl</span>
+            </button>
           </div>
+        </form>
+
+        {/* Try Suggestions Pills */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-slate-400 font-medium mr-1">Try</span>
+          {trySuggestions.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => {
+                setQueryInput(item.query);
+                handleInstantSearch(item.query);
+              }}
+              className={`px-3 py-1 rounded-full text-xs transition-all border ${
+                activeQuery.toLowerCase() === item.query.toLowerCase()
+                  ? "bg-blue-600 text-white border-blue-600 font-semibold shadow-sm"
+                  : "bg-slate-100 text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
 
           {/* Algrow-Style Horizontal Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="text-xs text-slate-400 font-medium">Filter by</span>
+              <span className="text-xs text-slate-500 font-medium">Filter by</span>
 
               {/* Segmented Switch: Shorts vs Longform */}
-              <div className="flex items-center bg-[#0c1017] border border-[#1c2433] rounded-lg p-0.5">
+              <div className="flex items-center bg-slate-100 border border-slate-200 rounded-lg p-0.5">
                 <button
                   type="button"
                   onClick={() => {
@@ -655,7 +653,7 @@ function NicheFinderContent() {
                     fetchFilteredPage(1, { format: "shorts" });
                   }}
                   className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                    formatFilter === "shorts" ? "bg-[#1f293d] text-white" : "text-slate-400 hover:text-slate-200"
+                    formatFilter === "shorts" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
                   Shorts
@@ -667,14 +665,14 @@ function NicheFinderContent() {
                     fetchFilteredPage(1, { format: "long" });
                   }}
                   className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                    formatFilter === "long" ? "bg-[#1f293d] text-white" : "text-slate-400 hover:text-slate-200"
+                    formatFilter === "long" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
                   Longform
                 </button>
               </div>
 
-              {/* 1. All Categories Dropdown (Algrow Image 2) */}
+              {/* 1. All Categories Dropdown */}
               <div className="relative">
                 <button
                   type="button"
@@ -683,14 +681,14 @@ function NicheFinderContent() {
                     setShowNicheMenu(false);
                     setShowSubNicheMenu(false);
                   }}
-                  className="bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors"
+                  className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors shadow-sm"
                 >
                   <span className="truncate max-w-[130px]">{selectedCategory}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 </button>
 
                 {showCategoryMenu && (
-                  <div className="absolute left-0 top-full mt-1.5 w-56 bg-[#10141c] border border-[#20283a] rounded-xl shadow-2xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
+                  <div className="absolute left-0 top-full mt-1.5 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
                     {ALGROW_CATEGORIES.map((cat) => {
                       const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
                       return (
@@ -703,12 +701,12 @@ function NicheFinderContent() {
                           }}
                           className={`px-3.5 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors ${
                             isSelected
-                              ? "bg-[#182338] text-white font-semibold"
-                              : "text-slate-300 hover:bg-[#151c28] hover:text-white"
+                              ? "bg-blue-50 text-blue-700 font-semibold"
+                              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                           }`}
                         >
                           <span>{cat}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-blue-600" />}
                         </div>
                       );
                     })}
@@ -716,7 +714,7 @@ function NicheFinderContent() {
                 )}
               </div>
 
-              {/* 2. Any Niche Dropdown (Algrow Image 3 with counts) */}
+              {/* 2. Any Niche Dropdown with counts */}
               <div className="relative">
                 <button
                   type="button"
@@ -725,14 +723,14 @@ function NicheFinderContent() {
                     setShowCategoryMenu(false);
                     setShowSubNicheMenu(false);
                   }}
-                  className="bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors"
+                  className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors shadow-sm"
                 >
                   <span className="truncate max-w-[130px]">{selectedNiche}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 </button>
 
                 {showNicheMenu && (
-                  <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#10141c] border border-[#20283a] rounded-xl shadow-2xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
+                  <div className="absolute left-0 top-full mt-1.5 w-64 bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
                     {ALGROW_NICHES.map((n) => {
                       const isSelected = selectedNiche.toLowerCase() === n.toLowerCase();
                       const count = nicheCounts[n];
@@ -747,18 +745,18 @@ function NicheFinderContent() {
                           }}
                           className={`px-3.5 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors ${
                             isSelected
-                              ? "bg-[#182338] text-white font-semibold"
-                              : "text-slate-300 hover:bg-[#151c28] hover:text-white"
+                              ? "bg-blue-50 text-blue-700 font-semibold"
+                              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                           }`}
                         >
                           <span className="truncate pr-2">{n}</span>
                           <div className="flex items-center gap-2 shrink-0">
                             {n !== "Any niche" && count !== undefined && count > 0 && (
-                              <span className="text-[11px] font-mono text-slate-400 font-medium">
+                              <span className="text-[11px] font-mono text-slate-500 font-medium">
                                 {formatCompactNumber(count)}
                               </span>
                             )}
-                            {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                            {isSelected && <Check className="w-3.5 h-3.5 text-blue-600" />}
                           </div>
                         </div>
                       );
@@ -776,14 +774,14 @@ function NicheFinderContent() {
                     setShowCategoryMenu(false);
                     setShowNicheMenu(false);
                   }}
-                  className="bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors"
+                  className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium rounded-lg px-3 py-1.5 flex items-center gap-2 cursor-pointer transition-colors shadow-sm"
                 >
                   <span className="truncate max-w-[130px]">{selectedSubNiche}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 </button>
 
                 {showSubNicheMenu && (
-                  <div className="absolute left-0 top-full mt-1.5 w-60 bg-[#10141c] border border-[#20283a] rounded-xl shadow-2xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
+                  <div className="absolute left-0 top-full mt-1.5 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 z-40 animate-in fade-in duration-150 max-h-80 overflow-y-auto">
                     <div
                       onClick={() => {
                         setSelectedSubNiche("All Sub-Niches");
@@ -792,12 +790,12 @@ function NicheFinderContent() {
                       }}
                       className={`px-3.5 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors ${
                         selectedSubNiche === "All Sub-Niches"
-                          ? "bg-[#182338] text-white font-semibold"
-                          : "text-slate-300 hover:bg-[#151c28] hover:text-white"
+                          ? "bg-blue-50 text-blue-700 font-semibold"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     >
                       <span>All Sub-Niches</span>
-                      {selectedSubNiche === "All Sub-Niches" && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                      {selectedSubNiche === "All Sub-Niches" && <Check className="w-3.5 h-3.5 text-blue-600" />}
                     </div>
 
                     {(ALGROW_SUB_NICHES[selectedNiche] || []).map((sub: string) => {
@@ -812,12 +810,12 @@ function NicheFinderContent() {
                           }}
                           className={`px-3.5 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors ${
                             isSelected
-                              ? "bg-[#182338] text-white font-semibold"
-                              : "text-slate-300 hover:bg-[#151c28] hover:text-white"
+                              ? "bg-blue-50 text-blue-700 font-semibold"
+                              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                           }`}
                         >
                           <span>{sub}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-blue-600" />}
                         </div>
                       );
                     })}
@@ -825,7 +823,7 @@ function NicheFinderContent() {
                 )}
               </div>
 
-              {/* 4. More Filters Button (Algrow Image 1: Advanced Filters Modal Trigger) */}
+              {/* 4. More Filters Button */}
               <button
                 type="button"
                 onClick={() => {
@@ -834,16 +832,16 @@ function NicheFinderContent() {
                   setShowNicheMenu(false);
                   setShowSubNicheMenu(false);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors shadow-sm ${
                   countAdvancedActive() > 0
-                    ? "bg-[#182338] text-blue-400 border-blue-500/40"
-                    : "bg-[#0c1017] hover:bg-[#121824] text-slate-300 border-[#1c2433]"
+                    ? "bg-blue-50 text-blue-700 border-blue-300"
+                    : "bg-white hover:bg-slate-50 text-slate-700 border-slate-200"
                 }`}
               >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+                <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
                 <span>More filters</span>
                 {countAdvancedActive() > 0 && (
-                  <span className="text-[10px] bg-blue-600/30 text-blue-300 px-1.5 py-0.2 rounded-full font-mono">
+                  <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.2 rounded-full font-mono font-bold">
                     {countAdvancedActive()}
                   </span>
                 )}
@@ -856,10 +854,10 @@ function NicheFinderContent() {
               <button
                 type="button"
                 onClick={exportToCSV}
-                className="px-3 py-1.5 rounded-lg bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm"
                 title="Exporter les résultats en format CSV"
               >
-                <Download className="w-3.5 h-3.5 text-blue-400" />
+                <Download className="w-3.5 h-3.5 text-blue-600" />
                 <span>Export CSV ({unfilteredCount || videos.length})</span>
               </button>
             )}
@@ -875,7 +873,7 @@ function NicheFinderContent() {
                     setFormatFilter("long");
                     fetchFilteredPage(1, { format: "long" });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-slate-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] border border-slate-200 transition-colors"
                 >
                   <span>{formatFilter === "shorts" ? "Shorts" : "All Formats"}</span>
                   <X className="w-3 h-3 text-slate-400" />
@@ -889,10 +887,10 @@ function NicheFinderContent() {
                     setSelectedCategory("All Categories");
                     fetchFilteredPage(1, { category: "All Categories" });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-blue-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] border border-blue-200 transition-colors"
                 >
                   <span>{selectedCategory}</span>
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-blue-400" />
                 </button>
               )}
 
@@ -904,10 +902,10 @@ function NicheFinderContent() {
                     setSelectedSubNiche("All Sub-Niches");
                     fetchFilteredPage(1, { niche: "Any niche", subNiche: "All Sub-Niches" });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-purple-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-700 text-[11px] border border-purple-200 transition-colors"
                 >
                   <span>{selectedNiche}</span>
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-purple-400" />
                 </button>
               )}
 
@@ -918,10 +916,10 @@ function NicheFinderContent() {
                     setSelectedSubNiche("All Sub-Niches");
                     fetchFilteredPage(1, { subNiche: "All Sub-Niches" });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-indigo-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] border border-indigo-200 transition-colors"
                 >
                   <span>{selectedSubNiche}</span>
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-indigo-400" />
                 </button>
               )}
 
@@ -933,7 +931,7 @@ function NicheFinderContent() {
                     setAdvancedFilters(adv);
                     fetchFilteredPage(1, { advanced: adv });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-slate-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] border border-slate-200 transition-colors"
                 >
                   <span>{formatCompactNumber(advancedFilters.minViews)}+ views</span>
                   <X className="w-3 h-3 text-slate-400" />
@@ -948,7 +946,7 @@ function NicheFinderContent() {
                     setAdvancedFilters(adv);
                     fetchFilteredPage(1, { advanced: adv });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-slate-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] border border-slate-200 transition-colors"
                 >
                   <span>Last {advancedFilters.period === "21d" ? "3 weeks" : advancedFilters.period === "7d" ? "7 days" : advancedFilters.period}</span>
                   <X className="w-3 h-3 text-slate-400" />
@@ -963,10 +961,10 @@ function NicheFinderContent() {
                     setAdvancedFilters(adv);
                     fetchFilteredPage(1, { advanced: adv });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-emerald-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] border border-emerald-200 transition-colors font-medium"
                 >
                   <span>Channel age under {advancedFilters.maxChannelAgeDays} days</span>
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-emerald-500" />
                 </button>
               )}
 
@@ -978,10 +976,10 @@ function NicheFinderContent() {
                     setAdvancedFilters(adv);
                     fetchFilteredPage(1, { advanced: adv });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-amber-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] border border-amber-200 transition-colors font-medium"
                 >
                   <span>Outlier &ge; {advancedFilters.minOutlier}x</span>
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-amber-500" />
                 </button>
               )}
 
@@ -993,7 +991,7 @@ function NicheFinderContent() {
                     setAdvancedFilters(adv);
                     fetchFilteredPage(1, { advanced: adv });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-slate-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] border border-slate-200 transition-colors"
                 >
                   <span>&lt; {formatCompactNumber(advancedFilters.maxSubs)} subs</span>
                   <X className="w-3 h-3 text-slate-400" />
@@ -1007,7 +1005,7 @@ function NicheFinderContent() {
                     setSearchFilter("");
                     fetchFilteredPage(1, { search: "" });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#111722] hover:bg-[#182130] text-slate-300 text-[11px] border border-[#1e2738] transition-colors"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] border border-slate-200 transition-colors"
                 >
                   <span>Keyword: "{searchFilter}"</span>
                   <X className="w-3 h-3 text-slate-400" />
@@ -1017,7 +1015,7 @@ function NicheFinderContent() {
               <button
                 type="button"
                 onClick={resetAllFilters}
-                className="text-xs text-slate-500 hover:text-slate-300 underline ml-2 cursor-pointer"
+                className="text-xs text-slate-500 hover:text-slate-900 underline ml-2 cursor-pointer font-medium"
               >
                 Clear all
               </button>
@@ -1026,24 +1024,24 @@ function NicheFinderContent() {
 
           {/* Real-time Discovery Progress Dashboard */}
           {currentJob && currentJob.status === "running" && (
-            <div className="bg-[#0c1017] border border-[#1c2433] rounded-xl p-4 shadow-xl space-y-3">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-blue-500/20 text-blue-400 animate-pulse">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
                     <RefreshCw className="w-4 h-4 animate-spin" />
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
                       <span>Scanning "{currentJob.query}"</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold">
                         {(currentJob.depth || "DEEP").toUpperCase()}
                       </span>
                     </h3>
-                    <p className="text-xs text-slate-400">{currentJob.message}</p>
+                    <p className="text-xs text-slate-500">{currentJob.message}</p>
                   </div>
                 </div>
 
-                <div className="text-xs text-slate-400 font-mono">
+                <div className="text-xs text-slate-500 font-mono font-semibold">
                   {currentJob.uniqueVideosCount} unique videos found
                 </div>
               </div>
@@ -1052,60 +1050,60 @@ function NicheFinderContent() {
 
           {/* Niche Saturation Assessment & Validated Multi-Channel Breakouts Banner */}
           {saturationScore && (
-            <div className="bg-gradient-to-r from-[#0c1017] via-[#0d1420] to-[#0a0e14] border border-[#1c2536] rounded-xl p-4 space-y-3">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2 rounded-xl border flex items-center justify-center ${
+                    className={`p-2.5 rounded-xl border flex items-center justify-center ${
                       saturationScore.level === "blue_ocean"
-                        ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                         : saturationScore.level === "saturated"
-                        ? "bg-rose-500/15 border-rose-500/30 text-rose-400"
-                        : "bg-amber-500/15 border-amber-500/30 text-amber-400"
+                        ? "bg-rose-50 border-rose-200 text-rose-600"
+                        : "bg-amber-50 border-amber-200 text-amber-600"
                     }`}
                   >
-                    <Compass className="w-4 h-4" />
+                    <Compass className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white uppercase tracking-wider">
+                      <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                         Niche Saturation Score :
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-bold border ${
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
                           saturationScore.level === "blue_ocean"
-                            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : saturationScore.level === "saturated"
-                            ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
-                            : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
                         }`}
                       >
                         {saturationScore.label}
                       </span>
-                      <span className="text-xs font-mono font-bold text-slate-400">
+                      <span className="text-xs font-mono font-bold text-slate-500">
                         ({saturationScore.score}/100)
                       </span>
                     </div>
-                    <p className="text-xs text-slate-300 mt-0.5">{saturationScore.description}</p>
+                    <p className="text-xs text-slate-600 mt-0.5">{saturationScore.description}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs bg-[#070a0f] px-3 py-1.5 rounded-lg border border-[#182130]">
+                <div className="flex items-center gap-3 text-xs bg-white px-3.5 py-2 rounded-lg border border-slate-200 shadow-sm">
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Creators</span>
-                    <span className="font-mono font-bold text-white">{saturationScore.distinctCreators}</span>
+                    <span className="text-[10px] text-slate-400 block uppercase font-medium">Creators</span>
+                    <span className="font-mono font-bold text-slate-900">{saturationScore.distinctCreators}</span>
                   </div>
-                  <div className="w-px h-5 bg-slate-800" />
+                  <div className="w-px h-5 bg-slate-200" />
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Views / Creator</span>
-                    <span className="font-mono font-bold text-blue-400">
+                    <span className="text-[10px] text-slate-400 block uppercase font-medium">Views / Creator</span>
+                    <span className="font-mono font-bold text-blue-600">
                       {formatCompactNumber(saturationScore.viewsPerCreator)}
                     </span>
                   </div>
-                  <div className="w-px h-5 bg-slate-800" />
+                  <div className="w-px h-5 bg-slate-200" />
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Breakout Rate</span>
-                    <span className="font-mono font-bold text-emerald-400">
+                    <span className="text-[10px] text-slate-400 block uppercase font-medium">Breakout Rate</span>
+                    <span className="font-mono font-bold text-emerald-600">
                       {saturationScore.smallChannelsBreakoutRate}%
                     </span>
                   </div>
@@ -1114,9 +1112,9 @@ function NicheFinderContent() {
 
               {/* Multi-Channel Validated Breakout Topics */}
               {validatedBreakoutTopics.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#161f2c]">
-                  <span className="text-[11px] font-bold text-rose-400 flex items-center gap-1">
-                    <Flame className="w-3.5 h-3.5" />
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                  <span className="text-[11px] font-bold text-rose-600 flex items-center gap-1">
+                    <Flame className="w-3.5 h-3.5 fill-current" />
                     Validated Concepts (3+ creators broke out) :
                   </span>
                   {validatedBreakoutTopics.map((val: any) => (
@@ -1215,12 +1213,12 @@ function NicheFinderContent() {
                   return (
                     <div
                       key={item.id}
-                      className="bg-[#0c1017] border border-[#18202d] hover:border-[#2b3850] rounded-2xl overflow-hidden flex flex-col justify-between shadow-xl transition-all group"
+                      className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
                     >
                       {/* Thumbnail Container */}
                       <div
                         onClick={() => setSelectedVideoId(item.id)}
-                        className="relative aspect-video w-full bg-slate-950 overflow-hidden cursor-pointer group/thumb"
+                        className="relative aspect-video w-full bg-slate-900 overflow-hidden cursor-pointer group/thumb"
                         title="Click to inspect A/B testing & packaging history"
                       >
                         <img
@@ -1231,15 +1229,15 @@ function NicheFinderContent() {
                           className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300"
                         />
 
-                        {/* Bottom Left: Outlier Badge (Algrow 🔥 87x / 🔥 14x style) */}
+                        {/* Bottom Left: Outlier Badge */}
                         <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-xs font-black flex items-center gap-1 backdrop-blur-md shadow-lg ${
+                            className={`px-2.5 py-0.5 rounded-full text-xs font-black flex items-center gap-1 backdrop-blur-md shadow-md ${
                               item.outlierMultiplier >= 5
-                                ? "bg-rose-600/90 text-white shadow-rose-950"
+                                ? "bg-rose-600 text-white"
                                 : item.outlierMultiplier >= 2
-                                ? "bg-amber-500/90 text-slate-950 shadow-amber-950"
-                                : "bg-blue-600/90 text-white shadow-blue-950"
+                                ? "bg-amber-500 text-slate-950"
+                                : "bg-blue-600 text-white"
                             }`}
                           >
                             <Flame className="w-3.5 h-3.5 fill-current" />
@@ -1248,13 +1246,13 @@ function NicheFinderContent() {
 
                           {/* Score /100 and Outlier Badge */}
                           {((item as any).viralBreakoutScore || (item as any).relevanceScore) && (
-                            <span className="px-2 py-0.5 rounded-full bg-purple-600/90 text-white text-[10px] font-mono font-bold backdrop-blur-md">
+                            <span className="px-2 py-0.5 rounded-full bg-purple-600 text-white text-[10px] font-mono font-bold backdrop-blur-md">
                               Score {((item as any).viralBreakoutScore || (item as any).relevanceScore)}/100
                             </span>
                           )}
 
                           {item.isValidatedBreakoutTopic && (
-                            <span className="px-2 py-0.5 rounded-full bg-indigo-600/90 text-white text-[10px] font-black uppercase tracking-wider backdrop-blur-md">
+                            <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black uppercase tracking-wider backdrop-blur-md">
                               Breakout
                             </span>
                           )}
@@ -1262,7 +1260,7 @@ function NicheFinderContent() {
 
                         {/* Hover Overlay */}
                         <div className="absolute inset-0 bg-blue-950/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
-                          <span className="px-3 py-1.5 rounded-xl bg-blue-600/95 text-white font-bold text-xs shadow-lg flex items-center gap-1.5">
+                          <span className="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-lg flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>Inspect Packaging & A/B</span>
                           </span>
@@ -1280,52 +1278,52 @@ function NicheFinderContent() {
                           {/* Video Title */}
                           <h3
                             onClick={() => setSelectedVideoId(item.id)}
-                            className="font-bold text-white text-sm line-clamp-2 hover:text-blue-400 transition-colors leading-snug cursor-pointer"
+                            className="font-bold text-slate-900 text-sm line-clamp-2 hover:text-blue-600 transition-colors leading-snug cursor-pointer"
                             title={item.title}
                           >
                             {item.title}
                           </h3>
 
                           {/* Stats Subline (Views • Age • VPD • VSR • Médiane estimée) */}
-                          <div className="text-xs text-slate-400 font-medium flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <span className="text-slate-200 font-bold">{formatCompactNumber(item.viewCount)} Views</span>
+                          <div className="text-xs text-slate-500 font-medium flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="text-slate-900 font-bold">{formatCompactNumber(item.viewCount)} Views</span>
                             <span>•</span>
                             <span>{getElapsedString(item.publishedAt)}</span>
                             <span>•</span>
-                            <span className="text-emerald-400 font-mono font-semibold">+{formatCompactNumber(item.viewsPerDay)}/j</span>
+                            <span className="text-emerald-600 font-mono font-semibold">+{formatCompactNumber(item.viewsPerDay)}/j</span>
                             <span>•</span>
-                            <span className="text-purple-300 font-mono font-semibold" title="Ratio Vues / Abonnés">
+                            <span className="text-purple-600 font-mono font-semibold" title="Ratio Vues / Abonnés">
                               VSR: {((item as any).viralRatio || (item.viewCount / Math.max(item.channelSubscribers, 1))).toFixed(1)}x
                             </span>
                             {(item as any).medianReliable === false && (
-                              <span className="text-amber-400 text-[10px] font-semibold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20" title="Médiane basée sur moins de 5 vidéos comparables">
+                              <span className="text-amber-700 text-[10px] font-semibold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200" title="Médiane basée sur moins de 5 vidéos comparables">
                                 (médiane estimée)
                               </span>
                             )}
                           </div>
 
-                          {/* Category & Sub-Niche Pills (Exact Algrow Styling: Blue pill + Gold pill) */}
+                          {/* Category & Sub-Niche Pills */}
                           <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                            <span className="px-3 py-1 rounded-full bg-[#0d223a] text-blue-400 text-xs font-semibold border border-blue-500/30">
+                            <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
                               {taxonomy.category}
                             </span>
-                            <span className="px-3 py-1 rounded-full bg-[#271d0e] text-amber-400 text-xs font-semibold border border-amber-500/30">
+                            <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200">
                               {taxonomy.subNiche}
                             </span>
                           </div>
 
                           {/* Algrow Detail Lines: Subject & Title Format */}
-                          <div className="space-y-1.5 pt-1.5 border-t border-[#141b27]">
+                          <div className="space-y-1.5 pt-1.5 border-t border-slate-100">
                             <div className="text-xs">
-                              <span className="text-slate-500 font-medium block">Subject</span>
-                              <span className="text-slate-200 font-semibold truncate block">
+                              <span className="text-slate-400 font-medium block">Subject</span>
+                              <span className="text-slate-800 font-semibold truncate block">
                                 {taxonomy.subject}
                               </span>
                             </div>
 
                             <div className="text-xs">
-                              <span className="text-slate-500 font-medium block">Title Format</span>
-                              <span className="text-blue-400 font-medium font-mono text-[11px] truncate block" title={taxonomy.titleFormat}>
+                              <span className="text-slate-400 font-medium block">Title Format</span>
+                              <span className="text-blue-600 font-medium font-mono text-[11px] truncate block" title={taxonomy.titleFormat}>
                                 {taxonomy.titleFormat}
                               </span>
                             </div>
@@ -1333,7 +1331,7 @@ function NicheFinderContent() {
                         </div>
 
                         {/* Channel Context Footer (Avatar + Name + Subs + Bookmark + Options) */}
-                        <div className="pt-2.5 border-t border-[#141b27] flex items-center justify-between">
+                        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between">
                           <div
                             onClick={() => router.push(`/channel/${item.channelId}`)}
                             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity min-w-0"
@@ -1344,18 +1342,18 @@ function NicheFinderContent() {
                                 alt={item.channelTitle}
                                 referrerPolicy="no-referrer"
                                 crossOrigin="anonymous"
-                                className="w-7 h-7 rounded-full border border-slate-700 object-cover shrink-0"
+                                className="w-7 h-7 rounded-full border border-slate-200 object-cover shrink-0"
                               />
                             ) : (
-                              <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-300 shrink-0">
+                              <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-700 shrink-0 border border-slate-200">
                                 {item.channelTitle[0]}
                               </div>
                             )}
                             <div className="min-w-0">
-                              <div className="text-xs font-semibold text-white truncate max-w-[130px] leading-tight">
+                              <div className="text-xs font-semibold text-slate-900 truncate max-w-[130px] leading-tight">
                                 {item.channelTitle}
                               </div>
-                              <div className="text-[11px] text-slate-400 leading-tight">
+                              <div className="text-[11px] text-slate-500 leading-tight">
                                 {formatCompactNumber(item.channelSubscribers)} Subs
                               </div>
                             </div>
@@ -1377,8 +1375,8 @@ function NicheFinderContent() {
                               disabled={isTracked || isTracking}
                               className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 ${
                                 isTracked
-                                  ? "bg-purple-600/30 text-purple-300 border border-purple-500/40"
-                                  : "text-slate-400 hover:text-purple-300 hover:bg-[#182338]"
+                                  ? "bg-purple-50 text-purple-700 border border-purple-200"
+                                  : "text-slate-400 hover:text-purple-600 hover:bg-purple-50"
                               }`}
                               title={isTracked ? "Chaîne suivie dans Channel Tracking" : "Suivre cette chaîne dans Channel Tracking"}
                             >
@@ -1392,7 +1390,7 @@ function NicheFinderContent() {
                                 e.stopPropagation();
                                 setSelectedVideoId(item.id);
                               }}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-[#182338] transition-colors flex items-center gap-1"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center gap-1"
                               title="Voir l'historique et scraper les vidéos similaires"
                             >
                               <Sparkles className="w-3.5 h-3.5" />
@@ -1403,13 +1401,13 @@ function NicheFinderContent() {
                               onClick={(e) => toggleSaveVideo(item.id, e)}
                               className={`p-1.5 rounded-lg transition-colors ${
                                 isSaved
-                                  ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
-                                  : "text-slate-400 hover:text-white hover:bg-[#182338]"
+                                  ? "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                                  : "text-slate-400 hover:text-slate-700 hover:bg-slate-100"
                               }`}
                               title={isSaved ? "Vidéo sauvegardée" : "Sauvegarder la vidéo"}
                             >
                               {isSaved ? (
-                                <BookmarkCheck className="w-4 h-4 fill-current text-amber-400" />
+                                <BookmarkCheck className="w-4 h-4 fill-current text-amber-500" />
                               ) : (
                                 <Bookmark className="w-4 h-4" />
                               )}
@@ -1419,10 +1417,10 @@ function NicheFinderContent() {
                               href={`https://www.youtube.com/watch?v=${item.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#182338] transition-colors"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                               title="Ouvrir sur YouTube"
                             >
-                              <MoreHorizontal className="w-4 h-4" />
+                              <ExternalLink className="w-3.5 h-3.5" />
                             </a>
                           </div>
                         </div>
@@ -1439,12 +1437,12 @@ function NicheFinderContent() {
                     type="button"
                     onClick={() => fetchFilteredPage(Math.max(1, page - 1))}
                     disabled={page === 1}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#0c1017] border border-[#1c2433] text-xs font-semibold text-slate-300 disabled:opacity-40 hover:text-white transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
                   >
                     Previous
                   </button>
 
-                  <span className="text-xs text-slate-400 font-mono px-3">
+                  <span className="text-xs text-slate-500 font-mono px-3">
                     Page {page} of {totalPages}
                   </span>
 
@@ -1452,7 +1450,7 @@ function NicheFinderContent() {
                     type="button"
                     onClick={() => fetchFilteredPage(Math.min(totalPages, page + 1))}
                     disabled={page >= totalPages}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#0c1017] border border-[#1c2433] text-xs font-semibold text-slate-300 disabled:opacity-40 hover:text-white transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
                   >
                     Next
                   </button>
@@ -1461,12 +1459,12 @@ function NicheFinderContent() {
             </div>
           ) : (
             !loading && (
-              <div className="text-center py-20 bg-[#0c1017] border border-[#18202d] rounded-2xl p-8 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-blue-500/10 text-blue-400 mx-auto flex items-center justify-center">
+              <div className="text-center py-20 bg-slate-50/50 border border-slate-200 rounded-2xl p-8 space-y-3">
+                <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 mx-auto flex items-center justify-center">
                   <Search className="w-6 h-6" />
                 </div>
-                <h3 className="text-base font-bold text-white">No viral videos found for this search</h3>
-                <p className="text-xs text-slate-400 max-w-md mx-auto">
+                <h3 className="text-base font-bold text-slate-900">No viral videos found for this search</h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
                   Try searching a broader niche (like "AI", "Gaming", "Horror Iceberg") or reducing the outlier filter threshold.
                 </p>
                 <button
@@ -1483,7 +1481,6 @@ function NicheFinderContent() {
             )
           )}
         </main>
-      </div>
 
       {/* Video Detail & A/B Testing Modal */}
       {selectedVideoId && (
@@ -1518,8 +1515,8 @@ export default function NicheFinderPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen bg-[#070a0f] items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <div className="flex min-h-screen bg-white items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
         </div>
       }
     >
