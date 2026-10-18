@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         job: {
           jobId,
+          depth: "deep",
           status: "running",
           step: "exploring_youtube",
           message: "Initialisation et exploration YouTube en cours...",

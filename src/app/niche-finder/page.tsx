@@ -1036,7 +1036,7 @@ function NicheFinderContent() {
                     <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                       <span>Scanning "{currentJob.query}"</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">
-                        {currentJob.depth.toUpperCase()}
+                        {(currentJob.depth || "DEEP").toUpperCase()}
                       </span>
                     </h3>
                     <p className="text-xs text-slate-400">{currentJob.message}</p>
