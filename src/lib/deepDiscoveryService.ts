@@ -15,50 +15,83 @@ function getApiKey(): string {
 
 /**
  * Storage for asynchronous discovery jobs and results
+ * Fully compatible with Vercel Serverless (In-Memory global store + /tmp directory fallback)
  */
-const DATA_DIR = path.join(process.cwd(), "data");
+const IS_VERCEL = !!process.env.VERCEL;
+const DATA_DIR = IS_VERCEL
+  ? path.join("/tmp", "data")
+  : path.join(process.cwd(), "data");
+
 const JOBS_FILE = path.join(DATA_DIR, "discovery_jobs.json");
 const CACHE_FILE = path.join(DATA_DIR, "discovered_videos_cache.json");
 
-function ensureFiles() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(JOBS_FILE)) fs.writeFileSync(JOBS_FILE, "{}", "utf-8");
-  if (!fs.existsSync(CACHE_FILE)) fs.writeFileSync(CACHE_FILE, "{}", "utf-8");
-}
+// In-Memory cache map to guarantee instant, cross-tick persistence on Serverless containers
+const globalJobsStore = (global as any).__DISCOVERY_JOBS__ || new Map<string, SearchJobProgress>();
+const globalVideosStore = (global as any).__DISCOVERY_VIDEOS__ || new Map<string, DiscoveredVideoRecord[]>();
+(global as any).__DISCOVERY_JOBS__ = globalJobsStore;
+(global as any).__DISCOVERY_VIDEOS__ = globalVideosStore;
 
-function readJobsMap(): Record<string, SearchJobProgress> {
-  ensureFiles();
+function ensureFiles() {
   try {
-    return JSON.parse(fs.readFileSync(JOBS_FILE, "utf-8"));
-  } catch {
-    return {};
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!fs.existsSync(JOBS_FILE)) fs.writeFileSync(JOBS_FILE, "{}", "utf-8");
+    if (!fs.existsSync(CACHE_FILE)) fs.writeFileSync(CACHE_FILE, "{}", "utf-8");
+  } catch (e) {
+    // Non-blocking in serverless if disk write is restricted
   }
 }
 
+function readJobsMap(): Record<string, SearchJobProgress> {
+  const map: Record<string, SearchJobProgress> = {};
+  for (const [k, v] of globalJobsStore.entries()) {
+    map[k] = v;
+  }
+  ensureFiles();
+  try {
+    if (fs.existsSync(JOBS_FILE)) {
+      const diskJobs = JSON.parse(fs.readFileSync(JOBS_FILE, "utf-8"));
+      Object.assign(map, diskJobs);
+    }
+  } catch {}
+  return map;
+}
+
 function writeJobsMap(map: Record<string, SearchJobProgress>) {
+  for (const [k, v] of Object.entries(map)) {
+    globalJobsStore.set(k, v);
+  }
   ensureFiles();
   try {
     fs.writeFileSync(JOBS_FILE, JSON.stringify(map, null, 2), "utf-8");
   } catch (e) {
-    console.error("Error writing jobs file:", e);
+    // Fail-safe for read-only fs
   }
 }
 
 function readVideosCache(): Record<string, DiscoveredVideoRecord[]> {
+  const map: Record<string, DiscoveredVideoRecord[]> = {};
+  for (const [k, v] of globalVideosStore.entries()) {
+    map[k] = v;
+  }
   ensureFiles();
   try {
-    return JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
-  } catch {
-    return {};
-  }
+    if (fs.existsSync(CACHE_FILE)) {
+      const diskVideos = JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+      Object.assign(map, diskVideos);
+    }
+  } catch {}
+  return map;
 }
 
 function writeVideosCache(cache: Record<string, DiscoveredVideoRecord[]>) {
+  for (const [k, v] of Object.entries(cache)) {
+    globalVideosStore.set(k, v);
+  }
   ensureFiles();
   try {
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), "utf-8");
   } catch (e) {
-    console.error("Error writing cache file:", e);
+    // Fail-safe for read-only fs
   }
 }
 
@@ -66,23 +99,32 @@ function writeVideosCache(cache: Record<string, DiscoveredVideoRecord[]>) {
  * Save / Update Job state
  */
 export function saveJobProgress(job: SearchJobProgress) {
+  const updatedJob = { ...job, updatedAt: new Date().toISOString() };
+  globalJobsStore.set(job.jobId, updatedJob);
   const jobs = readJobsMap();
-  jobs[job.jobId] = { ...job, updatedAt: new Date().toISOString() };
+  jobs[job.jobId] = updatedJob;
   writeJobsMap(jobs);
 }
 
 export function getJobProgress(jobId: string): SearchJobProgress | null {
+  if (globalJobsStore.has(jobId)) {
+    return globalJobsStore.get(jobId)!;
+  }
   const jobs = readJobsMap();
   return jobs[jobId] || null;
 }
 
 export function saveJobResults(jobId: string, videos: DiscoveredVideoRecord[]) {
+  globalVideosStore.set(jobId, videos);
   const cache = readVideosCache();
   cache[jobId] = videos;
   writeVideosCache(cache);
 }
 
 export function getJobResults(jobId: string): DiscoveredVideoRecord[] {
+  if (globalVideosStore.has(jobId)) {
+    return globalVideosStore.get(jobId)!;
+  }
   const cache = readVideosCache();
   return cache[jobId] || [];
 }

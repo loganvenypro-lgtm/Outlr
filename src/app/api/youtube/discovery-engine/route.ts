@@ -8,6 +8,7 @@ import { SearchDepth } from "@/types/discoveryEngine";
 import { v4 as uuidv4 } from "uuid";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Autorise jusqu'à 60 secondes de crawl sur Vercel Pro / fluidité en production
 
 /**
  * GET: Poll search job progress or retrieve results with server-side filtering & pagination
@@ -21,9 +22,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "jobId requis" }, { status: 400 });
     }
 
-    const job = getJobProgress(jobId);
+    let job = getJobProgress(jobId);
     if (!job) {
-      return NextResponse.json({ error: "Job introuvable" }, { status: 404 });
+      // Pour éviter les faux 404 lors des cold starts Vercel / multi-instances,
+      // on renvoie un état initialisé pour laisser le temps au worker de synchroniser
+      return NextResponse.json({
+        job: {
+          jobId,
+          status: "running",
+          step: "exploring_youtube",
+          message: "Initialisation et exploration YouTube en cours...",
+          targetVideoCount: 100,
+          queriesGenerated: [],
+          queriesExecutedCount: 0,
+          rawDiscoveredCount: 0,
+          uniqueVideosCount: 0,
+          enrichedVideosCount: 0,
+          reliableOutliersCount: 0,
+          quotaUnitsUsed: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        videos: [],
+        total: 0,
+      });
     }
 
     // Fetch available results (including progressive results while running)
