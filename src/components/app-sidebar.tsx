@@ -16,8 +16,6 @@ import {
   FolderHeart,
   DollarSign,
   ChevronRight,
-  SlidersHorizontal,
-  LayoutDashboard,
   Layers,
 } from "lucide-react";
 
@@ -39,16 +37,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 const navConfig = [
   {
-    title: "Recherche & DÃ©couverte",
+    title: "Recherche & Découverte",
     defaultOpen: true,
     items: [
       {
-        title: "VidÃ©os Atypiques",
+        title: "Vidéos Atypiques",
         url: "/",
         icon: Flame,
       },
@@ -77,7 +74,7 @@ const navConfig = [
     ],
   },
   {
-    title: "Intelligence CrÃ©ateur",
+    title: "Intelligence Créateur",
     defaultOpen: true,
     items: [
       {
@@ -100,7 +97,7 @@ const navConfig = [
     ],
   },
   {
-    title: "Studio & MonÃ©tisation",
+    title: "Studio & Monétisation",
     defaultOpen: false,
     items: [
       {
@@ -139,43 +136,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {/* Brand Header */}
       <SidebarHeader className="border-b border-slate-100 bg-white px-5 pb-4 pt-5">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-black text-base shadow-sm shadow-blue-500/20 group-hover:scale-105 transition-transform">
-            O
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <Flame className="h-5 w-5 fill-white" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+          <div>
+            <span className="text-base font-extrabold tracking-tight text-blue-600">
               Outlr
             </span>
-            <span className="text-[11px] font-medium text-slate-400">
+            <span className="block text-[11px] font-medium text-slate-400">
               YouTube Viral Intelligence
             </span>
           </div>
         </Link>
-      </SidebarHeader>
 
-      {/* Filter / Quick Search */}
-      <div className="px-3 pt-3 pb-1">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+        {/* Quick Filter Search */}
+        <div className="relative mt-3">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             placeholder="Filtrer les outils..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-[12px] text-slate-800 placeholder-slate-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
-      </div>
+      </SidebarHeader>
 
-      {/* Navigation Sections */}
-      <SidebarContent className="gap-5 bg-white px-3 py-5">
+      {/* Navigation Content */}
+      <SidebarContent className="px-2 py-3 bg-white space-y-1">
         {navConfig.map((group) => {
           const filteredItems = group.items.filter((item) =>
-            !searchFilter ||
             item.title.toLowerCase().includes(searchFilter.toLowerCase())
           );
 
-          if (filteredItems.length === 0) return null;
+          if (searchFilter && filteredItems.length === 0) return null;
 
           return (
             <Collapsible
@@ -183,58 +177,58 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               defaultOpen={group.defaultOpen || Boolean(searchFilter)}
               className="group/collapsible"
             >
-              <SidebarGroup className="py-1">
-                <SidebarGroupLabel
-                  className="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between cursor-pointer hover:text-slate-600 transition-colors rounded-md"
-                  render={<CollapsibleTrigger />}
-                >
-                  <span>{group.title}</span>
-                  <ChevronRight className="h-3.5 w-3.5 transition-transform duration-200 group-data-open/collapsible:rotate-90 text-slate-400" />
+              <SidebarGroup className="p-0">
+                <SidebarGroupLabel asChild>
+                  <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-600 transition-colors">
+                    <span>{group.title}</span>
+                    <ChevronRight className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </CollapsibleTrigger>
                 </SidebarGroupLabel>
 
                 <CollapsibleContent>
-                  <SidebarGroupContent className="pt-1">
-                    <SidebarMenu className="gap-1">
+                  <SidebarGroupContent>
+                    <SidebarMenu className="space-y-0.5">
                       {filteredItems.map((item) => {
-                        const isActive =
-                          item.url === "/"
-                            ? pathname === "/"
-                            : pathname.startsWith(item.url);
                         const Icon = item.icon;
+                        const isActive =
+                          pathname === item.url ||
+                          (item.url !== "/" && pathname.startsWith(item.url));
 
                         return (
                           <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
+                              asChild
                               isActive={isActive}
-                              className={`h-10 rounded-xl px-3 text-[13px] font-medium transition-colors flex items-center justify-between ${
+                              className={`w-full justify-between rounded-xl px-3 py-2 text-sm transition-all ${
                                 isActive
                                   ? "bg-blue-50 text-blue-700 font-semibold"
                                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                               }`}
-                              render={<Link href={item.url} />}
                             >
-                              <div className="flex items-center gap-2.5">
-                                <Icon
-                                  className={`h-4 w-4 shrink-0 ${
-                                    isActive
-                                      ? "text-blue-600"
-                                      : "text-slate-400 group-hover:text-slate-600"
-                                  }`}
-                                />
-                                <span>{item.title}</span>
-                              </div>
+                              <Link href={item.url} className="flex items-center justify-between w-full">
+                                <div className="flex items-center gap-2.5">
+                                  <Icon
+                                    className={`h-4 w-4 shrink-0 ${
+                                      isActive
+                                        ? "text-blue-600"
+                                        : "text-slate-400 group-hover:text-slate-600"
+                                    }`}
+                                  />
+                                  <span>{item.title}</span>
+                                </div>
 
-                              {item.badge && (
-                                <span
-                                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
-                                    isActive
-                                      ? "bg-blue-200/60 text-blue-800"
-                                      : "bg-slate-100 text-slate-500"
-                                  }`}
-                                >
-                                  {item.badge}
-                                </span>
-                              )}
+                                {item.badge && (
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                                      isActive
+                                        ? "bg-blue-200/60 text-blue-800"
+                                        : "bg-slate-100 text-slate-500"
+                                    }`}
+                                  >
+                                    {item.badge}
+                                  </span>
+                                )}
+                              </Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         );
@@ -248,8 +242,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         })}
       </SidebarContent>
 
-      {/* Footer User Profile & System Status */}
-      <SidebarFooter className="border-t border-slate-100 p-2 bg-white space-y-2">
+      {/* Footer User Profile with clean layout */}
+      <SidebarFooter className="border-t border-slate-100 p-2 bg-white">
         <NavUser
           user={{
             name: "Logan",
@@ -257,7 +251,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=LoganOutlr",
           }}
         />
-        <div className="flex items-center justify-between px-2 pt-1 border-t border-slate-50">
+        <div className="flex items-center justify-between px-2 pt-2 border-t border-slate-100">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-medium text-slate-500">
@@ -274,5 +268,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-
-
