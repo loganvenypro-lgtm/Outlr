@@ -1,5 +1,7 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+
 import {
   Avatar,
   AvatarFallback,
@@ -32,6 +34,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -81,26 +84,25 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheckIcon
-                />
+              <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer">
+                <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon
-                />
+              <DropdownMenuItem onClick={() => router.push("/sponsors")} className="cursor-pointer">
+                <CreditCardIcon />
                 Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon
-                />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon
-              />
+            <DropdownMenuItem
+              onClick={async () => {
+                await fetch("/api/auth/me", { method: "POST" });
+                router.push("/login");
+                router.refresh();
+              }}
+              className="cursor-pointer text-rose-600 focus:text-rose-600"
+            >
+              <LogOutIcon />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

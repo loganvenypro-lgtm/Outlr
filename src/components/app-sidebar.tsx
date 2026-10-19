@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
@@ -13,171 +12,168 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
+import {
+  Flame,
+  Layers,
+  TrendingUp,
+  BarChart3,
+  Sparkles,
+  Bell,
+  Compass,
+  Zap,
+  Wand2,
+  DollarSign,
+  FolderHeart,
+  Folder,
+} from "lucide-react"
 
-// This is sample data.
+// Outlr navigation configuration
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Logan",
+    email: "logan@outlr.io",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=LoganOutlr",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Outlr Radar",
       logo: (
-        <GalleryVerticalEndIcon
-        />
+        <Flame className="size-4 text-blue-600" />
       ),
-      plan: "Enterprise",
+      plan: "Pro Intelligence",
     },
     {
-      name: "Acme Corp.",
+      name: "Studio Créateur",
       logo: (
-        <AudioLinesIcon
-        />
+        <Zap className="size-4 text-amber-500" />
       ),
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: (
-        <TerminalIcon
-        />
-      ),
-      plan: "Free",
+      plan: "Scale Plan",
     },
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
+      title: "Recherche & Découverte",
+      url: "/",
       icon: (
-        <TerminalSquareIcon
-        />
+        <Flame className="size-4" />
       ),
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Vidéos Atypiques",
+          url: "/",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Viral Niche Finder",
+          url: "/niche-finder",
         },
         {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: (
-        <BotIcon
-        />
-      ),
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
+          title: "Channel Trends (24h)",
+          url: "/channel-trends",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Radar & Tendances",
+          url: "/trending",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Statistiques Globales",
+          url: "/stats",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
+      title: "Intelligence Créateur",
+      url: "/viral-chat",
       icon: (
-        <BookOpenIcon
-        />
+        <Sparkles className="size-4" />
       ),
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Viral AI Strategist",
+          url: "/viral-chat",
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: "Channel Tracking (Radar)",
+          url: "/tracking",
         },
         {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Concurrents & Audience",
+          url: "/dashboard/similar-channels",
         },
       ],
     },
     {
-      title: "Settings",
-      url: "#",
+      title: "Studio & Monétisation",
+      url: "/tubelab",
       icon: (
-        <Settings2Icon
-        />
+        <Zap className="size-4" />
       ),
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "TubeLab Studio",
+          url: "/tubelab",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Titre & Copywriting",
+          url: "/title-lab",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "Revenus & Sponsos",
+          url: "/sponsors",
         },
         {
-          title: "Limits",
-          url: "#",
+          title: "Marques & Sponsors",
+          url: "/leads",
         },
       ],
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
+      name: "Dossier Tech & IA",
+      url: "/tracking",
       icon: (
-        <FrameIcon
-        />
+        <Folder className="size-4 text-blue-500" />
       ),
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
+      name: "Chaînes Faceless",
+      url: "/tracking",
       icon: (
-        <PieChartIcon
-        />
+        <Folder className="size-4 text-purple-500" />
       ),
     },
     {
-      name: "Travel",
-      url: "#",
+      name: "Inspiration Storytelling",
+      url: "/tracking",
       icon: (
-        <MapIcon
-        />
+        <Folder className="size-4 text-emerald-500" />
       ),
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [currentUser, setCurrentUser] = React.useState(data.user)
+
+  // Fetch logged-in user dynamically if session exists
+  React.useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser({
+            name: data.user.name,
+            email: data.user.email,
+            avatar: data.user.avatar,
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-white" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
@@ -186,7 +182,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={currentUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
