@@ -178,12 +178,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="group/collapsible"
             >
               <SidebarGroup className="p-0">
-                <SidebarGroupLabel asChild>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-600 transition-colors">
-                    <span>{group.title}</span>
-                    <ChevronRight className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </CollapsibleTrigger>
-                </SidebarGroupLabel>
+                <SidebarGroupLabel
+                  render={
+                    <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-600 transition-colors">
+                      <span>{group.title}</span>
+                      <ChevronRight className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </CollapsibleTrigger>
+                  }
+                />
 
                 <CollapsibleContent>
                   <SidebarGroupContent>
@@ -197,39 +199,39 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         return (
                           <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
-                              asChild
                               isActive={isActive}
                               className={`w-full justify-between rounded-xl px-3 py-2 text-sm transition-all ${
                                 isActive
                                   ? "bg-blue-50 text-blue-700 font-semibold"
                                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                               }`}
-                            >
-                              <Link href={item.url} className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2.5">
-                                  <Icon
-                                    className={`h-4 w-4 shrink-0 ${
-                                      isActive
-                                        ? "text-blue-600"
-                                        : "text-slate-400 group-hover:text-slate-600"
-                                    }`}
-                                  />
-                                  <span>{item.title}</span>
-                                </div>
+                              render={
+                                <Link href={item.url}>
+                                  <div className="flex items-center gap-2.5">
+                                    <Icon
+                                      className={`h-4 w-4 shrink-0 ${
+                                        isActive
+                                          ? "text-blue-600"
+                                          : "text-slate-400 group-hover:text-slate-600"
+                                      }`}
+                                    />
+                                    <span>{item.title}</span>
+                                  </div>
 
-                                {item.badge && (
-                                  <span
-                                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
-                                      isActive
-                                        ? "bg-blue-200/60 text-blue-800"
-                                        : "bg-slate-100 text-slate-500"
-                                    }`}
-                                  >
-                                    {item.badge}
-                                  </span>
-                                )}
-                              </Link>
-                            </SidebarMenuButton>
+                                  {item.badge && (
+                                    <span
+                                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                                        isActive
+                                          ? "bg-blue-200/60 text-blue-800"
+                                          : "bg-slate-100 text-slate-500"
+                                      }`}
+                                    >
+                                      {item.badge}
+                                    </span>
+                                  )}
+                                </Link>
+                              }
+                            />
                           </SidebarMenuItem>
                         );
                       })}
