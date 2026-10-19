@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FloatingAiAssistant } from "@/components/FloatingAiAssistant";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 export function ClientShell({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
     document.documentElement.classList.remove("dark");
-    document.body.style.background = "#ffffff";
+    document.body.style.background = "#f8fafc";
     document.body.style.color = "#0f172a";
   }, []);
 
@@ -19,12 +21,23 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  // Full-screen pages without sidebar
+  const isAuthOrLanding = pathname === "/login" || pathname === "/welcome";
+
+  if (isAuthOrLanding) {
+    return (
+      <main className="min-h-screen w-full bg-white font-sans text-slate-900 antialiased">
+        {children}
+      </main>
+    );
+  }
+
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-white text-slate-900 font-sans">
+      <div className="flex min-h-screen w-full bg-[#f8fafc] font-sans text-slate-900 antialiased">
         <AppSidebar />
-        <SidebarInset className="flex flex-col flex-1 min-w-0 bg-white">
-          <div className="flex-1 overflow-y-auto bg-white">{children}</div>
+        <SidebarInset className="flex min-w-0 flex-1 flex-col bg-[#f8fafc]">
+          <div className="flex-1 overflow-y-auto bg-[#f8fafc]">{children}</div>
         </SidebarInset>
         <FloatingAiAssistant />
       </div>
