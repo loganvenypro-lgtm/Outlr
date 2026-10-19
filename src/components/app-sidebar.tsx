@@ -43,11 +43,11 @@ import {
 
 const navConfig = [
   {
-    title: "Recherche & Découverte",
+    title: "Recherche & DÃ©couverte",
     defaultOpen: true,
     items: [
       {
-        title: "Vidéos Atypiques",
+        title: "VidÃ©os Atypiques",
         url: "/",
         icon: Flame,
       },
@@ -58,9 +58,15 @@ const navConfig = [
         badge: "Outliers",
       },
       {
+        title: "Channel Trends",
+        url: "/channel-trends",
+        icon: TrendingUp,
+        badge: "24h Spike",
+      },
+      {
         title: "Radar & Tendances",
         url: "/trending",
-        icon: TrendingUp,
+        icon: Flame,
       },
       {
         title: "Statistiques Globales",
@@ -70,7 +76,7 @@ const navConfig = [
     ],
   },
   {
-    title: "Intelligence Créateur",
+    title: "Intelligence CrÃ©ateur",
     defaultOpen: true,
     items: [
       {
@@ -90,15 +96,10 @@ const navConfig = [
         url: "/dashboard/similar-channels",
         icon: Compass,
       },
-      {
-        title: "Miniatures & Packaging",
-        url: "/thumbnail-intelligence",
-        icon: Wand2,
-      },
     ],
   },
   {
-    title: "Studio & Monétisation",
+    title: "Studio & MonÃ©tisation",
     defaultOpen: false,
     items: [
       {
@@ -135,7 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {...props}
     >
       {/* Brand Header */}
-      <SidebarHeader className="border-b border-slate-100 px-4 py-3.5 bg-white">
+      <SidebarHeader className="border-b border-slate-100 bg-white px-5 pb-4 pt-5">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-black text-base shadow-sm shadow-blue-500/20 group-hover:scale-105 transition-transform">
             O
@@ -166,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </div>
 
       {/* Navigation Sections */}
-      <SidebarContent className="px-2 py-2 gap-1 bg-white">
+      <SidebarContent className="gap-5 bg-white px-3 py-5">
         {navConfig.map((group) => {
           const filteredItems = group.items.filter((item) =>
             !searchFilter ||
@@ -192,7 +193,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                 <CollapsibleContent>
                   <SidebarGroupContent className="pt-1">
-                    <SidebarMenu className="gap-0.5">
+                    <SidebarMenu className="gap-1">
                       {filteredItems.map((item) => {
                         const isActive =
                           item.url === "/"
@@ -204,7 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
                               isActive={isActive}
-                              className={`h-9 px-2.5 rounded-lg text-xs font-medium transition-colors flex items-center justify-between ${
+                              className={`h-10 rounded-xl px-3 text-[13px] font-medium transition-colors flex items-center justify-between ${
                                 isActive
                                   ? "bg-blue-50 text-blue-700 font-semibold"
                                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -265,3 +266,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
+
+
