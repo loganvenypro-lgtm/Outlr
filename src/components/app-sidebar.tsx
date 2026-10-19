@@ -27,7 +27,6 @@ import {
   Folder,
 } from "lucide-react"
 
-// Outlr navigation configuration
 const data = {
   user: {
     name: "Logan",
@@ -37,42 +36,33 @@ const data = {
   teams: [
     {
       name: "Outlr Radar",
-      logo: (
-        <Flame className="size-4 text-blue-600" />
-      ),
       plan: "Pro Intelligence",
-    },
-    {
-      name: "Studio Créateur",
-      logo: (
-        <Zap className="size-4 text-amber-500" />
-      ),
-      plan: "Scale Plan",
     },
   ],
   navMain: [
     {
       title: "Recherche & Découverte",
       url: "/",
-      icon: (
-        <Flame className="size-4" />
-      ),
+      icon: <Flame className="size-4" />,
       isActive: true,
       items: [
         {
           title: "Vidéos Atypiques",
           url: "/",
+          badge: "Radar",
         },
         {
           title: "Viral Niche Finder",
           url: "/niche-finder",
+          badge: "Outliers",
         },
         {
           title: "Channel Trends (24h)",
           url: "/channel-trends",
+          badge: "Spike",
         },
         {
-          title: "Radar & Tendances",
+          title: "Tendances YouTube",
           url: "/trending",
         },
         {
@@ -84,16 +74,15 @@ const data = {
     {
       title: "Intelligence Créateur",
       url: "/viral-chat",
-      icon: (
-        <Sparkles className="size-4" />
-      ),
+      icon: <Sparkles className="size-4" />,
       items: [
         {
           title: "Viral AI Strategist",
           url: "/viral-chat",
+          badge: "IA",
         },
         {
-          title: "Channel Tracking (Radar)",
+          title: "Channel Tracking",
           url: "/tracking",
         },
         {
@@ -105,9 +94,7 @@ const data = {
     {
       title: "Studio & Monétisation",
       url: "/tubelab",
-      icon: (
-        <Zap className="size-4" />
-      ),
+      icon: <Zap className="size-4" />,
       items: [
         {
           title: "TubeLab Studio",
@@ -132,23 +119,17 @@ const data = {
     {
       name: "Dossier Tech & IA",
       url: "/tracking",
-      icon: (
-        <Folder className="size-4 text-blue-500" />
-      ),
+      icon: <Folder className="size-4 text-blue-500" />,
     },
     {
-      name: "Chaînes Faceless",
+      name: "Chaînes Faceless / Cashcow",
       url: "/tracking",
-      icon: (
-        <Folder className="size-4 text-purple-500" />
-      ),
+      icon: <Folder className="size-4 text-purple-500" />,
     },
     {
-      name: "Inspiration Storytelling",
+      name: "Storytelling & Documentaires",
       url: "/tracking",
-      icon: (
-        <Folder className="size-4 text-emerald-500" />
-      ),
+      icon: <Folder className="size-4 text-emerald-500" />,
     },
   ],
 }
@@ -156,16 +137,15 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [currentUser, setCurrentUser] = React.useState(data.user)
 
-  // Fetch logged-in user dynamically if session exists
   React.useEffect(() => {
     fetch("/api/auth/me")
       .then((res) => res.json())
-      .then((data) => {
-        if (data.authenticated && data.user) {
+      .then((resData) => {
+        if (resData.authenticated && resData.user) {
           setCurrentUser({
-            name: data.user.name,
-            email: data.user.email,
-            avatar: data.user.avatar,
+            name: resData.user.name,
+            email: resData.user.email,
+            avatar: resData.user.avatar,
           })
         }
       })
@@ -173,17 +153,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [])
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-slate-200 bg-white" {...props}>
-      <SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-slate-200/80 bg-white text-slate-800 shadow-xs"
+      {...props}
+    >
+      <SidebarHeader className="p-3 border-b border-slate-100 bg-white">
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+
+      <SidebarContent className="p-2 space-y-2 bg-white">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter>
+
+      <SidebarFooter className="p-2 border-t border-slate-100 bg-white space-y-2">
         <NavUser user={currentUser} />
+        <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="flex items-center gap-2">
+            <div className="size-2 rounded-full bg-lime-500 animate-pulse" />
+            <span className="text-[11px] font-bold text-slate-600">
+              PostgreSQL Sync
+            </span>
+          </div>
+          <span className="text-[10px] font-black text-slate-900 bg-lime-400 px-2 py-0.5 rounded-md">
+            ACTIF
+          </span>
+        </div>
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   )
