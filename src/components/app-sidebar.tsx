@@ -26,6 +26,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -247,13 +248,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         })}
       </SidebarContent>
 
-      {/* Footer Info */}
-      <SidebarFooter className="border-t border-slate-100 p-3 bg-white">
-        <div className="flex items-center justify-between px-1">
+      {/* Footer User Profile & System Status */}
+      <SidebarFooter className="border-t border-slate-100 p-2 bg-white space-y-2">
+        <NavUser
+          user={{
+            name: "Logan",
+            email: "logan@outlr.io",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=LoganOutlr",
+          }}
+        />
+        <div className="flex items-center justify-between px-2 pt-1 border-t border-slate-50">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-medium text-slate-500">
-              Live YouTube Radar
+              Radar Live PostgreSQL
             </span>
           </div>
           <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">

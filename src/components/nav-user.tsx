@@ -1,5 +1,8 @@
 "use client"
 
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+
 import {
   Avatar,
   AvatarFallback,
@@ -32,6 +35,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -84,27 +88,19 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheckIcon
-                />
-                Account
+              <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer">
+                <BadgeCheckIcon className="size-4" />
+                Account & Settings
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon
-                />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon
-                />
-                Notifications
+              <DropdownMenuItem onClick={() => router.push("/sponsors")} className="cursor-pointer">
+                <CreditCardIcon className="size-4" />
+                Billing & Plans
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <LogOutIcon
-                />
+              <DropdownMenuItem onClick={() => router.push("/login")} variant="destructive" className="cursor-pointer">
+                <LogOutIcon className="size-4" />
                 Log out
               </DropdownMenuItem>
             </DropdownMenuGroup>
