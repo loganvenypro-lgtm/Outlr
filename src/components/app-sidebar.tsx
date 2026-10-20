@@ -1,97 +1,103 @@
 "use client"
 
 import * as React from "react"
-import { NavMain } from "@/components/nav-main"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  BarChart3,
+  Bookmark,
+  Building2,
+  Clapperboard,
+  Flame,
+  FlaskConical,
+  GitCompareArrows,
+  House,
+  Image as ImageIcon,
+  LineChart,
+  MessageSquareText,
+  Radar,
+  ScanSearch,
+  Search,
+  Settings,
+  TrendingUp,
+  Users,
+  Wallet,
+} from "lucide-react"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
-import { SearchForm } from "@/components/search-form"
 import { getDicebearAvatar } from "@/lib/avatar"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
-import {
-  Telescope,
-  Clapperboard,
-  Store,
-  Terminal,
-  House,
-  Radar,
-} from "lucide-react"
 
-const data = {
-  user: {
-    name: "Logan",
-    email: "logan@outlr.io",
-    avatar: getDicebearAvatar("logan@outlr.io"),
+type NavItem = {
+  title: string
+  url: string
+  icon: React.ComponentType<{ className?: string }>
+  badge?: string
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: "Découvrir",
+    items: [
+      { title: "Outliers", url: "/dashboard", icon: Flame, badge: "Live" },
+      { title: "Accueil", url: "/", icon: House },
+      { title: "Tendances", url: "/trending", icon: TrendingUp },
+      { title: "Radar global", url: "/radar", icon: Radar },
+      { title: "Vidéos virales", url: "/niche-finder", icon: BarChart3 },
+      { title: "Trouver une chaîne", url: "/channel-finder", icon: Search },
+    ],
   },
-  teams: [
-    {
-      name: "Outlr",
-      plan: "Pro",
-    },
-  ],
-  navMain: [
-    {
-      title: "Home",
-      icon: <House className="size-4" />,
-      isActive: true,
-      url: "/",
-      items: [{ title: "Home", url: "/" }],
-    },
-    {
-      title: "Research Tools",
-      icon: <Telescope className="size-4" />,
-      url: "/radar",
-      items: [
-        { title: "Radar Global", url: "/radar" },
-        { title: "Shorts Channels", url: "/trending" },
-        { title: "Long Form Channels", url: "/radar" },
-        { title: "Saved Channels", url: "/tracking" },
-        { title: "Channel Trends", url: "/channel-trends" },
-        { title: "Monetization Tracker", url: "/sponsors" },
-        { title: "Viral Videos", url: "/niche-finder" },
-        { title: "Channel Finder", url: "/channel-finder" },
-        { title: "Find Channel", url: "/dashboard/similar-channels" },
-        { title: "YouTube Scraper", url: "/discovery" },
-      ],
-    },
-    {
-      title: "Creation Tools",
-      icon: <Clapperboard className="size-4" />,
-      url: "/tubelab",
-      items: [
-        { title: "TubeLab Studio", url: "/tubelab" },
-        { title: "Title Lab", url: "/title-lab" },
-        { title: "Viral AI Strategist", url: "/viral-chat" },
-        { title: "Thumbnail Intelligence", url: "/thumbnail-intelligence" },
-        { title: "Global Stats", url: "/stats" },
-      ],
-    },
-    {
-      title: "Market",
-      icon: <Store className="size-4" />,
-      url: "/leads",
-      items: [
-        { title: "Brands & Sponsors", url: "/leads" },
-        { title: "Compare Channels", url: "/compare" },
-      ],
-    },
-    {
-      title: "MCP/API",
-      icon: <Terminal className="size-4" />,
-      url: "/settings",
-      badge: "New",
-      items: [{ title: "Settings & API", url: "/settings" }],
-    },
-  ],
+  {
+    label: "Suivi",
+    items: [
+      { title: "Chaînes suivies", url: "/tracking", icon: Bookmark },
+      { title: "Évolution des chaînes", url: "/channel-trends", icon: LineChart },
+      { title: "Chaînes similaires", url: "/dashboard/similar-channels", icon: Users },
+      { title: "Comparer", url: "/compare", icon: GitCompareArrows },
+    ],
+  },
+  {
+    label: "Création",
+    items: [
+      { title: "Studio", url: "/tubelab", icon: Clapperboard },
+      { title: "Title Lab", url: "/title-lab", icon: FlaskConical },
+      { title: "Miniatures", url: "/thumbnail-intelligence", icon: ImageIcon },
+      { title: "Stratège IA", url: "/viral-chat", icon: MessageSquareText },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { title: "Monétisation", url: "/sponsors", icon: Wallet },
+      { title: "Marques & sponsors", url: "/leads", icon: Building2 },
+      { title: "Scraper", url: "/discovery", icon: ScanSearch },
+      { title: "Statistiques", url: "/stats", icon: BarChart3 },
+    ],
+  },
+]
+
+const FALLBACK_USER = {
+  name: "Logan",
+  email: "logan@outlr.io",
+  avatar: getDicebearAvatar("logan@outlr.io"),
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [currentUser, setCurrentUser] = React.useState(data.user)
+  const pathname = usePathname()
+  const [currentUser, setCurrentUser] = React.useState(FALLBACK_USER)
 
   React.useEffect(() => {
     fetch("/api/auth/me")
@@ -108,22 +114,65 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .catch(() => {})
   }, [])
 
+  const isActive = (url: string) => (url === "/" ? pathname === "/" : pathname === url)
+
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-r border-white/10 bg-[#0a0a0a] text-neutral-300"
-      {...props}
-    >
-      <SidebarHeader className="bg-[#0a0a0a] p-3 pb-1">
-        <TeamSwitcher teams={data.teams} />
-        <SearchForm />
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Flame className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">Outlr</span>
+                <span className="truncate text-xs text-muted-foreground">Radar YouTube</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="bg-[#0a0a0a] px-3 py-2">
-        <NavMain items={data.navMain} />
+      <SidebarContent>
+        {NAV_GROUPS.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.url + item.title}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={isActive(item.url)}
+                      render={<Link href={item.url} />}
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                    {item.badge && (
+                      <SidebarMenuBadge className="rounded-md bg-emerald-500/10 text-[10px] font-semibold text-emerald-700">
+                        {item.badge}
+                      </SidebarMenuBadge>
+                    )}
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
-      <SidebarFooter className="bg-[#0a0a0a] p-3 pt-1">
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip="Paramètres" isActive={isActive("/settings")} render={<Link href="/settings" />}>
+              <Settings />
+              <span>Paramètres</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <SidebarSeparator className="mx-0" />
         <NavUser user={currentUser} />
       </SidebarFooter>
 

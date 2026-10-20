@@ -1,5 +1,10 @@
-import { HomeWelcome } from "@/components/home/HomeWelcome";
+import { Suspense } from "react";
+import { OutliersExplorer } from "@/components/outliers/outliers-explorer";
 
 export default function DashboardPage() {
-  return <HomeWelcome />;
+  return (
+    <Suspense>
+      <OutliersExplorer />
+    </Suspense>
+  );
 }
