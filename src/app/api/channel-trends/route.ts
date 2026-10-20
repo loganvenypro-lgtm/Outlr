@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
       sql`
         SELECT
           c.id, c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.country,
-          c.trend_score, c.recent_ratio, c.channel_created_at, c.outlier_rate, c.opportunity_score,
+          c.trend_score, c.recent_ratio, c.channel_created_at, c.discovered_at, c.outlier_rate, c.opportunity_score,
           r.views_7d, r.uploads_7d, r.outliers_30d, r.best_multiplier, r.short_share, r.category_id, r.language,
           snap.views_24h, snap.views_prev_24h, snap.subs_24h
         FROM ${from}
@@ -159,6 +159,7 @@ export async function GET(request: NextRequest) {
       trendScore: num(r.trend_score),
       recentRatio: num(r.recent_ratio),
       createdAt: r.channel_created_at ? new Date(r.channel_created_at).toISOString() : null,
+      discoveredAt: r.discovered_at ? new Date(r.discovered_at).toISOString() : null,
       outlierRate: num(r.outlier_rate),
       opportunityScore: num(r.opportunity_score),
       views24h: num(r.views_24h),

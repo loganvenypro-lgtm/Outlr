@@ -35,6 +35,7 @@ export interface TrendChannel {
   trendScore: number | null;
   recentRatio: number | null;
   createdAt: string | null;
+  discoveredAt: string | null;
   outlierRate: number | null;
   opportunityScore: number | null;
   views24h: number | null;
@@ -55,7 +56,7 @@ export interface TrendChannel {
   }[];
 }
 
-function ago(iso: string): string {
+export function ago(iso: string): string {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
   if (days < 1) return "aujourd'hui";
   if (days < 30) return `il y a ${days} j`;
@@ -73,6 +74,28 @@ export function channelAge(iso: string): string {
   if (days < 365) return `créée il y a ${Math.round(days / 30)} mois`;
   const years = Math.round(days / 365);
   return `créée il y a ${years} an${years > 1 ? "s" : ""}`;
+}
+
+/** "Découverte il y a 17 min" — when the scanner first added the channel. */
+export function discoveredAgo(iso: string): string {
+  const minutes = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60_000));
+  if (minutes < 60) return `Découverte il y a ${Math.max(1, minutes)} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `Découverte il y a ${hours} h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `Découverte il y a ${days} j`;
+  if (days < 365) return `Découverte il y a ${Math.round(days / 30)} mois`;
+  const years = Math.round(days / 365);
+  return `Découverte il y a ${years} an${years > 1 ? "s" : ""}`;
+}
+
+export function DiscoveredBadge({ at }: { at: string }) {
+  return (
+    <Badge variant="outline" className="gap-1.5 font-normal text-muted-foreground" title={new Date(at).toLocaleString("fr-FR")}>
+      <span className="size-1.5 rounded-full bg-muted-foreground/60" />
+      {discoveredAgo(at)}
+    </Badge>
+  );
 }
 
 export function subscribersPerDay(subscribers: number | null, createdAt: string | null): number | null {
@@ -148,6 +171,7 @@ export function ChannelCard({
             {channel.categoryId != null && CATEGORY_LABELS[channel.categoryId] && (
               <Badge variant="secondary">{CATEGORY_LABELS[channel.categoryId]}</Badge>
             )}
+            {channel.discoveredAt && <DiscoveredBadge at={channel.discoveredAt} />}
           </div>
         </div>
         {headlineScore != null && (

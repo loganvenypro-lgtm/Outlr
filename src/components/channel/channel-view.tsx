@@ -32,7 +32,7 @@ import {
   fetchJson,
 } from "@/components/explorer/explorer-ui";
 import { cn, formatCompactNumber } from "@/lib/utils";
-import { channelAge, subscribersPerDay } from "@/components/channel-trends/channel-card";
+import { channelAge, DiscoveredBadge, subscribersPerDay } from "@/components/channel-trends/channel-card";
 import { SimilarChannelsSheet } from "@/components/channel-trends/similar-channels-sheet";
 import { RealtimeBars, VideoPerformanceChart } from "./charts";
 import { VideoDialog } from "./video-dialog";
@@ -67,6 +67,7 @@ interface ChannelData {
     trendScore: number | null;
     recentRatio: number | null;
     createdAt: string | null;
+    discoveredAt: string | null;
     outlierRate: number | null;
     opportunityScore: number | null;
     tracked: boolean;
@@ -261,6 +262,7 @@ export function ChannelView({ channelId }: { channelId: string }) {
                   Mis à jour {ago(data.updatedAt)}
                 </Badge>
               )}
+              {channel.discoveredAt && <DiscoveredBadge at={channel.discoveredAt} />}
             </div>
           </div>
           <div className="flex flex-wrap gap-2">

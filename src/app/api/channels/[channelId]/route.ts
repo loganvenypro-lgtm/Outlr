@@ -263,6 +263,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         trendScore: num(channel.trend_score),
         recentRatio: num(channel.recent_ratio),
         createdAt: channel.channel_created_at ? new Date(channel.channel_created_at).toISOString() : null,
+        discoveredAt: channel.discovered_at ? new Date(channel.discovered_at).toISOString() : null,
         outlierRate: num(channel.outlier_rate),
         opportunityScore: num(channel.opportunity_score),
         tracked: Boolean(channel.tracked),
