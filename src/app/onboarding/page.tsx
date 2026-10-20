@@ -272,7 +272,15 @@ export default function OnboardingPage() {
               totalViews: channelData.totalViews,
               videoCount: channelData.videoCount,
             },
+            tags: ["Ma chaîne"],
           }),
+        });
+
+        // Remember it as the creator's own channel: drives the personalised home
+        await fetch("/api/me/channel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ channelId: channelData.id }),
         });
 
         // Also track any selected competitor channels
