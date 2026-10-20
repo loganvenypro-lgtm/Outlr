@@ -158,15 +158,18 @@ export async function GET(request: NextRequest) {
             // Breakout detection
             if (multiplier >= 2.0 || (ageHours <= 72 && vphMultiplier >= 2.5)) {
               const maxRatio = Math.max(multiplier, vphMultiplier);
-              // Insert alert into PostgreSQL safely
+              // Insert alert once per video (the id is random, so dedupe on video_id + alert_type)
               try {
                 await sql`
                   INSERT INTO channel_alerts (
                     id, channel_id, channel_name, channel_avatar, video_id, video_title, video_thumbnail, published_at, views, baseline_views, outlier_multiplier, alert_type, severity, message, is_read, created_at
-                  ) VALUES (
-                    ${uuidv4()}, ${channel.channelId}, ${channel.name}, ${channel.avatar}, ${r.id}, ${r.title}, ${r.thumbnail}, ${r.publishedAt}, ${views}, ${baseline}, ${maxRatio}, 'breakout_video', ${maxRatio >= 4.0 ? 'high' : 'medium'}, ${`🔥 ALERTE RADAR : Cette vidéo surperforme de ${maxRatio}x (${vph.toLocaleString()} vues/h)`}, false, NOW()
                   )
-                  ON CONFLICT (id) DO NOTHING
+                  SELECT
+                    ${uuidv4()}, ${channel.channelId}, ${channel.name}, ${channel.avatar}, ${r.id}, ${r.title}, ${r.thumbnail}, ${r.publishedAt}, ${views}, ${baseline}, ${maxRatio}, 'breakout_video', ${maxRatio >= 4.0 ? 'high' : 'medium'}, ${`🔥 ALERTE RADAR : Cette vidéo surperforme de ${maxRatio}x (${vph.toLocaleString()} vues/h)`}, false, NOW()
+                  WHERE NOT EXISTS (
+                    SELECT 1 FROM channel_alerts WHERE video_id = ${r.id} AND alert_type = 'breakout_video'
+                  )
+                  ON CONFLICT DO NOTHING
                 `;
               } catch {
                 // Ignore alert duplicate
