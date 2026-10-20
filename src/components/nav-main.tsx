@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,7 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { ChevronRightIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react"
 
 export function NavMain({
   items,
@@ -38,10 +37,7 @@ export function NavMain({
   const pathname = usePathname()
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
-        Menu Principal
-      </SidebarGroupLabel>
+    <SidebarGroup className="p-0">
       <SidebarMenu className="space-y-1">
         {items.map((item) => {
           const isParentActive =
@@ -59,24 +55,23 @@ export function NavMain({
                 render={
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className={`w-full justify-between rounded-xl px-3 py-2 text-sm font-semibold transition-all ${
-                      isParentActive
-                        ? "bg-slate-100 text-slate-900 shadow-xs"
-                        : "text-slate-600 hover:bg-slate-100/70 hover:text-slate-900"
-                    }`}
+                    className="w-full justify-between rounded-lg px-2.5 py-2 text-[13px] font-semibold text-neutral-200 transition-colors hover:bg-white/5 hover:text-white"
                   />
                 }
               >
-                <div className="flex items-center gap-2.5">
-                  <span className={isParentActive ? "text-lime-500" : "text-slate-400 group-hover/collapsible:text-slate-600"}>
-                    {item.icon}
-                  </span>
-                  <span className="tracking-tight">{item.title}</span>
-                </div>
-                <ChevronRightIcon className="ml-auto size-4 transition-transform duration-200 group-data-open/collapsible:rotate-90 text-slate-400" />
+                <span className="flex items-center gap-2.5">
+                  <span className="text-neutral-400">{item.icon}</span>
+                  <span>{item.title}</span>
+                  {item.badge && (
+                    <span className="rounded-md bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-300">
+                      {item.badge}
+                    </span>
+                  )}
+                </span>
+                <ChevronDownIcon className="ml-auto size-3.5 text-neutral-500 transition-transform duration-200 group-data-open/collapsible:rotate-180" />
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <SidebarMenuSub className="ml-5 border-l border-slate-200/80 pl-2.5 py-1 space-y-1">
+                <SidebarMenuSub className="ml-4 border-l border-white/10 py-1 pl-3 pr-0">
                   {item.items?.map((subItem) => {
                     const isSubActive = pathname === subItem.url
 
@@ -84,25 +79,14 @@ export function NavMain({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
                           isActive={isSubActive}
-                          className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
+                          className={`relative rounded-lg px-3 py-[7px] text-[13px] transition-colors ${
                             isSubActive
-                              ? "bg-slate-900 text-white font-semibold shadow-xs"
-                              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                              ? "bg-white/10 font-medium text-white"
+                              : "font-normal text-neutral-400 hover:bg-white/5 hover:text-neutral-100"
                           }`}
                           render={<Link href={subItem.url} />}
                         >
                           <span className="flex-1 truncate">{subItem.title}</span>
-                          {subItem.badge && (
-                            <span
-                              className={`text-[9.5px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ml-auto ${
-                                isSubActive
-                                  ? "bg-lime-400 text-slate-950"
-                                  : "bg-slate-100 text-slate-500 border border-slate-200/60"
-                              }`}
-                            >
-                              {subItem.badge}
-                            </span>
-                          )}
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     )

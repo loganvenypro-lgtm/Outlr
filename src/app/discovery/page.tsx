@@ -193,7 +193,7 @@ export default function SponsorDiscoveryPage() {
   const industriesList = Array.from(new Set(brands.map((b) => b.industry).filter(Boolean)));
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -212,20 +212,20 @@ export default function SponsorDiscoveryPage() {
                 <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400">
                   <Briefcase className="w-5 h-5" />
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
                   Sponsor Discovery
                 </h1>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
                   Base Locale Active
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Recherchez par créateur, par marque ou explorez les partenariats détectés sur YouTube avec conservation des preuves et timecodes.
               </p>
             </div>
 
             {/* Mode Switcher */}
-            <div className="flex items-center bg-[#0e1628] border border-[#1e2b46] rounded-xl p-1 self-start md:self-auto">
+            <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 self-start md:self-auto">
               <button
                 type="button"
                 onClick={() => setSearchMode("creator")}
@@ -258,10 +258,10 @@ export default function SponsorDiscoveryPage() {
 
           {/* Search Box */}
           {searchMode !== "global" && (
-            <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 shadow-xl space-y-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xl space-y-3">
               <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
-                  <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Search className="w-5 h-5 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={query}
@@ -271,7 +271,7 @@ export default function SponsorDiscoveryPage() {
                         ? "Nom de chaîne, handle (@MrBeast), ID, ou URL YouTube..."
                         : "Nom de la marque (ex: NordVPN, BetterHelp, Step, iFIT...)"
                     }
-                    className="w-full bg-[#0a101f] border border-[#1a2642] focus:border-blue-500 rounded-xl px-3 py-2.5 pl-11 text-sm text-white placeholder-slate-500 focus:outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-3 py-2.5 pl-11 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all"
                   />
                 </div>
                 <button
@@ -317,7 +317,7 @@ export default function SponsorDiscoveryPage() {
           {searchMode === "creator" && creatorInfo && !loading && (
             <div className="space-y-6">
               {/* Creator Card */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
                 <div className="flex items-center gap-4">
                   <img
                     src={creatorInfo.thumbnail}
@@ -327,13 +327,13 @@ export default function SponsorDiscoveryPage() {
                     className="w-14 h-14 rounded-2xl border border-slate-700 object-cover"
                   />
                   <div>
-                    <h3 className="font-extrabold text-white text-lg flex items-center gap-2">
+                    <h3 className="font-extrabold text-slate-900 text-lg flex items-center gap-2">
                       <span>{creatorInfo.title}</span>
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
                         {creatorAuditReports.length} vidéos analysées
                       </span>
                     </h3>
-                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+                    <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
                       {creatorInfo.customUrl && <span>{creatorInfo.customUrl}</span>}
                       <span>•</span>
                       <span>{formatCompactNumber(creatorInfo.subscriberCount)} abonnés</span>
@@ -346,7 +346,7 @@ export default function SponsorDiscoveryPage() {
                 <button
                   type="button"
                   onClick={() => router.push(`/channel/${creatorInfo.id}`)}
-                  className="px-4 py-2 rounded-xl bg-[#141e33] hover:bg-[#1a2742] border border-[#1e2b47] text-slate-300 hover:text-white text-xs font-semibold transition-all"
+                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all"
                 >
                   Voir Dashboard Complet
                 </button>
@@ -354,9 +354,9 @@ export default function SponsorDiscoveryPage() {
 
               {/* Videos and Detected Sponsors List */}
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <span>Dernières Vidéos & Sponsors Associés</span>
-                  <span className="text-xs text-slate-400 font-normal">
+                  <span className="text-xs text-slate-500 font-normal">
                     (Vérification descriptions, codes promos et SponsorBlock)
                   </span>
                 </h3>
@@ -365,10 +365,10 @@ export default function SponsorDiscoveryPage() {
                   {creatorAuditReports.map((report) => (
                     <div
                       key={report.videoId}
-                      className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 shadow-lg space-y-4"
+                      className="bg-white border border-slate-200 rounded-2xl p-5 shadow-lg space-y-4"
                     >
                       {/* Video Row */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#18233a]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                         <div className="flex items-center gap-3.5 min-w-0">
                           <img
                             src={report.videoThumbnail}
@@ -378,12 +378,12 @@ export default function SponsorDiscoveryPage() {
                             className="w-24 aspect-video rounded-lg object-cover shrink-0 border border-slate-800"
                           />
                           <div className="min-w-0">
-                            <h4 className="font-bold text-white text-sm truncate hover:text-blue-400">
+                            <h4 className="font-bold text-slate-900 text-sm truncate hover:text-blue-400">
                               <a href={`https://www.youtube.com/watch?v=${report.videoId}`} target="_blank" rel="noopener noreferrer">
                                 {report.videoTitle}
                               </a>
                             </h4>
-                            <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                            <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
                               <span>{formatDate(report.publishedAt)}</span>
                               <span>•</span>
                               <span>{formatCompactNumber(report.viewCount)} vues</span>
@@ -407,11 +407,11 @@ export default function SponsorDiscoveryPage() {
                           {report.sponsors.map((sp: any, sIdx: number) => (
                             <div
                               key={sIdx}
-                              className="bg-[#0b1120] border border-[#19243d] rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
+                              className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
                             >
                               <div className="space-y-1">
                                 <div className="flex items-center justify-between gap-2">
-                                  <span className="font-bold text-white text-sm flex items-center gap-1.5">
+                                  <span className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                                     <Building className="w-4 h-4 text-blue-400" />
                                     <span>{sp.sponsorName}</span>
                                   </span>
@@ -431,22 +431,22 @@ export default function SponsorDiscoveryPage() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#162138] text-slate-300">
+                                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#162138] text-slate-600">
                                     Confiance: {sp.confidence === "high" ? "Élevée (Confirmé)" : "Moyenne (Probable)"}
                                   </span>
                                   {sp.category && (
-                                    <span className="text-[10px] text-slate-400 font-medium">
+                                    <span className="text-[10px] text-slate-500 font-medium">
                                       {sp.category}
                                     </span>
                                   )}
                                 </div>
 
-                                <p className="text-[11px] text-slate-400 italic line-clamp-2 mt-1">
+                                <p className="text-[11px] text-slate-500 italic line-clamp-2 mt-1">
                                   Preuve : "{sp.contextSnippet}"
                                 </p>
                               </div>
 
-                              <div className="pt-2 border-t border-[#162137] flex items-center justify-between text-xs">
+                              <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
                                 {sp.sponsorEmail ? (
                                   <a href={`mailto:${sp.sponsorEmail}`} className="font-mono text-blue-300 hover:underline text-[11px] flex items-center gap-1">
                                     <Mail className="w-3 h-3 text-blue-400" />
@@ -484,7 +484,7 @@ export default function SponsorDiscoveryPage() {
           {(searchMode === "global" || searchMode === "brand") && (
             <div className="space-y-6">
               {/* Controls & Filters Bar */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
                   {/* Instant search */}
                   <div className="relative w-full sm:w-64">
@@ -496,21 +496,21 @@ export default function SponsorDiscoveryPage() {
                         setSearchFilter(e.target.value);
                         setCurrentPage(1);
                       }}
-                      className="w-full bg-[#0a101f] border border-[#1a2642] rounded-xl px-3 py-1.5 pl-8 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
                     />
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   </div>
 
                   {/* Industry filter */}
                   <div className="flex items-center gap-2">
-                    <Filter className="w-3.5 h-3.5 text-slate-400" />
+                    <Filter className="w-3.5 h-3.5 text-slate-500" />
                     <select
                       value={industryFilter}
                       onChange={(e) => {
                         setIndustryFilter(e.target.value);
                         setCurrentPage(1);
                       }}
-                      className="bg-[#0a101f] border border-[#1a2642] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 focus:outline-none focus:border-blue-500"
                     >
                       <option value="all">Tous les secteurs</option>
                       {industriesList.map((ind: any) => (
@@ -523,7 +523,7 @@ export default function SponsorDiscoveryPage() {
                   <select
                     value={sortBy}
                     onChange={(e: any) => setSortBy(e.target.value)}
-                    className="bg-[#0a101f] border border-[#1a2642] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                    className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 focus:outline-none focus:border-blue-500"
                   >
                     <option value="deals">Trier par Collaborations</option>
                     <option value="views">Trier par Vues Cumulées</option>
@@ -536,7 +536,7 @@ export default function SponsorDiscoveryPage() {
                   type="button"
                   onClick={exportToCSV}
                   disabled={brands.length === 0}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141e33] hover:bg-[#1a2742] border border-[#1e2b47] text-slate-200 hover:text-white text-xs font-semibold transition-all disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold transition-all disabled:opacity-50"
                   title="Exporter les données au format CSV"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
@@ -545,11 +545,11 @@ export default function SponsorDiscoveryPage() {
               </div>
 
               {/* Data Table Required in Specification */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl shadow-xl overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-[#1c2944] bg-[#0a1120] text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                      <tr className="border-b border-slate-200 bg-white text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                         <th className="py-3.5 px-4">Marque</th>
                         <th className="py-3.5 px-4">Créateurs Associés</th>
                         <th className="py-3.5 px-4 text-center">Vidéos Détectées</th>
@@ -559,10 +559,10 @@ export default function SponsorDiscoveryPage() {
                         <th className="py-3.5 px-4 text-right">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#152037]">
+                    <tbody className="divide-y divide-slate-200">
                       {paginatedBrands.length > 0 ? (
                         paginatedBrands.map((brand) => (
-                          <tr key={brand.id} className="hover:bg-[#11192e] transition-colors">
+                          <tr key={brand.id} className="hover:bg-slate-50 transition-colors">
                             {/* Brand Name & Industry */}
                             <td className="py-3.5 px-4">
                               <div 
@@ -573,10 +573,10 @@ export default function SponsorDiscoveryPage() {
                                   <Building className="w-4 h-4" />
                                 </div>
                                 <div>
-                                  <span className="font-bold text-white text-sm group-hover:text-blue-400 transition-colors block">
+                                  <span className="font-bold text-slate-900 text-sm group-hover:text-blue-400 transition-colors block">
                                     {brand.name}
                                   </span>
-                                  <span className="text-[10px] text-slate-400 block">
+                                  <span className="text-[10px] text-slate-500 block">
                                     {brand.industry || "Sponsor Général"}
                                   </span>
                                 </div>
@@ -588,7 +588,7 @@ export default function SponsorDiscoveryPage() {
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {brand.creators && brand.creators.length > 0 ? (
                                   brand.creators.map((c: any) => (
-                                    <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#162137] text-slate-300 text-[11px] font-medium">
+                                    <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#162137] text-slate-600 text-[11px] font-medium">
                                       {c.name}
                                     </span>
                                   ))
@@ -606,7 +606,7 @@ export default function SponsorDiscoveryPage() {
                             </td>
 
                             {/* Views */}
-                            <td className="py-3.5 px-4 font-bold text-white text-right font-mono">
+                            <td className="py-3.5 px-4 font-bold text-slate-900 text-right font-mono">
                               {formatCompactNumber(brand.totalViews)}
                             </td>
 
@@ -626,7 +626,7 @@ export default function SponsorDiscoveryPage() {
                             </td>
 
                             {/* Date */}
-                            <td className="py-3.5 px-4 text-slate-400 text-right text-[11px]">
+                            <td className="py-3.5 px-4 text-slate-500 text-right text-[11px]">
                               {formatDate(brand.lastDetected)}
                             </td>
 
@@ -635,7 +635,7 @@ export default function SponsorDiscoveryPage() {
                               <button
                                 type="button"
                                 onClick={() => router.push(`/discovery/brand/${encodeURIComponent(brand.name)}`)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#141e33] hover:bg-blue-600 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
                               >
                                 <span>Voir fiche</span>
                                 <ArrowRight className="w-3 h-3" />
@@ -645,7 +645,7 @@ export default function SponsorDiscoveryPage() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={7} className="text-center py-12 text-slate-400 text-xs">
+                          <td colSpan={7} className="text-center py-12 text-slate-500 text-xs">
                             Aucune marque enregistrée. Lancez un scan de créateur (ex: @MrBeast) pour peupler la base de données locale.
                           </td>
                         </tr>
@@ -656,7 +656,7 @@ export default function SponsorDiscoveryPage() {
 
                 {/* Pagination Controls */}
                 {filteredBrands.length > itemsPerPage && (
-                  <div className="p-4 border-t border-[#1c2944] bg-[#0a1120] flex items-center justify-between text-xs text-slate-400">
+                  <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs text-slate-500">
                     <span>
                       Affichage de {(currentPage - 1) * itemsPerPage + 1} à {Math.min(currentPage * itemsPerPage, filteredBrands.length)} sur {filteredBrands.length} marques
                     </span>
@@ -666,16 +666,16 @@ export default function SponsorDiscoveryPage() {
                         type="button"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1a2742] text-slate-300 disabled:opacity-40"
+                        className="p-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
-                      <span className="font-semibold text-white px-2">Page {currentPage} / {totalPages}</span>
+                      <span className="font-semibold text-slate-900 px-2">Page {currentPage} / {totalPages}</span>
                       <button
                         type="button"
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        className="p-1.5 rounded-lg bg-[#141e33] hover:bg-[#1a2742] text-slate-300 disabled:opacity-40"
+                        className="p-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>

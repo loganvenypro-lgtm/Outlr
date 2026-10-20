@@ -98,7 +98,7 @@ export default function ChannelSponsorsPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -116,7 +116,7 @@ export default function ChannelSponsorsPage() {
             <button
               type="button"
               onClick={() => router.push(`/channel/${channelId}`)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#11192e] hover:bg-[#192543] border border-[#1e2b47] text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Retour à l'analyse</span>
@@ -125,11 +125,11 @@ export default function ChannelSponsorsPage() {
 
           {/* Loading */}
           {loading && (
-            <div className="py-24 text-center space-y-4 bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-8">
+            <div className="py-24 text-center space-y-4 bg-white border border-slate-200 rounded-2xl p-8">
               <Loader2 className="w-10 h-10 animate-spin text-blue-500 mx-auto" />
               <div className="space-y-1">
-                <h3 className="text-base font-bold text-white">Audit Intelligent des Sponsors en cours...</h3>
-                <p className="text-xs text-slate-400 max-w-md mx-auto">
+                <h3 className="text-base font-bold text-slate-900">Audit Intelligent des Sponsors en cours...</h3>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
                   Analyse des descriptions vidéos, extraction des segments sponsorisés via SponsorBlock, détection des emails des marques et identification des timecodes exacts.
                 </p>
               </div>
@@ -138,11 +138,11 @@ export default function ChannelSponsorsPage() {
 
           {/* Error */}
           {error && !loading && (
-            <div className="bg-[#0e1628] border border-rose-900/50 rounded-2xl p-8 text-center space-y-4">
+            <div className="bg-white border border-rose-900/50 rounded-2xl p-8 text-center space-y-4">
               <AlertCircle className="w-10 h-10 text-rose-400 mx-auto" />
               <div className="space-y-1">
-                <h3 className="text-base font-bold text-white">Erreur lors de l'audit</h3>
-                <p className="text-xs text-slate-400">{error}</p>
+                <h3 className="text-base font-bold text-slate-900">Erreur lors de l'audit</h3>
+                <p className="text-xs text-slate-500">{error}</p>
               </div>
             </div>
           )}
@@ -151,7 +151,7 @@ export default function ChannelSponsorsPage() {
           {!loading && !error && channel && (
             <div className="space-y-6">
               {/* Channel Hero Header with verified contact emails */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl relative overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="flex items-center gap-4">
                     <img
@@ -163,20 +163,20 @@ export default function ChannelSponsorsPage() {
                     />
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-black text-white">{channel.title}</h2>
+                        <h2 className="text-xl font-black text-slate-900">{channel.title}</h2>
                         <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold">
                           Audit Sponsors
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        Analyse sur les <strong className="text-slate-200">{reports.length} derniers uploads</strong> • {brands.length} marques identifiées
+                      <p className="text-xs text-slate-500 mt-1">
+                        Analyse sur les <strong className="text-slate-700">{reports.length} derniers uploads</strong> • {brands.length} marques identifiées
                       </p>
                     </div>
                   </div>
 
                   {/* Emails found (Channel Creator + Inquiries) */}
-                  <div className="bg-[#0a101f] border border-[#192642] rounded-xl p-3.5 flex flex-col gap-1.5 min-w-[280px]">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <div className="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col gap-1.5 min-w-[280px]">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                       <Mail className="w-3.5 h-3.5 text-blue-400" />
                       <span>Contact Business Détecté</span>
                     </span>
@@ -191,7 +191,7 @@ export default function ChannelSponsorsPage() {
                             <button
                               type="button"
                               onClick={() => copyToClipboard(em, em)}
-                              className="p-1 hover:text-white text-slate-400"
+                              className="p-1 hover:text-slate-900 text-slate-500"
                               title="Copier l'email"
                             >
                               {copiedText === em ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -208,7 +208,7 @@ export default function ChannelSponsorsPage() {
 
               {/* Navigation Tabs (Par Vidéo vs Par Marque) */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center bg-[#0e1628] border border-[#1e2b46] rounded-xl p-1 self-start">
+                <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 self-start">
                   <button
                     type="button"
                     onClick={() => setActiveTab("videos")}
@@ -236,9 +236,9 @@ export default function ChannelSponsorsPage() {
                     placeholder="Filtrer une marque (ex: NordVPN, Step...)"
                     value={filterBrand}
                     onChange={(e) => setFilterBrand(e.target.value)}
-                    className="w-full bg-[#0e1628] border border-[#1e2b46] rounded-xl px-3 py-1.5 pl-8 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
                   />
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
                 </div>
               </div>
 
@@ -251,10 +251,10 @@ export default function ChannelSponsorsPage() {
                     return (
                       <div
                         key={report.videoId}
-                        className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 shadow-lg space-y-4 hover:border-slate-700 transition-colors"
+                        className="bg-white border border-slate-200 rounded-2xl p-5 shadow-lg space-y-4 hover:border-slate-700 transition-colors"
                       >
                         {/* Video Info Row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#18233a]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                           <div className="flex items-center gap-3.5 min-w-0">
                             <img
                               src={report.videoThumbnail}
@@ -264,12 +264,12 @@ export default function ChannelSponsorsPage() {
                               className="w-20 aspect-video rounded-lg object-cover shrink-0 border border-slate-800"
                             />
                             <div className="min-w-0">
-                              <h3 className="font-bold text-white text-sm truncate hover:text-blue-400 transition-colors">
+                              <h3 className="font-bold text-slate-900 text-sm truncate hover:text-blue-400 transition-colors">
                                 <a href={videoUrl} target="_blank" rel="noopener noreferrer">
                                   {report.videoTitle}
                                 </a>
                               </h3>
-                              <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                              <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
                                 <span>{formatDate(report.publishedAt)}</span>
                                 <span>•</span>
                                 <span>{formatCompactNumber(report.viewCount)} vues</span>
@@ -295,7 +295,7 @@ export default function ChannelSponsorsPage() {
                               href={videoUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 rounded-lg bg-[#141e33] hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
+                              className="p-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
                               title="Ouvrir la vidéo sur YouTube"
                             >
                               <ExternalLink className="w-4 h-4" />
@@ -309,11 +309,11 @@ export default function ChannelSponsorsPage() {
                             {report.sponsors.map((sp, idx) => (
                               <div
                                 key={idx}
-                                className="bg-[#0b1120] border border-[#19243d] rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
+                                className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
                               >
                                 <div>
                                   <div className="flex items-center justify-between gap-2">
-                                    <span className="font-extrabold text-white text-sm flex items-center gap-1.5">
+                                    <span className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
                                       <Building className="w-4 h-4 text-blue-400" />
                                       <span>{sp.sponsorName}</span>
                                     </span>
@@ -334,18 +334,18 @@ export default function ChannelSponsorsPage() {
                                   </div>
 
                                   {sp.category && (
-                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mt-0.5">
+                                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mt-0.5">
                                       {sp.category}
                                     </span>
                                   )}
 
-                                  <p className="text-[11px] text-slate-400 line-clamp-2 mt-1.5 italic">
+                                  <p className="text-[11px] text-slate-500 line-clamp-2 mt-1.5 italic">
                                     "{sp.contextSnippet}"
                                   </p>
                                 </div>
 
                                 {/* Contact info of the brand */}
-                                <div className="pt-2 border-t border-[#162137] flex items-center justify-between gap-2 text-xs">
+                                <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2 text-xs">
                                   {sp.sponsorEmail ? (
                                     <div className="flex items-center gap-1.5">
                                       <Mail className="w-3.5 h-3.5 text-blue-400" />
@@ -362,7 +362,7 @@ export default function ChannelSponsorsPage() {
                                       href={sp.sponsorUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-slate-400 hover:text-white flex items-center gap-1 text-[11px]"
+                                      className="text-slate-500 hover:text-slate-900 flex items-center gap-1 text-[11px]"
                                     >
                                       <span>Lien sponsorisé</span>
                                       <ExternalLink className="w-3 h-3" />
@@ -391,11 +391,11 @@ export default function ChannelSponsorsPage() {
                     .map((brand, idx) => (
                       <div
                         key={idx}
-                        className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-lg"
+                        className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-lg"
                       >
                         <div>
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="font-extrabold text-white text-base flex items-center gap-2">
+                            <h4 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
                               <Building className="w-4 h-4 text-blue-400" />
                               <span>{brand.brandName}</span>
                             </h4>
@@ -405,34 +405,34 @@ export default function ChannelSponsorsPage() {
                           </div>
 
                           {brand.category && (
-                            <span className="text-[10px] text-slate-400 uppercase tracking-wider block mt-1">
+                            <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1">
                               {brand.category}
                             </span>
                           )}
                         </div>
 
                         {/* Contact details */}
-                        <div className="pt-3 border-t border-[#18233a] space-y-2">
+                        <div className="pt-3 border-t border-slate-200 space-y-2">
                           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
                             Contact Sponsoring Détecté
                           </span>
 
                           {brand.contactEmail ? (
-                            <div className="flex items-center justify-between bg-[#0a101f] p-2.5 rounded-xl border border-[#1a2642]">
+                            <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200">
                               <a href={`mailto:${brand.contactEmail}`} className="font-mono text-xs text-blue-300 hover:underline truncate">
                                 {brand.contactEmail}
                               </a>
                               <button
                                 type="button"
                                 onClick={() => copyToClipboard(brand.contactEmail!, brand.brandName)}
-                                className="p-1 hover:text-white text-slate-400 ml-2"
+                                className="p-1 hover:text-slate-900 text-slate-500 ml-2"
                                 title="Copier"
                               >
                                 {copiedText === brand.brandName ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             </div>
                           ) : (
-                            <div className="bg-[#0a101f] p-2.5 rounded-xl border border-[#1a2642] text-xs text-slate-500 italic">
+                            <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs text-slate-500 italic">
                               Via leur portail média / partenariats
                             </div>
                           )}

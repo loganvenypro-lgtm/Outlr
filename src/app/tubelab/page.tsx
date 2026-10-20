@@ -92,7 +92,7 @@ export default function TubeLabPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -111,20 +111,20 @@ export default function TubeLabPage() {
                 <div className="p-2 rounded-xl bg-purple-600/20 text-purple-400">
                   <Zap className="w-5 h-5" />
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
                   TubeLab Suite
                 </h1>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/20">
                   Outliers & Idéation IA
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Détectez les vidéos qui surperforment le nombre d'abonnés de leur créateur (Outliers), trouvez des niches à fort RPM et générez des concepts viraux.
               </p>
             </div>
 
             {/* Sub-tabs Switcher */}
-            <div className="flex items-center bg-[#0e1628] border border-[#1e2b46] rounded-xl p-1 self-start md:self-auto">
+            <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 self-start md:self-auto">
               <button
                 type="button"
                 onClick={() => setTab("outliers")}
@@ -159,15 +159,15 @@ export default function TubeLabPage() {
           </div>
 
           {/* Search bar */}
-          <form onSubmit={handleSearchSubmit} className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-4 shadow-xl flex gap-3">
+          <form onSubmit={handleSearchSubmit} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xl flex gap-3">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={nicheQuery}
                 onChange={(e) => setNicheQuery(e.target.value)}
                 placeholder="Entrez un mot-clé ou une thématique (ex: intelligence artificielle, finance, fitness, crypto)..."
-                className="w-full bg-[#0a101f] border border-[#1a2642] focus:border-purple-500 rounded-xl px-3 py-2 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none"
+                className="w-full bg-white border border-slate-200 focus:border-purple-500 rounded-xl px-3 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none"
               />
             </div>
             <button
@@ -184,9 +184,9 @@ export default function TubeLabPage() {
           {tab === "outliers" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <span>Vidéos à Forte Surperformance (Outlier Ratio)</span>
-                  <span className="text-xs text-slate-400 font-normal">
+                  <span className="text-xs text-slate-500 font-normal">
                     (Vues supérieures à l'audience habituelle de la chaîne)
                   </span>
                 </h3>
@@ -196,7 +196,7 @@ export default function TubeLabPage() {
               </div>
 
               {loading && (
-                <div className="py-20 text-center text-slate-400 text-xs">
+                <div className="py-20 text-center text-slate-500 text-xs">
                   <Loader2 className="w-6 h-6 animate-spin text-purple-400 mx-auto mb-2" />
                   Calcul des ratios de vues par rapport aux abonnés des créateurs...
                 </div>
@@ -207,7 +207,7 @@ export default function TubeLabPage() {
                   {outliers.map((video) => (
                     <div
                       key={video.id}
-                      className="bg-[#0e1628] border border-[#1e2b46] hover:border-purple-500/50 rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col justify-between group"
+                      className="bg-white border border-slate-200 hover:border-purple-500/50 rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col justify-between group"
                     >
                       {/* Thumbnail Container */}
                       <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
@@ -241,7 +241,7 @@ export default function TubeLabPage() {
                       {/* Info & Stats */}
                       <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                         <div>
-                          <h4 className="font-bold text-white text-xs line-clamp-2 leading-snug group-hover:text-purple-400 transition-colors">
+                          <h4 className="font-bold text-slate-900 text-xs line-clamp-2 leading-snug group-hover:text-purple-400 transition-colors">
                             {video.title}
                           </h4>
 
@@ -254,15 +254,15 @@ export default function TubeLabPage() {
                                 className="w-5 h-5 rounded-full object-cover"
                               />
                             )}
-                            <span className="text-[11px] font-semibold text-slate-300 truncate">
+                            <span className="text-[11px] font-semibold text-slate-600 truncate">
                               {video.channelTitle} ({formatCompactNumber(video.channelSubs)} subs)
                             </span>
                           </div>
                         </div>
 
                         {/* Metrics Bar */}
-                        <div className="pt-2.5 border-t border-[#18233a] flex items-center justify-between text-xs">
-                          <span className="font-bold text-white font-mono flex items-center gap-1">
+                        <div className="pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-900 font-mono flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5 text-blue-400" />
                             <span>{formatCompactNumber(video.views)}</span>
                           </span>
@@ -276,7 +276,7 @@ export default function TubeLabPage() {
                               href={`https://www.youtube.com/watch?v=${video.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 rounded-lg bg-[#141e33] hover:bg-purple-600 text-slate-400 hover:text-white transition-colors"
+                              className="p-1.5 rounded-lg bg-white hover:bg-purple-600 text-slate-400 hover:text-white transition-colors"
                               title="Ouvrir sur YouTube"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -294,12 +294,12 @@ export default function TubeLabPage() {
           {/* Tab 2: Niche Finder & RPM Benchmark */}
           {tab === "niches" && (
             <div className="space-y-4">
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5">
-                <h3 className="font-bold text-white text-base flex items-center gap-2">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-emerald-400" />
                   <span>Niches YouTube les Plus Rentables (RPM & Potentiel Sponsoring)</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Les estimations de RPM (Revenu pour 1000 vues AdSense) et les dynamiques de croissance observées sur le marché.
                 </p>
               </div>
@@ -308,23 +308,23 @@ export default function TubeLabPage() {
                 {popularNiches.map((n, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#0e1628] border border-[#1e2b46] hover:border-purple-500/50 rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4 transition-all"
+                    className="bg-white border border-slate-200 hover:border-purple-500/50 rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4 transition-all"
                   >
                     <div>
                       <div className="flex items-center justify-between">
-                        <h4 className="font-extrabold text-white text-base">{n.name}</h4>
+                        <h4 className="font-extrabold text-slate-900 text-base">{n.name}</h4>
                         <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                           {n.growth}
                         </span>
                       </div>
                       <div className="mt-2 space-y-1 text-xs">
-                        <p className="text-slate-400 flex justify-between">
+                        <p className="text-slate-500 flex justify-between">
                           <span>RPM Estimé :</span>
-                          <span className="font-bold text-white font-mono">{n.rpm}</span>
+                          <span className="font-bold text-slate-900 font-mono">{n.rpm}</span>
                         </p>
-                        <p className="text-slate-400 flex justify-between">
+                        <p className="text-slate-500 flex justify-between">
                           <span>Concurrence :</span>
-                          <span className="text-slate-200">{n.competition}</span>
+                          <span className="text-slate-700">{n.competition}</span>
                         </p>
                       </div>
                     </div>
@@ -336,7 +336,7 @@ export default function TubeLabPage() {
                         fetchOutliers(n.tag);
                         setTab("outliers");
                       }}
-                      className="w-full py-2 rounded-xl bg-[#141e33] hover:bg-purple-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
+                      className="w-full py-2 rounded-xl bg-white hover:bg-purple-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
                     >
                       <span>Scanner les Outliers</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -349,14 +349,14 @@ export default function TubeLabPage() {
 
           {/* Tab 3: AI Ideation (TubeLab Ideas Generator) */}
           {tab === "ideation" && (
-            <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#18233a]">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
                 <div>
-                  <h3 className="font-bold text-white text-base flex items-center gap-2">
+                  <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                     <Lightbulb className="w-5 h-5 text-amber-400" />
                     <span>Générateur de Concepts Viraux par IA (Groq Engine)</span>
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Générez des idées de vidéos optimisées pour le CTR (miniature, titre à suspense et hook d'accroche).
                   </p>
                 </div>
@@ -373,14 +373,14 @@ export default function TubeLabPage() {
               </div>
 
               {generatingIdeas && (
-                <div className="py-16 text-center text-slate-400 text-xs">
+                <div className="py-16 text-center text-slate-500 text-xs">
                   <Loader2 className="w-6 h-6 animate-spin text-purple-400 mx-auto mb-2" />
                   Génération des concepts viraux en cours via Groq LLM...
                 </div>
               )}
 
               {!generatingIdeas && aiConcepts && (
-                <div className="bg-[#0a101f] border border-[#1a2642] rounded-xl p-5 text-xs text-slate-200 leading-relaxed font-sans whitespace-pre-line space-y-3">
+                <div className="bg-white border border-slate-200 rounded-xl p-5 text-xs text-slate-700 leading-relaxed font-sans whitespace-pre-line space-y-3">
                   {aiConcepts}
                 </div>
               )}

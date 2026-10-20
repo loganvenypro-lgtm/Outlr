@@ -129,7 +129,7 @@ export default function GlobalSponsorHunterPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -147,23 +147,23 @@ export default function GlobalSponsorHunterPage() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>MeetSponsors Engine • Intelligence Marques & Démarchage</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
               Trouvez qui finance les créateurs et <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">contactez les marques</span>
             </h1>
-            <p className="text-slate-400 text-xs md:text-sm leading-relaxed">
+            <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
               Analysez n'importe quelle chaîne YouTube : découvrez les marques qui sponsorisent ses vidéos, les minutes exactes de diffusion (timecodes), les codes promos et les emails des décideurs marketing.
             </p>
 
             {/* Prominent Search Bar */}
             <form onSubmit={handleFormSubmit} className="pt-4">
-              <div className="relative flex items-center bg-[#11192e] border-2 border-[#1e2a47] focus-within:border-blue-500 rounded-2xl p-2 shadow-2xl transition-all">
-                <Search className="w-6 h-6 text-slate-400 ml-3 mr-2 shrink-0" />
+              <div className="relative flex items-center bg-white border-2 border-slate-200 focus-within:border-blue-500 rounded-2xl p-2 shadow-2xl transition-all">
+                <Search className="w-6 h-6 text-slate-500 ml-3 mr-2 shrink-0" />
                 <input
                   type="text"
                   value={channelQuery}
                   onChange={(e) => setChannelQuery(e.target.value)}
                   placeholder="Entrez une chaîne (ex: @MrBeast, Veritasium, Fireship, MKBHD...)"
-                  className="w-full bg-transparent text-white text-sm md:text-base placeholder-slate-500 focus:outline-none px-2"
+                  className="w-full bg-transparent text-slate-900 text-sm md:text-base placeholder-slate-400 focus:outline-none px-2"
                 />
                 <button
                   type="submit"
@@ -184,7 +184,7 @@ export default function GlobalSponsorHunterPage() {
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400 mt-2.5">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 mt-2.5">
                 <span className="text-slate-500">Exemples rapides :</span>
                 {["@MrBeast", "Veritasium", "MKBHD", "Fireship", "Squeezie"].map((tag) => (
                   <button
@@ -194,7 +194,7 @@ export default function GlobalSponsorHunterPage() {
                       setChannelQuery(tag);
                       runAudit(tag);
                     }}
-                    className="px-2.5 py-1 rounded-md bg-[#141d33] hover:bg-[#1a2642] hover:text-blue-400 text-slate-300 transition-colors"
+                    className="px-2.5 py-1 rounded-md bg-[#141d33] hover:bg-slate-50 hover:text-blue-400 text-slate-600 transition-colors"
                   >
                     {tag}
                   </button>
@@ -205,9 +205,9 @@ export default function GlobalSponsorHunterPage() {
 
           {/* Loading Progress Bar */}
           {loading && (
-            <div className="max-w-2xl mx-auto bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl space-y-3">
+            <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-3">
               <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-white flex items-center gap-2">
+                <span className="text-slate-900 flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                   <span>{analyzingStep}</span>
                 </span>
@@ -237,7 +237,7 @@ export default function GlobalSponsorHunterPage() {
           {!loading && !error && selectedChannel && (
             <div className="space-y-6">
               {/* Channel Profile Banner */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl relative overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="flex items-center gap-4">
                     <img
@@ -249,14 +249,14 @@ export default function GlobalSponsorHunterPage() {
                     />
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-xl font-black text-white">{selectedChannel.title}</h2>
+                        <h2 className="text-xl font-black text-slate-900">{selectedChannel.title}</h2>
                         {selectedChannel.customUrl && (
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
                             {selectedChannel.customUrl.startsWith("@") ? selectedChannel.customUrl : `@${selectedChannel.customUrl}`}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
                         <span>{formatCompactNumber(selectedChannel.subscriberCount)} abonnés</span>
                         <span>•</span>
                         <span>{formatCompactNumber(selectedChannel.viewCount)} vues totales</span>
@@ -267,8 +267,8 @@ export default function GlobalSponsorHunterPage() {
                   </div>
 
                   {/* Creator Inquiries Email */}
-                  <div className="bg-[#0a101f] border border-[#1a2642] rounded-xl p-3.5 flex flex-col gap-1 min-w-[280px]">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <div className="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col gap-1 min-w-[280px]">
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                       <Mail className="w-3.5 h-3.5 text-blue-400" />
                       <span>Email Business Créateur</span>
                     </span>
@@ -280,7 +280,7 @@ export default function GlobalSponsorHunterPage() {
                         <button
                           type="button"
                           onClick={() => copyToClipboard(channelEmails[0], "creator-email")}
-                          className="p-1 text-slate-400 hover:text-white"
+                          className="p-1 text-slate-500 hover:text-slate-900"
                           title="Copier"
                         >
                           {copiedText === "creator-email" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -295,7 +295,7 @@ export default function GlobalSponsorHunterPage() {
 
               {/* View Switcher Tabs (MeetSponsors 3-pillar layout) */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center bg-[#0e1628] border border-[#1e2b46] rounded-xl p-1 self-start">
+                <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 self-start">
                   <button
                     type="button"
                     onClick={() => setViewTab("brands")}
@@ -333,9 +333,9 @@ export default function GlobalSponsorHunterPage() {
                       placeholder="Filtrer une marque..."
                       value={filterBrandKeyword}
                       onChange={(e) => setFilterBrandKeyword(e.target.value)}
-                      className="w-full bg-[#0e1628] border border-[#1e2b46] rounded-xl px-3 py-1.5 pl-8 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
                     />
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   </div>
                 )}
               </div>
@@ -348,11 +348,11 @@ export default function GlobalSponsorHunterPage() {
                       {filteredBrands.map((b, idx) => (
                         <div
                           key={idx}
-                          className="bg-[#0e1628] border border-[#1e2b46] hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-lg transition-all"
+                          className="bg-white border border-slate-200 hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-lg transition-all"
                         >
                           <div>
                             <div className="flex items-center justify-between gap-2">
-                              <h3 className="font-extrabold text-white text-base flex items-center gap-2 truncate">
+                              <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2 truncate">
                                 <Building className="w-4 h-4 text-blue-400 shrink-0" />
                                 <span className="truncate">{b.brandName}</span>
                               </h3>
@@ -362,20 +362,20 @@ export default function GlobalSponsorHunterPage() {
                             </div>
 
                             {b.category && (
-                              <span className="text-[10px] text-slate-400 uppercase tracking-wider block mt-1 font-medium">
+                              <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1 font-medium">
                                 {b.category}
                               </span>
                             )}
                           </div>
 
                           {/* Contact Email Section */}
-                          <div className="pt-3 border-t border-[#18233a] space-y-2">
+                          <div className="pt-3 border-t border-slate-200 space-y-2">
                             <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
                               Contact Partenariat / Sponsoring
                             </span>
 
                             {b.contactEmail ? (
-                              <div className="flex items-center justify-between bg-[#0a101f] p-2.5 rounded-xl border border-[#1a2642]">
+                              <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200">
                                 <a 
                                   href={`mailto:${b.contactEmail}`}
                                   className="font-mono text-xs text-blue-300 hover:underline truncate"
@@ -385,14 +385,14 @@ export default function GlobalSponsorHunterPage() {
                                 <button
                                   type="button"
                                   onClick={() => copyToClipboard(b.contactEmail!, b.brandName)}
-                                  className="p-1 hover:text-white text-slate-400 ml-2"
+                                  className="p-1 hover:text-slate-900 text-slate-500 ml-2"
                                   title="Copier"
                                 >
                                   {copiedText === b.brandName ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                                 </button>
                               </div>
                             ) : (
-                              <div className="bg-[#0a101f] p-2.5 rounded-xl border border-[#1a2642] text-xs text-slate-500 italic">
+                              <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs text-slate-500 italic">
                                 Contact via leur portail relations créateurs
                               </div>
                             )}
@@ -413,7 +413,7 @@ export default function GlobalSponsorHunterPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-8 text-center text-slate-400 text-xs">
+                    <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-500 text-xs">
                       Aucune marque trouvée avec ce filtre.
                     </div>
                   )}
@@ -428,9 +428,9 @@ export default function GlobalSponsorHunterPage() {
                     return (
                       <div
                         key={rep.videoId}
-                        className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 shadow-lg space-y-4"
+                        className="bg-white border border-slate-200 rounded-2xl p-5 shadow-lg space-y-4"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#18233a]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200">
                           <div className="flex items-center gap-3.5 min-w-0">
                             <img
                               src={rep.videoThumbnail}
@@ -440,12 +440,12 @@ export default function GlobalSponsorHunterPage() {
                               className="w-20 aspect-video rounded-lg object-cover shrink-0 border border-slate-800"
                             />
                             <div className="min-w-0">
-                              <h3 className="font-bold text-white text-sm truncate hover:text-blue-400 transition-colors">
+                              <h3 className="font-bold text-slate-900 text-sm truncate hover:text-blue-400 transition-colors">
                                 <a href={videoUrl} target="_blank" rel="noopener noreferrer">
                                   {rep.videoTitle}
                                 </a>
                               </h3>
-                              <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                              <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
                                 <span>{formatDate(rep.publishedAt)}</span>
                                 <span>•</span>
                                 <span>{formatCompactNumber(rep.viewCount)} vues</span>
@@ -463,7 +463,7 @@ export default function GlobalSponsorHunterPage() {
                             href={videoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#141e33] hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors self-start sm:self-auto"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors self-start sm:self-auto"
                           >
                             <span>Regarder</span>
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -476,11 +476,11 @@ export default function GlobalSponsorHunterPage() {
                             {rep.sponsors.map((sp, idx) => (
                               <div
                                 key={idx}
-                                className="bg-[#0b1120] border border-[#19243d] rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
+                                className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 flex flex-col justify-between"
                               >
                                 <div className="space-y-1">
                                   <div className="flex items-center justify-between gap-2">
-                                    <span className="font-bold text-white text-sm flex items-center gap-1.5">
+                                    <span className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                                       <Building className="w-4 h-4 text-blue-400" />
                                       <span>{sp.sponsorName}</span>
                                     </span>
@@ -499,12 +499,12 @@ export default function GlobalSponsorHunterPage() {
                                     )}
                                   </div>
 
-                                  <p className="text-[11px] text-slate-400 line-clamp-2 italic">
+                                  <p className="text-[11px] text-slate-500 line-clamp-2 italic">
                                     "{sp.contextSnippet}"
                                   </p>
                                 </div>
 
-                                <div className="pt-2 border-t border-[#162137] flex items-center justify-between text-xs">
+                                <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
                                   {sp.sponsorEmail ? (
                                     <div className="flex items-center gap-1.5">
                                       <Mail className="w-3.5 h-3.5 text-blue-400" />
@@ -521,7 +521,7 @@ export default function GlobalSponsorHunterPage() {
                                       href={sp.sponsorUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-slate-400 hover:text-white flex items-center gap-1 text-[11px]"
+                                      className="text-slate-500 hover:text-slate-900 flex items-center gap-1 text-[11px]"
                                     >
                                       <span>Lien sponsorisé</span>
                                       <ExternalLink className="w-3 h-3" />
@@ -545,13 +545,13 @@ export default function GlobalSponsorHunterPage() {
               {/* Tab 3: Global MeetSponsors Database */}
               {viewTab === "database" && (
                 <div className="space-y-4">
-                  <div className="bg-[#0e1628] border border-blue-500/30 rounded-2xl p-5 flex items-center justify-between">
+                  <div className="bg-white border border-blue-500/30 rounded-2xl p-5 flex items-center justify-between">
                     <div>
-                      <h3 className="font-bold text-white text-base flex items-center gap-2">
+                      <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                         <ShieldCheck className="w-5 h-5 text-emerald-400" />
                         <span>Répertoire Vérifié des Marques Sponsors YouTube</span>
                       </h3>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-xs text-slate-500 mt-0.5">
                         Base de données des plus grands acheteurs média sur YouTube avec contact et poste du responsable.
                       </p>
                     </div>
@@ -561,16 +561,16 @@ export default function GlobalSponsorHunterPage() {
                     {Object.entries(KNOWN_SPONSORS).map(([domain, data], idx) => (
                       <div
                         key={idx}
-                        className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 flex flex-col justify-between space-y-3"
+                        className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between space-y-3"
                       >
                         <div>
                           <div className="flex items-center justify-between">
-                            <h4 className="font-extrabold text-white text-base">{data.name}</h4>
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#162035] text-slate-300">
+                            <h4 className="font-extrabold text-slate-900 text-base">{data.name}</h4>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-white text-slate-600">
                               Actif
                             </span>
                           </div>
-                          <span className="text-[11px] text-slate-400 font-medium">{data.category}</span>
+                          <span className="text-[11px] text-slate-500 font-medium">{data.category}</span>
                           {data.contactRole && (
                             <span className="text-[11px] text-blue-400 block mt-1">
                               Poste : {data.contactRole}
@@ -578,16 +578,16 @@ export default function GlobalSponsorHunterPage() {
                           )}
                         </div>
 
-                        <div className="pt-2 border-t border-[#18233a] space-y-2 text-xs">
+                        <div className="pt-2 border-t border-slate-200 space-y-2 text-xs">
                           {data.email && (
-                            <div className="flex items-center justify-between bg-[#0a101f] p-2 rounded-lg border border-[#1a2642]">
+                            <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
                               <a href={`mailto:${data.email}`} className="font-mono text-blue-300 text-[11px] truncate">
                                 {data.email}
                               </a>
                               <button
                                 type="button"
                                 onClick={() => copyToClipboard(data.email!, data.name)}
-                                className="p-1 text-slate-400 hover:text-white"
+                                className="p-1 text-slate-500 hover:text-slate-900"
                                 title="Copier"
                               >
                                 {copiedText === data.name ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}

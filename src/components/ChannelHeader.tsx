@@ -38,7 +38,7 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
   };
 
   return (
-    <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl overflow-hidden shadow-xl">
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xl">
       {/* Banner */}
       <div className="h-40 sm:h-52 w-full bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 relative overflow-hidden">
         {channel.banner ? (
@@ -68,25 +68,25 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=2563eb&color=fff&size=200`;
                 }}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-[#0e1628] bg-slate-800 object-cover shadow-2xl shadow-black/60"
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-slate-200 bg-slate-800 object-cover shadow-2xl shadow-black/60"
               />
-              <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-[#0e1628] text-white">
+              <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-slate-200 text-white">
                 <CheckCircle2 className="w-3.5 h-3.5" />
               </div>
             </div>
 
             <div className="space-y-1 pb-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                   {channel.title}
                 </h1>
                 {channel.country && (
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#19243d] text-slate-300 border border-[#233355]">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#19243d] text-slate-600 border border-slate-200">
                     {channel.country}
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3 text-xs text-slate-400">
+              <div className="flex items-center gap-3 text-xs text-slate-500">
                 {channel.customUrl && (
                   <span className="text-blue-400 font-medium">
                     {channel.customUrl.startsWith("@") ? channel.customUrl : `@${channel.customUrl}`}
@@ -121,7 +121,7 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#141e33] hover:bg-[#1c2944] border border-[#1e2b47] text-slate-300 hover:text-white font-medium text-xs transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 font-medium text-xs transition-all"
               title="Copy shareable link"
             >
               {copied ? (
@@ -131,7 +131,7 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
                 </>
               ) : (
                 <>
-                  <Share2 className="w-3.5 h-3.5 text-slate-400" />
+                  <Share2 className="w-3.5 h-3.5 text-slate-500" />
                   <span>Partager</span>
                 </>
               )}
@@ -150,7 +150,7 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
         </div>
 
         {/* Metadata info pills */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2 border-t border-[#18233a]">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-2 border-t border-slate-200">
           {channel.publishedAt && (
             <div className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-slate-500" />
@@ -171,7 +171,7 @@ export function ChannelHeader({ channel }: ChannelHeaderProps) {
 
         {/* Description snippet */}
         {channel.description && (
-          <div className="mt-4 p-3.5 bg-[#0a101e] border border-[#162137] rounded-xl text-xs text-slate-300 leading-relaxed">
+          <div className="mt-4 p-3.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-600 leading-relaxed">
             <p className="line-clamp-3 whitespace-pre-line">{channel.description}</p>
           </div>
         )}

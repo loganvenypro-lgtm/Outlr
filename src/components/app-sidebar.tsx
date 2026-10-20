@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
+import { SearchForm } from "@/components/search-form"
 import {
   Sidebar,
   SidebarContent,
@@ -13,18 +13,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import {
-  Flame,
-  Layers,
-  TrendingUp,
-  BarChart3,
-  Sparkles,
-  Bell,
-  Compass,
-  Zap,
-  Wand2,
-  DollarSign,
-  FolderHeart,
-  Folder,
+  Telescope,
+  Clapperboard,
+  Store,
+  Terminal,
+  House,
+  Radar,
 } from "lucide-react"
 
 const data = {
@@ -35,101 +29,61 @@ const data = {
   },
   teams: [
     {
-      name: "Outlr Radar",
-      plan: "Pro Intelligence",
+      name: "Outlr",
+      plan: "Pro",
     },
   ],
   navMain: [
     {
-      title: "Recherche & Découverte",
-      url: "/",
-      icon: <Flame className="size-4" />,
+      title: "Home",
+      icon: <House className="size-4" />,
       isActive: true,
+      url: "/",
+      items: [{ title: "Home", url: "/" }],
+    },
+    {
+      title: "Research Tools",
+      icon: <Telescope className="size-4" />,
+      url: "/radar",
       items: [
-        {
-          title: "Vidéos Atypiques",
-          url: "/",
-          badge: "Radar",
-        },
-        {
-          title: "Viral Niche Finder",
-          url: "/niche-finder",
-          badge: "Outliers",
-        },
-        {
-          title: "Channel Trends (24h)",
-          url: "/channel-trends",
-          badge: "Spike",
-        },
-        {
-          title: "Tendances YouTube",
-          url: "/trending",
-        },
-        {
-          title: "Statistiques Globales",
-          url: "/stats",
-        },
+        { title: "Radar Global", url: "/radar" },
+        { title: "Shorts Channels", url: "/trending" },
+        { title: "Long Form Channels", url: "/radar" },
+        { title: "Saved Channels", url: "/tracking" },
+        { title: "Channel Trends", url: "/channel-trends" },
+        { title: "Monetization Tracker", url: "/sponsors" },
+        { title: "Viral Videos", url: "/niche-finder" },
+        { title: "Find Channel", url: "/dashboard/similar-channels" },
+        { title: "YouTube Scraper", url: "/discovery" },
       ],
     },
     {
-      title: "Intelligence Créateur",
-      url: "/viral-chat",
-      icon: <Sparkles className="size-4" />,
-      items: [
-        {
-          title: "Viral AI Strategist",
-          url: "/viral-chat",
-          badge: "IA",
-        },
-        {
-          title: "Channel Tracking",
-          url: "/tracking",
-        },
-        {
-          title: "Concurrents & Audience",
-          url: "/dashboard/similar-channels",
-        },
-      ],
-    },
-    {
-      title: "Studio & Monétisation",
+      title: "Creation Tools",
+      icon: <Clapperboard className="size-4" />,
       url: "/tubelab",
-      icon: <Zap className="size-4" />,
       items: [
-        {
-          title: "TubeLab Studio",
-          url: "/tubelab",
-        },
-        {
-          title: "Titre & Copywriting",
-          url: "/title-lab",
-        },
-        {
-          title: "Revenus & Sponsos",
-          url: "/sponsors",
-        },
-        {
-          title: "Marques & Sponsors",
-          url: "/leads",
-        },
+        { title: "TubeLab Studio", url: "/tubelab" },
+        { title: "Title Lab", url: "/title-lab" },
+        { title: "Viral AI Strategist", url: "/viral-chat" },
+        { title: "Thumbnail Intelligence", url: "/thumbnail-intelligence" },
+        { title: "Global Stats", url: "/stats" },
       ],
     },
-  ],
-  projects: [
     {
-      name: "Dossier Tech & IA",
-      url: "/tracking",
-      icon: <Folder className="size-4 text-blue-500" />,
+      title: "Market",
+      icon: <Store className="size-4" />,
+      url: "/leads",
+      items: [
+        { title: "Brands & Sponsors", url: "/leads" },
+        { title: "Compare Channels", url: "/compare" },
+      ],
     },
     {
-      name: "Chaînes Faceless / Cashcow",
-      url: "/tracking",
-      icon: <Folder className="size-4 text-purple-500" />,
-    },
-    {
-      name: "Storytelling & Documentaires",
-      url: "/tracking",
-      icon: <Folder className="size-4 text-emerald-500" />,
+      title: "MCP/API",
+      icon: <Terminal className="size-4" />,
+      url: "/settings",
+      badge: "New",
+      items: [{ title: "Settings & API", url: "/settings" }],
     },
   ],
 }
@@ -155,31 +109,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-slate-200/80 bg-white text-slate-800 shadow-xs"
+      className="border-r border-white/10 bg-[#0a0a0a] text-neutral-300"
       {...props}
     >
-      <SidebarHeader className="p-3 border-b border-slate-100 bg-white">
+      <SidebarHeader className="bg-[#0a0a0a] p-3 pb-1">
         <TeamSwitcher teams={data.teams} />
+        <SearchForm />
       </SidebarHeader>
 
-      <SidebarContent className="p-2 space-y-2 bg-white">
+      <SidebarContent className="bg-[#0a0a0a] px-3 py-2">
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
 
-      <SidebarFooter className="p-2 border-t border-slate-100 bg-white space-y-2">
+      <SidebarFooter className="bg-[#0a0a0a] p-3 pt-1">
         <NavUser user={currentUser} />
-        <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="size-2 rounded-full bg-lime-500 animate-pulse" />
-            <span className="text-[11px] font-bold text-slate-600">
-              PostgreSQL Sync
-            </span>
-          </div>
-          <span className="text-[10px] font-black text-slate-900 bg-lime-400 px-2 py-0.5 rounded-md">
-            ACTIF
-          </span>
-        </div>
       </SidebarFooter>
 
       <SidebarRail />

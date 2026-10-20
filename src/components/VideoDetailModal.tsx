@@ -197,7 +197,7 @@ export function VideoDetailModal({ videoId, onClose, onFindSimilar }: VideoDetai
                       className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium text-[11px] transition-colors"
                     >
                       <span>YouTube</span>
-                      <ExternalLink className="w-3 h-3 text-slate-400" />
+                      <ExternalLink className="w-3 h-3 text-slate-500" />
                     </a>
 
                     <button
@@ -205,7 +205,7 @@ export function VideoDetailModal({ videoId, onClose, onFindSimilar }: VideoDetai
                       onClick={() => copyText(data.title)}
                       className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-[11px] transition-colors"
                     >
-                      {copiedTitle ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                      {copiedTitle ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-slate-500" />}
                       <span>Copier titre</span>
                     </button>
                   </div>

@@ -150,7 +150,7 @@ export function AdvancedFiltersModal({
                 <option value={500000}>500K</option>
                 <option value={1000000}>1M</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxViews}
                 onChange={(e) => setDraft({ ...draft, maxViews: parseInt(e.target.value, 10) })}
@@ -181,7 +181,7 @@ export function AdvancedFiltersModal({
               <div className="flex-1 bg-slate-100 border border-slate-200 text-slate-500 text-xs rounded-lg px-2.5 py-1.5 font-medium">
                 Aujourd'hui
               </div>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.period}
                 onChange={(e) => setDraft({ ...draft, period: e.target.value as any })}
@@ -220,7 +220,7 @@ export function AdvancedFiltersModal({
                 <option value={50000}>50K</option>
                 <option value={100000}>100K</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxSubs}
                 onChange={(e) => setDraft({ ...draft, maxSubs: parseInt(e.target.value, 10) })}
@@ -262,7 +262,7 @@ export function AdvancedFiltersModal({
                 <option value={5.0}>5.0x</option>
                 <option value={10.0}>10.0x</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxOutlier}
                 onChange={(e) => setDraft({ ...draft, maxOutlier: parseFloat(e.target.value) })}
@@ -300,7 +300,7 @@ export function AdvancedFiltersModal({
                 <option value={30}>30 min</option>
                 <option value={60}>1h</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxDurationMinutes}
                 onChange={(e) => setDraft({ ...draft, maxDurationMinutes: parseInt(e.target.value, 10) })}
@@ -337,7 +337,7 @@ export function AdvancedFiltersModal({
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxUploadCount}
                 onChange={(e) => setDraft({ ...draft, maxUploadCount: parseInt(e.target.value, 10) })}
@@ -375,7 +375,7 @@ export function AdvancedFiltersModal({
                 <option value={180}>180 jours</option>
                 <option value={365}>1 an</option>
               </select>
-              <span className="text-slate-400 text-xs">-</span>
+              <span className="text-slate-500 text-xs">-</span>
               <select
                 value={draft.maxChannelAgeDays}
                 onChange={(e) => setDraft({ ...draft, maxChannelAgeDays: parseInt(e.target.value, 10) })}

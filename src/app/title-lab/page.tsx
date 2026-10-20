@@ -70,7 +70,7 @@ export default function TitleLabPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -83,27 +83,27 @@ export default function TitleLabPage() {
 
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-7xl mx-auto w-full space-y-6">
           {/* Header Banner */}
-          <div className="bg-gradient-to-b from-[#0f172a] to-[#0b101e] border border-[#1e293b] rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl space-y-3">
+          <div className="bg-gradient-to-b from-[#0f172a] to-[#0b101e] border border-slate-200 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
               <Zap className="w-3.5 h-3.5" />
               <span>Optimisation de Taux de Clic (CTR) & Packaging Psychologique</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Title & Packaging Lab
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">
               Générez des titres calibrés pour maximiser votre CTR (&gt; 10%), identifiez les déclencheurs psychologiques de clic et obtenez des directives visuelles précises pour vos miniatures.
             </p>
 
             {/* Input Form */}
             <form onSubmit={handleGenerate} className="pt-3 space-y-3 max-w-3xl">
-              <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-[#080d1a] border border-[#1e2a44] focus-within:border-blue-500 rounded-xl p-1.5 shadow-xl transition-all">
+              <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white border border-slate-200 focus-within:border-blue-500 rounded-xl p-1.5 shadow-xl transition-all">
                 <input
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="Sujet de votre future vidéo (ex: IA vs Développeurs, Investir en bourse à 20 ans)..."
-                  className="flex-1 bg-transparent text-white text-xs sm:text-sm placeholder-slate-500 focus:outline-none px-3"
+                  className="flex-1 bg-transparent text-slate-900 text-xs sm:text-sm placeholder-slate-400 focus:outline-none px-3"
                   required
                 />
                 <button
@@ -129,7 +129,7 @@ export default function TitleLabPage() {
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                       angle === p.value
                         ? "bg-blue-600 text-white"
-                        : "bg-[#11192e] text-slate-300 hover:text-white border border-[#1b263e]"
+                        : "bg-white text-slate-300 hover:text-white border border-slate-200"
                     }`}
                   >
                     {p.label}
@@ -141,9 +141,9 @@ export default function TitleLabPage() {
 
           {/* Loading */}
           {loading && (
-            <div className="py-20 text-center space-y-3 bg-[#0f172a] border border-[#1e293b] rounded-2xl p-8">
+            <div className="py-20 text-center space-y-3 bg-white border border-slate-200 rounded-2xl p-8">
               <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Analyse des vidéos virales sur YouTube et modélisation des formules de titres à fort CTR...
               </p>
             </div>
@@ -154,12 +154,12 @@ export default function TitleLabPage() {
             <div className="space-y-6">
               {/* Generated Titles Cards */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between text-xs font-bold text-white uppercase tracking-wider">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-900 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <Target className="w-4 h-4 text-emerald-400" />
                     <span>Titres & Formules de Clic Suggérées ({results.generatedTitles?.length})</span>
                   </div>
-                  <span className="text-slate-400 font-normal normal-case text-[11px]">
+                  <span className="text-slate-500 font-normal normal-case text-[11px]">
                     Basé sur les formats de hooks les plus cliqués
                   </span>
                 </div>
@@ -168,7 +168,7 @@ export default function TitleLabPage() {
                   {results.generatedTitles?.map((item: any, idx: number) => (
                     <div
                       key={idx}
-                      className="bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/50 rounded-2xl p-5 shadow-xl transition-all space-y-3 flex flex-col justify-between"
+                      className="bg-white border border-slate-200 hover:border-blue-500/50 rounded-2xl p-5 shadow-xl transition-all space-y-3 flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         {/* Badges Bar */}
@@ -176,14 +176,14 @@ export default function TitleLabPage() {
                           <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
                             Score CTR : {item.score}/100
                           </span>
-                          <span className="text-[10px] font-mono text-slate-400 font-semibold">
+                          <span className="text-[10px] font-mono text-slate-500 font-semibold">
                             {item.ctrBenchmark || "CTR Élevé"}
                           </span>
                         </div>
 
                         {/* Title text */}
                         <div className="flex items-start justify-between gap-2 pt-1">
-                          <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
+                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                             {item.title}
                           </h3>
                           <button
@@ -212,12 +212,12 @@ export default function TitleLabPage() {
                       </div>
 
                       {/* Thumbnail Visual Idea */}
-                      <div className="bg-[#090f1d] p-3 rounded-xl border border-[#162238] space-y-1 text-xs">
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">
+                      <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-1 text-xs">
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase">
                           <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
                           <span>Idée de Miniature Associée :</span>
                         </div>
-                        <p className="text-slate-300 text-[11px] leading-relaxed">
+                        <p className="text-slate-600 text-[11px] leading-relaxed">
                           {item.thumbnailVisualIdea}
                         </p>
                       </div>
@@ -228,13 +228,13 @@ export default function TitleLabPage() {
 
               {/* Real YouTube Viral Benchmarks */}
               {results.realViralBench?.length > 0 && (
-                <div className="bg-[#0e1628] border border-[#1e2a44] rounded-2xl p-5 shadow-xl space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#18233a] pb-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wider">
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xl space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider">
                       <Flame className="w-4 h-4 text-orange-400" />
                       <span>Miniatures & Titres Viraux Réels sur YouTube pour ce sujet</span>
                     </div>
-                    <span className="text-[11px] text-slate-400">Classé par nombre de vues</span>
+                    <span className="text-[11px] text-slate-500">Classé par nombre de vues</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -244,7 +244,7 @@ export default function TitleLabPage() {
                         href={`https://www.youtube.com/watch?v=${v.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex flex-col bg-[#090f1d] border border-[#162238] hover:border-blue-500/50 rounded-xl overflow-hidden transition-all"
+                        className="group flex flex-col bg-white border border-slate-200 hover:border-blue-500/50 rounded-xl overflow-hidden transition-all"
                       >
                         <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
                           <img
@@ -260,7 +260,7 @@ export default function TitleLabPage() {
                         </div>
 
                         <div className="p-2 space-y-1 flex-1 flex flex-col justify-between">
-                          <h4 className="text-[11px] font-semibold text-white line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
+                          <h4 className="text-[11px] font-semibold text-slate-900 line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
                             {v.title}
                           </h4>
                           <span className="text-[10px] text-emerald-400 font-mono font-bold block pt-1">

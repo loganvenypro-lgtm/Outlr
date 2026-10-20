@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { scrapeChannelRss, scrapeInnerTubeSearch } from "@/lib/youtube-scraper";
+import {
+  scrapeChannelRss,
+  scrapeInnerTubeSearch,
+  scrapeRecentViralVideos,
+} from "@/lib/youtube-scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +12,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const channelId = searchParams.get("channelId");
     const query = searchParams.get("q");
+    const mode = searchParams.get("mode");
+    const period = searchParams.get("period") || "7d";
 
     // Mode 1: Real-time RSS Feed Scraper for a Channel
     if (channelId && channelId.trim()) {
@@ -20,7 +26,19 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Mode 2: InnerTube Zero-Quota Free Search
+    // Mode 2: recent viral InnerTube search (this week / month, sorted by views)
+    if (query && query.trim() && (mode === "viral" || mode === "recent")) {
+      const videos = await scrapeRecentViralVideos(query.trim(), { period, maxPages: 2 });
+      return NextResponse.json({
+        type: "recent_viral",
+        query: query.trim(),
+        period,
+        videosCount: videos.length,
+        videos,
+      });
+    }
+
+    // Mode 3: InnerTube Zero-Quota Free Search
     if (query && query.trim()) {
       const results = await scrapeInnerTubeSearch(query.trim());
       return NextResponse.json({

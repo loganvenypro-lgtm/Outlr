@@ -144,7 +144,7 @@ export function RecentVideosList({
 
   if (!videos || videos.length === 0) {
     return (
-      <div className="bg-[#0c1017] border border-[#1c2433] rounded-2xl p-8 text-center text-slate-400">
+      <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-500">
         No videos available for this channel.
       </div>
     );
@@ -215,12 +215,12 @@ export function RecentVideosList({
   });
 
   return (
-    <div className="bg-[#0c1017] border border-[#1c2433] rounded-2xl p-6 shadow-xl space-y-5">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-5">
       {/* Header and Lifetime Status */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#18233a]">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h3 className="font-bold text-white text-base">
+            <h3 className="font-bold text-slate-900 text-base">
               {isAllLoaded ? "Catalogue Vidéos (Archive Complète)" : "Vidéos de la chaîne"}
             </h3>
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20 font-mono">
@@ -234,10 +234,10 @@ export function RecentVideosList({
             )}
           </div>
 
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             {firstUploadDate ? (
               <span>
-                Première vidéo publiée le <strong className="text-slate-200">{formatDate(firstUploadDate)}</strong>.
+                Première vidéo publiée le <strong className="text-slate-700">{formatDate(firstUploadDate)}</strong>.
               </span>
             ) : (
               <span>Consultez l'historique complet, les statistiques et les outliers fiables.</span>
@@ -281,15 +281,15 @@ export function RecentVideosList({
       </div>
 
       {/* Intelligent Medians Dashboard Bar */}
-      <div className="bg-[#070a0f] border border-[#1c2433] rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+      <div className="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2">
           <Sliders className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-          <span className="font-bold text-white uppercase tracking-wider text-[11px]">
+          <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">
             Base de Calcul Outlier :
           </span>
 
           {/* Window Toggle */}
-          <div className="flex items-center bg-[#0c1017] border border-[#1c2433] rounded-lg p-0.5">
+          <div className="flex items-center bg-white border border-slate-200 rounded-lg p-0.5">
             <button
               type="button"
               onClick={() => setMedianWindow("12m")}
@@ -322,9 +322,9 @@ export function RecentVideosList({
 
         {/* Real Medians Comparison Pills */}
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
-          <span className="px-2.5 py-1 rounded-lg bg-[#0e1628] border border-[#1e2a44] text-slate-300">
+          <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600">
             🎯 Médiane Longform ({medianWindow}) :{" "}
-            <strong className="text-white font-mono">
+            <strong className="text-slate-900 font-mono">
               {formatCompactNumber(
                 medianWindow === "12m"
                   ? computedStats.longform12m
@@ -334,7 +334,7 @@ export function RecentVideosList({
               )}
             </strong>
           </span>
-          <span className="px-2.5 py-1 rounded-lg bg-[#0e1628] border border-[#1e2a44] text-slate-300">
+          <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-600">
             📱 Shorts isolés :{" "}
             <strong className="text-amber-400 font-mono">
               {formatCompactNumber(computedStats.shortsLifetime)}
@@ -354,16 +354,16 @@ export function RecentVideosList({
               placeholder="Filtrer par titre..."
               value={filterKeyword}
               onChange={(e) => setFilterKeyword(e.target.value)}
-              className="w-full bg-[#070a0f] border border-[#1c2433] rounded-xl px-3 py-1.5 pl-8 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
           </div>
 
           {/* Format selector (Exclude Shorts) */}
           <select
             value={formatFilter}
             onChange={(e) => setFormatFilter(e.target.value as any)}
-            className="bg-[#070a0f] border border-[#1c2433] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="all">Tous formats ({videos.length})</option>
             <option value="long">Vidéos longues ({computedStats.totalLongform})</option>
@@ -374,7 +374,7 @@ export function RecentVideosList({
           <select
             value={minViewsFilter}
             onChange={(e) => setMinViewsFilter(parseInt(e.target.value, 10))}
-            className="bg-[#070a0f] border border-[#1c2433] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="0">Toutes les vues</option>
             <option value="10000">&gt; 10k vues</option>
@@ -387,7 +387,7 @@ export function RecentVideosList({
 
         {/* Sort Switcher (including 'Oldest / Depuis le début') */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#070a0f] border border-[#1c2433] rounded-xl p-1 text-xs">
+          <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 text-xs">
             <button
               type="button"
               onClick={() => setSortBy("newest")}
@@ -447,7 +447,7 @@ export function RecentVideosList({
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center bg-[#070a0f] border border-[#1c2433] rounded-xl p-1">
+          <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
@@ -517,7 +517,7 @@ export function RecentVideosList({
                       <div
                         key={video.id}
                         onClick={() => setSelectedVideoId(video.id)}
-                        className="group flex flex-col bg-[#070a0f] hover:bg-[#111722] border border-[#1c2433] hover:border-blue-500/50 rounded-xl overflow-hidden transition-all duration-200 shadow-md hover:shadow-blue-900/10 cursor-pointer"
+                        className="group flex flex-col bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-500/50 rounded-xl overflow-hidden transition-all duration-200 shadow-md hover:shadow-blue-900/10 cursor-pointer"
                       >
                         {/* Thumbnail */}
                         <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
@@ -569,41 +569,41 @@ export function RecentVideosList({
                         <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                           <div>
                             <h4 
-                              className="font-bold text-white text-xs sm:text-sm line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors"
+                              className="font-bold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors"
                               title={video.title}
                             >
                               {video.title}
                             </h4>
-                            <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
+                            <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
                               <Calendar className="w-3 h-3 text-slate-500" />
                               <span>{formatDate(video.publishedAt)}</span>
                             </p>
                           </div>
 
                           {/* Metrics */}
-                          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#18233a] text-center text-xs">
-                            <div className="bg-[#0c1017] p-2 rounded-lg border border-[#162133]">
-                              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+                          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200 text-center text-xs">
+                            <div className="bg-white p-2 rounded-lg border border-slate-200">
+                              <div className="flex items-center justify-center gap-1 text-slate-500 mb-0.5">
                                 <Eye className="w-3 h-3 text-blue-400" />
                                 <span className="text-[10px] uppercase">Vues</span>
                               </div>
-                              <span className="font-extrabold text-white font-mono text-xs">
+                              <span className="font-extrabold text-slate-900 font-mono text-xs">
                                 {formatCompactNumber(video.viewCount)}
                               </span>
                             </div>
 
-                            <div className="bg-[#0c1017] p-2 rounded-lg border border-[#162133]">
-                              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+                            <div className="bg-white p-2 rounded-lg border border-slate-200">
+                              <div className="flex items-center justify-center gap-1 text-slate-500 mb-0.5">
                                 <ThumbsUp className="w-3 h-3 text-emerald-400" />
                                 <span className="text-[10px] uppercase">Likes</span>
                               </div>
-                              <span className="font-extrabold text-white font-mono text-xs">
+                              <span className="font-extrabold text-slate-900 font-mono text-xs">
                                 {video.likeCount !== undefined ? formatCompactNumber(video.likeCount) : "N/A"}
                               </span>
                             </div>
 
-                            <div className="bg-[#0c1017] p-2 rounded-lg border border-[#162133]">
-                              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+                            <div className="bg-white p-2 rounded-lg border border-slate-200">
+                              <div className="flex items-center justify-center gap-1 text-slate-500 mb-0.5">
                                 <MessageSquare className="w-3 h-3 text-purple-400" />
                                 <span className="text-[10px] uppercase">Engag.</span>
                               </div>
@@ -625,9 +625,9 @@ export function RecentVideosList({
         /* VIRTUALIZED TABLE MODE */
         <div
           ref={tableParentRef}
-          className="max-h-[820px] overflow-y-auto border border-[#1c2433] rounded-xl scrollbar-thin scrollbar-thumb-slate-800"
+          className="max-h-[820px] overflow-y-auto border border-slate-200 rounded-xl scrollbar-thin scrollbar-thumb-slate-800"
         >
-          <div className="sticky top-0 z-10 bg-[#070a0f] text-slate-400 uppercase font-semibold text-[10px] border-b border-[#1c2433] grid grid-cols-12 py-3 px-4">
+          <div className="sticky top-0 z-10 bg-white text-slate-500 uppercase font-semibold text-[10px] border-b border-slate-200 grid grid-cols-12 py-3 px-4">
             <div className="col-span-5">Vidéo</div>
             <div className="col-span-2 text-center">Date</div>
             <div className="col-span-1 text-center">Durée</div>
@@ -660,7 +660,7 @@ export function RecentVideosList({
                     width: "100%",
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
-                  className="grid grid-cols-12 py-3 px-4 items-center hover:bg-[#111722] transition-colors cursor-pointer border-b border-[#18233a] text-xs"
+                  className="grid grid-cols-12 py-3 px-4 items-center hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-200 text-xs"
                 >
                   <div className="col-span-5 flex items-center gap-3 min-w-0 pr-2">
                     <img
@@ -669,7 +669,7 @@ export function RecentVideosList({
                       className="w-16 aspect-video object-cover rounded-md border border-slate-800 shrink-0"
                     />
                     <div className="min-w-0">
-                      <p className="font-semibold text-white truncate max-w-xs sm:max-w-md">
+                      <p className="font-semibold text-slate-900 truncate max-w-xs sm:max-w-md">
                         {video.title}
                       </p>
                       {isFirstEver && (
@@ -680,15 +680,15 @@ export function RecentVideosList({
                     </div>
                   </div>
 
-                  <div className="col-span-2 text-center text-slate-400 whitespace-nowrap text-xs">
+                  <div className="col-span-2 text-center text-slate-500 whitespace-nowrap text-xs">
                     {formatDate(video.publishedAt)}
                   </div>
 
-                  <div className="col-span-1 text-center font-mono text-slate-400 text-xs">
+                  <div className="col-span-1 text-center font-mono text-slate-500 text-xs">
                     {video.durationFormatted || "--:--"}
                   </div>
 
-                  <div className="col-span-1 text-right font-extrabold text-white font-mono text-xs">
+                  <div className="col-span-1 text-right font-extrabold text-slate-900 font-mono text-xs">
                     {formatCompactNumber(video.viewCount)}
                   </div>
 
@@ -702,7 +702,7 @@ export function RecentVideosList({
                     )}
                   </div>
 
-                  <div className="col-span-1 text-right font-mono text-slate-300 text-xs">
+                  <div className="col-span-1 text-right font-mono text-slate-600 text-xs">
                     {video.likeCount ? formatCompactNumber(video.likeCount) : "N/A"}
                   </div>
 
@@ -711,7 +711,7 @@ export function RecentVideosList({
                       href={`https://www.youtube.com/watch?v=${video.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-[#111722] hover:bg-[#182130] text-slate-300 hover:text-white inline-flex items-center justify-center border border-[#1e2738]"
+                      className="p-1.5 rounded-lg bg-[#111722] hover:bg-slate-50 text-slate-600 hover:text-slate-900 inline-flex items-center justify-center border border-slate-200"
                       title="Ouvrir sur YouTube"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />

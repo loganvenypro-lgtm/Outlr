@@ -139,7 +139,7 @@ export default function StatsPage() {
                 <div className="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
                   <BarChart3 className="w-5 h-5" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                   Pipeline & Statistiques Globales
                 </h1>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
@@ -147,7 +147,7 @@ export default function StatsPage() {
                   Worker Actif
                 </span>
               </div>
-              <p className="text-slate-400 text-xs md:text-sm max-w-2xl">
+              <p className="text-slate-500 text-xs md:text-sm max-w-2xl">
                 Suivi complet en direct de toutes les vidéos récupérées depuis le début, des chaînes scannées,
                 des pépites qualifiées et des alertes envoyées.
               </p>
@@ -159,7 +159,7 @@ export default function StatsPage() {
                 type="button"
                 onClick={fetchStats}
                 disabled={refreshing}
-                className="px-3.5 py-2 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 text-xs font-semibold flex items-center gap-2 transition-all disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 text-xs font-semibold flex items-center gap-2 transition-all disabled:opacity-50"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-purple-400" : ""}`} />
                 <span>Actualiser</span>
@@ -177,7 +177,7 @@ export default function StatsPage() {
 
               <Link
                 href="/niche-finder"
-                className="px-4 py-2 rounded-xl bg-[#141d2b] hover:bg-[#1b273b] border border-[#233148] text-white text-xs font-bold flex items-center gap-1.5 transition-all"
+                className="px-4 py-2 rounded-xl bg-[#141d2b] hover:bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold flex items-center gap-1.5 transition-all"
               >
                 <Flame className="w-3.5 h-3.5 text-rose-400" />
                 <span>Voir les Outliers</span>
@@ -196,16 +196,16 @@ export default function StatsPage() {
           {/* SECTION 1: 6 Grandes Cards KPI Principales */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {/* Card 1: Vidéos Récupérées depuis le Début */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0e1626] to-[#0a0f1a] border border-[#1b2942] p-5 shadow-xl group hover:border-blue-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0e1626] to-[#0a0f1a] border border-slate-200 p-5 shadow-xl group hover:border-blue-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400">
                     Vidéos Récupérées depuis le Début
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : (data?.kpis.totalScrapedVideosRaw || 0).toLocaleString()}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
                     <span className="text-blue-300 font-bold">
                       {loading ? "..." : (data?.kpis.totalUniqueVideos || 0).toLocaleString()}
                     </span>
@@ -216,7 +216,7 @@ export default function StatsPage() {
                   <Video className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#162238] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   100% Zero-Quota YouTube
@@ -226,16 +226,16 @@ export default function StatsPage() {
             </div>
 
             {/* Card 2: Pépites Virales Qualifiées */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a111e] to-[#0d0912] border border-[#3b1f3d] p-5 shadow-xl group hover:border-rose-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a111e] to-[#0d0912] border border-slate-200 p-5 shadow-xl group hover:border-rose-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-rose-400">
                     Pépites Virales Qualifiées
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : (data?.kpis.totalQualifiedOutliers || 0).toLocaleString()}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
                     <span className="text-rose-300 font-bold">Score Composite ≥ 35</span>
                     <span>• Multiplier ≥ 2.5x</span>
                   </div>
@@ -244,23 +244,23 @@ export default function StatsPage() {
                   <Flame className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#29172b] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="text-rose-300 font-medium">Filtres 1of10 / Algrow</span>
-                <span className="text-slate-300 font-bold">Radar Outliers</span>
+                <span className="text-slate-600 font-bold">Radar Outliers</span>
               </div>
             </div>
 
             {/* Card 3: Audience Globale Cumulée */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a16] to-[#080f0d] border border-[#1d3d30] p-5 shadow-xl group hover:border-emerald-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1a16] to-[#080f0d] border border-slate-200 p-5 shadow-xl group hover:border-emerald-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
                     Audience Totale Cumulée
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : data?.kpis.totalCumulativeViewsFormatted || "0"}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 font-medium">
                     {loading
                       ? "..."
                       : `${((data?.kpis.totalCumulativeViews || 0) / 1_000_000_000).toFixed(2)} Milliards de vues générées`}
@@ -270,23 +270,23 @@ export default function StatsPage() {
                   <TrendingUp className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#172e24] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="text-emerald-300 font-medium">Volume de signal vidéo</span>
-                <span className="text-slate-300 font-bold">Trafic Réel</span>
+                <span className="text-slate-600 font-bold">Trafic Réel</span>
               </div>
             </div>
 
             {/* Card 4: Chaînes YouTube Surveillées */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#181126] to-[#0e0917] border border-[#2f1d47] p-5 shadow-xl group hover:border-purple-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#181126] to-[#0e0917] border border-slate-200 p-5 shadow-xl group hover:border-purple-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-purple-400">
                     Chaînes YouTube Surveillées
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : (data?.kpis.totalUniqueChannels || 0).toLocaleString()}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 font-medium">
                     Vivier 1k - 300k subs • Rotation continue
                   </div>
                 </div>
@@ -294,23 +294,23 @@ export default function StatsPage() {
                   <Users className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#241738] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span>{data?.kpis.trackedChannelsCount || 0} chaînes prioritaires</span>
                 <span className="text-purple-300 font-bold">Auto-Rotation</span>
               </div>
             </div>
 
             {/* Card 5: Alertes Discord Délivrées */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#131126] to-[#0a0914] border border-[#281f4a] p-5 shadow-xl group hover:border-violet-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#131126] to-[#0a0914] border border-slate-200 p-5 shadow-xl group hover:border-violet-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400">
                     Alertes Discord Délivrées
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : data?.kpis.discordNotificationsSent || 0}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 font-medium">
                     1 message synthétique par cycle • 0 doublon
                   </div>
                 </div>
@@ -318,23 +318,23 @@ export default function StatsPage() {
                   <Bell className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#20183b] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="text-violet-300 font-medium">Anti-Spam & Multi-Tiers</span>
-                <span className="text-slate-300 font-bold">Webhook Connecté</span>
+                <span className="text-slate-600 font-bold">Webhook Connecté</span>
               </div>
             </div>
 
             {/* Card 6: Profils & Intelligence Extraits */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1c170d] to-[#0f0c07] border border-[#3d3017] p-5 shadow-xl group hover:border-amber-500/40 transition-all">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1c170d] to-[#0f0c07] border border-slate-200 p-5 shadow-xl group hover:border-amber-500/40 transition-all">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
                     Intelligence & Thumbnails DB
                   </span>
-                  <div className="mt-2 text-3xl md:text-4xl font-black text-white font-mono tracking-tight">
+                  <div className="mt-2 text-3xl md:text-4xl font-black text-slate-900 font-mono tracking-tight">
                     {loading ? "..." : "4,908"}
                   </div>
-                  <div className="text-xs text-slate-400 mt-1 font-medium">
+                  <div className="text-xs text-slate-500 mt-1 font-medium">
                     Thumbnails, tests A/B & profils sponsors
                   </div>
                 </div>
@@ -342,22 +342,22 @@ export default function StatsPage() {
                   <Sparkles className="w-5 h-5" />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#292010] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="text-amber-300 font-medium">Historique Wayback & CDNs</span>
-                <span className="text-slate-300 font-bold">Deep Index</span>
+                <span className="text-slate-600 font-bold">Deep Index</span>
               </div>
             </div>
           </div>
 
           {/* SECTION 2: Formats Vidéos (Shorts vs Longform) */}
-          <div className="p-6 rounded-2xl bg-[#0c1017] border border-[#182130] space-y-4 shadow-xl">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Layers className="w-4 h-4 text-purple-400" />
                   <span>Répartition des Formats Vidéo Détectés</span>
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Séparation stricte pour la médiane (Shorts comparés avec Shorts, Longform avec Longform).
                 </p>
               </div>
@@ -388,22 +388,22 @@ export default function StatsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
-              <div className="p-3.5 rounded-xl bg-[#070a0f] border border-[#161f2c] space-y-1">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1">
                 <div className="font-bold text-blue-300 flex items-center justify-between">
                   <span>⏱️ Vidéos Longues (Longform)</span>
                   <span className="font-mono">{data?.kpis.longformCount?.toLocaleString() || 2954} vidéos</span>
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   Filtre de qualification : Min 35 000 vues • Durée moyenne 12:40 • Analyse d'engagement approfondie.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#070a0f] border border-[#161f2c] space-y-1">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1">
                 <div className="font-bold text-amber-300 flex items-center justify-between">
                   <span>⚡ YouTube Shorts</span>
                   <span className="font-mono">{data?.kpis.shortsCount?.toLocaleString() || 1062} vidéos</span>
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   Filtre de qualification : Min 20 000 vues • Durée &le; 60s • Détection de vélocité ultra-rapide.
                 </p>
               </div>
@@ -413,13 +413,13 @@ export default function StatsPage() {
           {/* SECTION 3: Distribution par Niches & Patterns de Titres */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Niches Scannées */}
-            <div className="p-6 rounded-2xl bg-[#0c1017] border border-[#182130] space-y-4 shadow-xl">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                   <Filter className="w-4 h-4 text-purple-400" />
                   <span>Top Niches Scannées & Analysées</span>
                 </h3>
-                <span className="text-[11px] text-slate-400 font-mono">Volumes</span>
+                <span className="text-[11px] text-slate-500 font-mono">Volumes</span>
               </div>
 
               <div className="space-y-2.5">
@@ -430,7 +430,7 @@ export default function StatsPage() {
                     return (
                       <div key={niche.name} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-slate-300 capitalize">
+                          <span className="font-semibold text-slate-600 capitalize">
                             #{idx + 1} {niche.name}
                           </span>
                           <span className="font-mono text-purple-400 font-bold">
@@ -453,13 +453,13 @@ export default function StatsPage() {
             </div>
 
             {/* Top Patterns de Titres Viraux */}
-            <div className="p-6 rounded-2xl bg-[#0c1017] border border-[#182130] space-y-4 shadow-xl">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-rose-400" />
                   <span>Structures de Titres les Plus Virales</span>
                 </h3>
-                <span className="text-[11px] text-slate-400 font-mono">Fréquence</span>
+                <span className="text-[11px] text-slate-500 font-mono">Fréquence</span>
               </div>
 
               <div className="space-y-2.5">
@@ -470,7 +470,7 @@ export default function StatsPage() {
                     return (
                       <div key={pat.name} className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-slate-300 truncate max-w-[280px]">
+                          <span className="font-semibold text-slate-600 truncate max-w-[280px]">
                             {pat.name}
                           </span>
                           <span className="font-mono text-rose-400 font-bold">
@@ -494,14 +494,14 @@ export default function StatsPage() {
           </div>
 
           {/* SECTION 4: Hall of Fame — Meilleurs Outliers Historiques */}
-          <div className="p-6 rounded-2xl bg-[#0c1017] border border-[#182130] space-y-5 shadow-xl">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Flame className="w-4 h-4 text-rose-500" />
                   <span>Hall of Fame — Plus Gros Multiplicateurs Détectés</span>
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Les vidéos ayant le plus surperformé l'audience et la médiane de leur créateur.
                 </p>
               </div>
@@ -519,7 +519,7 @@ export default function StatsPage() {
                 data.topAllTimeOutliers.map((vid) => (
                   <div
                     key={vid.id}
-                    className="bg-[#070a0f] border border-[#161f2c] hover:border-[#2b3850] rounded-xl overflow-hidden flex flex-col justify-between transition-all group"
+                    className="bg-white border border-slate-200 hover:border-slate-200 rounded-xl overflow-hidden flex flex-col justify-between transition-all group"
                   >
                     {/* Thumbnail & Outlier badge */}
                     <div className="relative aspect-video w-full bg-slate-950 overflow-hidden">
@@ -548,20 +548,20 @@ export default function StatsPage() {
                     <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
                       <div className="space-y-1">
                         <h4
-                          className="font-bold text-white text-xs line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors"
+                          className="font-bold text-slate-900 text-xs line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors"
                           title={vid.title}
                         >
                           {vid.title}
                         </h4>
-                        <div className="text-[11px] text-slate-400 flex items-center justify-between">
-                          <span className="truncate max-w-[120px] font-semibold text-slate-300">
+                        <div className="text-[11px] text-slate-500 flex items-center justify-between">
+                          <span className="truncate max-w-[120px] font-semibold text-slate-600">
                             {vid.channelTitle}
                           </span>
-                          <span className="font-mono text-slate-400">{vid.subsFormatted} subs</span>
+                          <span className="font-mono text-slate-500">{vid.subsFormatted} subs</span>
                         </div>
                       </div>
 
-                      <div className="pt-2 border-t border-[#121926] flex items-center justify-between text-[11px]">
+                      <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px]">
                         <span className="text-emerald-400 font-mono font-bold">
                           {vid.viewsFormatted} vues
                         </span>
@@ -587,25 +587,25 @@ export default function StatsPage() {
           </div>
 
           {/* SECTION 5: Journal Récent des Alertes Discord */}
-          <div className="p-6 rounded-2xl bg-[#0c1017] border border-[#182130] space-y-4 shadow-xl">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <Bell className="w-4 h-4 text-violet-400" />
                 <span>Journal Récent des Notifications Discord Anti-Doublon</span>
               </h3>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 font-mono">
                 {data?.kpis.discordNotificationsSent || 0} enregistrements
               </span>
             </div>
 
-            <div className="divide-y divide-[#141d2a] overflow-hidden rounded-xl border border-[#182130] bg-[#070a0f]">
+            <div className="divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
               {data?.recentDiscordNotifications && data.recentDiscordNotifications.length > 0 ? (
                 data.recentDiscordNotifications.map((log) => {
                   const sentDate = new Date(log.sentAt).toLocaleString("fr-FR");
                   return (
                     <div
                       key={log.id}
-                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs hover:bg-[#0c1017] transition-colors"
+                      className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <span
@@ -629,15 +629,15 @@ export default function StatsPage() {
                           <span>{log.videoId}</span>
                           <ExternalLink className="w-3 h-3" />
                         </a>
-                        <span className="text-slate-400 font-medium">
+                        <span className="text-slate-500 font-medium">
                           Multiplicateur :{" "}
-                          <strong className="text-white">
+                          <strong className="text-slate-900">
                             {log.multiplierAtNotification?.toFixed(1) || 3}x
                           </strong>
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-slate-400">
+                      <div className="flex items-center gap-3 text-slate-500">
                         <span className="font-mono">
                           {log.viewsAtNotification?.toLocaleString("fr-FR") || "N/A"} vues
                         </span>

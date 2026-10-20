@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
 import { upsertUnifiedChannel, upsertUnifiedVideo, QuotaManager } from "./intelligenceDb";
+import type { InnerTubeSearchFilters, InnerTubeUploadDate } from "./youtube-scraper";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 
@@ -129,82 +130,92 @@ export function getJobResults(jobId: string): DiscoveredVideoRecord[] {
   return cache[jobId] || [];
 }
 
+async function mapLimit<T, R>(items: T[], limit: number, mapper: (item: T, index: number) => Promise<R>): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(Math.max(limit, 1), items.length) }, async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await mapper(items[index], index);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
 /**
- * Resilient live discovery: Fetches authentic YouTube video IDs directly for any query,
- * supporting sp search filter flags (e.g. upload date, view count sort) and continuation tokens.
- * Completely immune to search.list 429 quota exhaustion.
+ * Live discovery of YouTube video IDs via InnerTube (no search.list quota).
+ * HTML scraping is a last-resort fallback only when InnerTube returns almost nothing,
+ * to avoid doubling request volume and tripping bot rate limits.
  */
 export async function scrapeRealYouTubeVideoIds(
-  query: string, 
-  maxResults = 45,
-  spFilter?: string
+  query: string,
+  maxResults = 40,
+  spFilter?: string | InnerTubeSearchFilters
 ): Promise<string[]> {
   const ids = new Set<string>();
+  const innerTubePages = maxResults <= 24 ? 1 : 2;
 
-  // 1. High-speed, zero-quota InnerTube endpoint
   try {
-    const { scrapeInnerTubeSearch } = await import("./youtube-scraper");
-    const innerTubeRes = await scrapeInnerTubeSearch(query);
-    for (const v of innerTubeRes.videos) {
+    const { scrapeInnerTubeSearchPaginated, decodeLegacySpFilter } = await import("./youtube-scraper");
+    const isFilters = spFilter && typeof spFilter === "object";
+    const innerTubeVideos = await scrapeInnerTubeSearchPaginated(
+      query,
+      innerTubePages,
+      isFilters ? undefined : decodeLegacySpFilter(spFilter),
+      isFilters ? spFilter : undefined
+    );
+    for (const v of innerTubeVideos) {
       if (v.id) ids.add(v.id);
     }
-    // If InnerTube yielded sufficient results or any results, return early to avoid slow HTML timeouts
-    if (ids.size >= Math.min(maxResults, 20)) {
-      return Array.from(ids).slice(0, maxResults);
-    }
-  } catch (e) {
-    // Proceed to fast HTML fallback
+  } catch {
+    // HTML fallback below
   }
 
-  // 2. Resilient fallback with HTML search (tight 2s timeout)
+  if (ids.size >= 8) {
+    return Array.from(ids).slice(0, maxResults);
+  }
+
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    let url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}`;
-    if (spFilter) {
-      url += `&sp=${encodeURIComponent(spFilter)}`;
-    }
-
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}&sp=EgIQAQ%3D%3D`;
     const res = await fetch(url, {
       signal: controller.signal,
+      cache: "no-store",
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9,fr;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8",
+        Referer: "https://www.youtube.com/",
       },
     });
     clearTimeout(timeoutId);
+    if (!res.ok) return Array.from(ids).slice(0, maxResults);
 
     const html = await res.text();
-
-    // Parse JSON ytInitialData payload if available
-    const match = html.match(/var ytInitialData = ({[\s\S]*?});<\/script>/) || html.match(/ytInitialData\s*=\s*({[\s\S]+?});/);
+    const match =
+      html.match(/var ytInitialData = ({[\s\S]*?});<\/script>/) ||
+      html.match(/ytInitialData\s*=\s*({[\s\S]+?});/);
     if (match) {
       try {
         const data = JSON.parse(match[1]);
-        const contents = data.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
+        const contents =
+          data.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents || [];
         for (const c of contents) {
           const itemSection = c.itemSectionRenderer?.contents || [];
           for (const item of itemSection) {
-            if (item.videoRenderer?.videoId) {
-              ids.add(item.videoRenderer.videoId);
-            }
+            const vid = item.videoRenderer?.videoId || item.lockupViewModel?.contentId;
+            if (vid) ids.add(vid);
           }
         }
       } catch {}
     }
-
-    // Fallback regex on HTML tokens
-    const watchMatches = html.matchAll(/\/watch\?v=([a-zA-Z0-9_-]{11})/g);
-    for (const m of watchMatches) {
-      if (m[1]) ids.add(m[1]);
-      if (ids.size >= maxResults) break;
-    }
-
-    return Array.from(ids).slice(0, maxResults);
   } catch {
-    return Array.from(ids);
+    // Non-blocking
   }
+
+  return Array.from(ids).slice(0, maxResults);
 }
 
 /**
@@ -231,7 +242,7 @@ export function tokenizeQuery(query: string): string[] {
  * 2. Multi-query Expansion Engine
  * Generates semantic variants, subtopics, long-tail phrases, and niche extensions
  */
-export function expandSearchQueries(baseQuery: string, maxVariants = 8): string[] {
+export function expandSearchQueries(baseQuery: string, maxVariants = 12): string[] {
   const q = baseQuery.trim();
   const tokens = tokenizeQuery(q);
   const variants = new Set<string>();
@@ -251,6 +262,9 @@ export function expandSearchQueries(baseQuery: string, maxVariants = 8): string[
     "experiments",
     "evolution",
     "tutorial",
+    "video essay",
+    "breakdown",
+    "analysis",
   ];
 
   // 3. Domain-specific angle generators
@@ -296,17 +310,46 @@ export function expandSearchQueries(baseQuery: string, maxVariants = 8): string[
     variants.add(`${q} portfolio strategy`);
     variants.add(`how I made money with ${q}`);
     variants.add(`${q} breakdown`);
+  } else if (lowerQ.includes("documentary") || lowerQ.includes("video essay") || lowerQ.includes("essay")) {
+    // Documentary / video essay specific expansions
+    variants.add(`best ${q}`);
+    variants.add(`${q} 2026`);
+    variants.add(`${q} analysis`);
+    variants.add(`long form ${q}`);
+    variants.add(`${q} full`);
+    variants.add(`${q} breakdown`);
+    // Also try the core subject without "documentary" or "video essay"
+    const coreSubject = q.replace(/\b(documentary|video essay|essay|youtube)\b/gi, "").trim();
+    if (coreSubject.length >= 3 && coreSubject.toLowerCase() !== q.toLowerCase()) {
+      variants.add(`${coreSubject} documentary`);
+      variants.add(`${coreSubject} explained`);
+      variants.add(`${coreSubject} deep dive`);
+    }
+  } else if (lowerQ.includes("dropshipping") || lowerQ.includes("ecommerce") || lowerQ.includes("shopify")) {
+    variants.add(`${q} for beginners`);
+    variants.add(`${q} in 2026`);
+    variants.add(`i tried ${q}`);
+    variants.add(`${q} from scratch`);
+    variants.add(`${q} course`);
+    variants.add(`${q} results`);
   } else {
     // General high-yield suffixes preserving query subject integrity
     variants.add(`${q} explained`);
     variants.add(`${q} documentary`);
     variants.add(`${q} deep dive`);
     variants.add(`${q} case study`);
+    variants.add(`${q} breakdown`);
+    variants.add(`best ${q} 2026`);
   }
 
   // 4. Word-reordered variant
   if (tokens.length >= 2) {
     variants.add([...tokens].reverse().join(" "));
+  }
+
+  // 5. Quoted exact-match variant for better precision
+  if (tokens.length >= 2 && !q.startsWith('"')) {
+    variants.add(`"${q}"`);
   }
 
   return Array.from(variants).slice(0, maxVariants);
@@ -363,24 +406,24 @@ export async function runDeepDiscoveryPipeline(
 
   // Determine target video count and API call budgets
   let targetCount = 300;
-  let maxQueries = 5;
+  let maxQueries = 6;
   let maxPagesPerQuery = 3;
 
   if (depth === "quick") {
-    targetCount = 100;
-    maxQueries = 3;
+    targetCount = 200;
+    maxQueries = 5;
     maxPagesPerQuery = 2;
   } else if (depth === "deep") {
-    targetCount = 300;
-    maxQueries = 5;
+    targetCount = 400;
+    maxQueries = 7;
     maxPagesPerQuery = 3;
   } else if (depth === "extended") {
-    targetCount = 500;
-    maxQueries = 7;
+    targetCount = 600;
+    maxQueries = 9;
     maxPagesPerQuery = 4;
   } else if (depth === "max") {
-    targetCount = 800;
-    maxQueries = 10;
+    targetCount = 1000;
+    maxQueries = 12;
     maxPagesPerQuery = 5;
   }
 
@@ -430,44 +473,80 @@ export async function runDeepDiscoveryPipeline(
   // Raw Discovery Map: VideoId -> initial snippet & foundViaQuery
   const rawVideoMap = new Map<string, { id: string; snippet: any; foundVia: string }>();
 
-  // 3. Fast Parallel Multi-Angle Discovery Engine
-  // We execute concurrent high-speed discovery on:
-  // (A) The primary query (standard relevance)
-  // (B) The primary query sorted by upload date (recent breakout videos: sp=CAI%253D)
-  // (C) The primary query sorted by view count (high volume evergreen hits: sp=CAM%253D)
-  // (D) Top expanded semantic angle variants
-  job.message = `Exploration instantanée des vidéos récentes et des breakouts pour "${query}"...`;
+  // 3. Polite multi-angle discovery: recent + high-velocity first, limited concurrency.
+  job.message = `Recherche des vidéos récentes les plus virales pour "${query}"...`;
   saveJobProgress(job);
 
-  // Adapt discovery promises based on chosen depth:
-  // For quick: 2 high-yield angles (Primary query + Recent breakout CAI%253D) -> completed in ~4-6 seconds
-  // For deep: 4 angles (Primary query + Recent breakout + Top views + 1 semantic angle) -> completed in ~8-12 seconds
-  // For extended/max: full multi-angle discovery
-  const maxSemanticAngles = depth === "quick" ? 0 : depth === "deep" ? 1 : depth === "extended" ? 2 : 4;
-  const semanticVariants = expandedQueries.filter((q) => q.toLowerCase() !== query.toLowerCase()).slice(0, maxSemanticAngles);
+  const maxSemanticAngles = depth === "quick" ? 1 : depth === "deep" ? 2 : 3;
+  const semanticVariants = expandedQueries
+    .filter((q) => q.toLowerCase() !== query.toLowerCase())
+    .slice(0, maxSemanticAngles);
 
-  const discoveryPromises = [
-    // 1. Standard search for main query
-    scrapeRealYouTubeVideoIds(query, depth === "quick" ? 40 : 50).then((scrapedIds) => ({ qVariant: query, scrapedIds })),
-    // 2. Fresh uploads filter on main query (YouTube upload date sp parameter)
-    scrapeRealYouTubeVideoIds(query, depth === "quick" ? 30 : 40, "CAI%253D").then((scrapedIds) => ({ qVariant: `${query} (Dernières sorties)`, scrapedIds })),
+  const queryTokens = query.trim().split(/\s+/);
+  const subQueryFragments: string[] = [];
+  if (queryTokens.length >= 3) {
+    subQueryFragments.push(queryTokens.slice(1).join(" "));
+    subQueryFragments.push(queryTokens.slice(0, -1).join(" "));
+  }
+  const existingLower = new Set([query.toLowerCase(), ...semanticVariants.map((s) => s.toLowerCase())]);
+  const uniqueFragments = subQueryFragments
+    .filter((f) => f.length >= 5 && !existingLower.has(f.toLowerCase()))
+    .slice(0, depth === "quick" ? 1 : 2);
+
+  const perQueryLimit = depth === "quick" ? 32 : 40;
+  const durationFilter: InnerTubeSearchFilters["duration"] =
+    options.duration === "long" ? "long" : options.duration === "short" ? "short" : undefined;
+
+  const periodToUploadDate = (period?: string): InnerTubeUploadDate => {
+    if (period === "24h" || period === "today") return "today";
+    if (period === "7d") return "week";
+    if (period === "30d" || period === "21d") return "month";
+    if (period === "90d" || period === "1y") return "year";
+    return "week";
+  };
+
+  const primaryUpload = periodToUploadDate(options.period);
+  const secondaryUpload: InnerTubeUploadDate =
+    primaryUpload === "today" ? "hour" : primaryUpload === "week" ? "month" : primaryUpload === "month" ? "week" : "month";
+
+  type DiscoveryAngle = { label: string; q: string; filters?: InnerTubeSearchFilters };
+  const discoveryAngles: DiscoveryAngle[] = [
+    {
+      label: `${query} (Viral récent)`,
+      q: query,
+      filters: { sort: "view_count", uploadDate: primaryUpload, duration: durationFilter },
+    },
+    {
+      label: `${query} (Dernières sorties)`,
+      q: query,
+      filters: { sort: "upload_date", uploadDate: primaryUpload, duration: durationFilter },
+    },
+    {
+      label: `${query} (Viral ${secondaryUpload})`,
+      q: query,
+      filters: { sort: "view_count", uploadDate: secondaryUpload, duration: durationFilter },
+    },
   ];
 
-  if (depth !== "quick") {
-    // 3. High view count breakout filter
-    discoveryPromises.push(
-      scrapeRealYouTubeVideoIds(query, 40, "CAM%253D").then((scrapedIds) => ({ qVariant: `${query} (Top Vues)`, scrapedIds }))
-    );
-  }
-
-  // 4. Semantic niche angles
   for (const qVariant of semanticVariants) {
-    discoveryPromises.push(
-      scrapeRealYouTubeVideoIds(qVariant, 30).then((scrapedIds) => ({ qVariant, scrapedIds }))
-    );
+    discoveryAngles.push({
+      label: qVariant,
+      q: qVariant,
+      filters: { sort: "view_count", uploadDate: primaryUpload, duration: durationFilter },
+    });
+  }
+  for (const fragment of uniqueFragments) {
+    discoveryAngles.push({
+      label: `Fragment: ${fragment}`,
+      q: fragment,
+      filters: { sort: "view_count", uploadDate: primaryUpload, duration: durationFilter },
+    });
   }
 
-  const discoveredBatches = await Promise.all(discoveryPromises);
+  const discoveredBatches = await mapLimit(discoveryAngles, 2, async (angle) => {
+    const scrapedIds = await scrapeRealYouTubeVideoIds(angle.q, perQueryLimit, angle.filters);
+    return { qVariant: angle.label, scrapedIds };
+  });
 
   for (const { qVariant, scrapedIds } of discoveredBatches) {
     for (const vid of scrapedIds) {
@@ -482,7 +561,7 @@ export async function runDeepDiscoveryPipeline(
     }
   }
 
-  job.queriesExecutedCount = discoveryPromises.length;
+  job.queriesExecutedCount = discoveryAngles.length;
   job.uniqueVideosCount = rawVideoMap.size;
   saveJobProgress(job);
 
@@ -718,13 +797,26 @@ export async function runDeepDiscoveryPipeline(
     // Non-blocking
   }
 
-  // 7. Sort by Relevance & Outlier blended score
-  finalRecords.sort((a, b) => {
-    // Top priority to high relevance and high outlier ratio
-    const scoreA = a.relevanceScore * 0.6 + Math.min(a.outlierMultiplier * 10, 100) * 0.4;
-    const scoreB = b.relevanceScore * 0.6 + Math.min(b.outlierMultiplier * 10, 100) * 0.4;
-    return scoreB - scoreA;
-  });
+  // 7. Rank recent high-velocity videos first (views/day + recency + outlier)
+  const recencyWeight = (days: number) => {
+    if (days <= 1) return 1.9;
+    if (days <= 3) return 1.6;
+    if (days <= 7) return 1.35;
+    if (days <= 30) return 1.12;
+    return 0.85;
+  };
+  const blendedScore = (r: DiscoveredVideoRecord) => {
+    const pub = r.publishedAt ? new Date(r.publishedAt).getTime() : now.getTime();
+    const days = Math.max((now.getTime() - pub) / (1000 * 60 * 60 * 24), 0.4);
+    const vpdScore = Math.min((r.viewsPerDay || 0) / 8000, 100);
+    const outlierScore = Math.min(r.outlierMultiplier * 8, 100);
+    const viralScore = Math.min((r.viralRatio || 0) * 12, 100);
+    return (
+      (r.relevanceScore * 0.28 + vpdScore * 0.32 + outlierScore * 0.2 + viralScore * 0.2) *
+      recencyWeight(days)
+    );
+  };
+  finalRecords.sort((a, b) => blendedScore(b) - blendedScore(a));
 
   // 8. Aggregates
   const totalViewsSum = finalRecords.reduce((acc, r) => acc + r.viewCount, 0);

@@ -122,7 +122,7 @@ export default function BrandDetailPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -138,29 +138,29 @@ export default function BrandDetailPage() {
           <button
             type="button"
             onClick={() => router.push("/discovery")}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#11192e] hover:bg-[#192543] border border-[#1e2b47] text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Retour à Sponsor Discovery</span>
           </button>
 
           {loading && (
-            <div className="py-20 text-center text-slate-400 text-xs">
+            <div className="py-20 text-center text-slate-500 text-xs">
               Chargement des collaborations et de la fiche marque...
             </div>
           )}
 
           {error && !loading && (
-            <div className="bg-[#0e1628] border border-rose-900/50 rounded-2xl p-8 text-center space-y-3">
-              <h3 className="text-base font-bold text-white">Marque introuvable</h3>
-              <p className="text-xs text-slate-400">{error}</p>
+            <div className="bg-white border border-rose-900/50 rounded-2xl p-8 text-center space-y-3">
+              <h3 className="text-base font-bold text-slate-900">Marque introuvable</h3>
+              <p className="text-xs text-slate-500">{error}</p>
             </div>
           )}
 
           {!loading && !error && brandData && (
             <div className="space-y-6">
               {/* Brand Header */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl relative overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-xl">
@@ -168,7 +168,7 @@ export default function BrandDetailPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-black text-white">{brandData.brand.name}</h1>
+                        <h1 className="text-2xl font-black text-slate-900">{brandData.brand.name}</h1>
                         <button
                           type="button"
                           onClick={() => {
@@ -178,7 +178,7 @@ export default function BrandDetailPage() {
                           className={`p-1.5 rounded-lg border transition-colors ${
                             isFavorite 
                               ? "bg-amber-500/20 border-amber-500/40 text-amber-400" 
-                              : "bg-[#11192e] border-[#1e2a44] text-slate-400 hover:text-white"
+                              : "bg-white border-slate-200 text-slate-400 hover:text-white"
                           }`}
                           title="Favori"
                         >
@@ -186,8 +186,8 @@ export default function BrandDetailPage() {
                         </button>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-1.5">
-                        <span className="font-semibold text-slate-300">{brandData.brand.industry || "Sponsor Général"}</span>
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1.5">
+                        <span className="font-semibold text-slate-600">{brandData.brand.industry || "Sponsor Général"}</span>
                         <span>•</span>
                         <span>{brandData.metrics.totalCollaborations} collaborations indexées</span>
                         <span>•</span>
@@ -201,7 +201,7 @@ export default function BrandDetailPage() {
                     <button
                       type="button"
                       onClick={exportBrandCollabsToCSV}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#141e33] hover:bg-[#1a2742] border border-[#1e2b47] text-slate-200 hover:text-white text-xs font-semibold transition-all"
+                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold transition-all"
                     >
                       <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                       <span>Exporter Collaborations</span>
@@ -223,7 +223,7 @@ export default function BrandDetailPage() {
 
                 {/* Verified Contact Card */}
                 {brandData.brand.contactEmail && (
-                  <div className="mt-5 pt-4 border-t border-[#18233a] flex items-center justify-between bg-[#0a101f] p-3 rounded-xl border border-[#192642]">
+                  <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200">
                     <div className="flex items-center gap-2.5">
                       <Mail className="w-4 h-4 text-blue-400" />
                       <div>
@@ -243,7 +243,7 @@ export default function BrandDetailPage() {
                         setCopiedEmail(true);
                         setTimeout(() => setCopiedEmail(false), 2000);
                       }}
-                      className="p-1.5 text-slate-400 hover:text-white"
+                      className="p-1.5 text-slate-500 hover:text-slate-900"
                       title="Copier l'email"
                     >
                       {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -253,19 +253,19 @@ export default function BrandDetailPage() {
               </div>
 
               {/* Commercial CRM Note & Pipeline Box */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 shadow-xl space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#18233a]">
-                  <h3 className="font-bold text-white text-sm flex items-center gap-2">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+                  <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                     <Edit3 className="w-4 h-4 text-blue-400" />
                     <span>Gestion Commerciale & Notes d'Agence</span>
                   </h3>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400 font-medium">Statut Pipeline :</span>
+                    <span className="text-xs text-slate-500 font-medium">Statut Pipeline :</span>
                     <select
                       value={commercialStatus}
                       onChange={(e) => setCommercialStatus(e.target.value)}
-                      className="bg-[#090f1d] border border-[#1e2c4a] rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-200 focus:outline-none focus:border-blue-500"
+                      className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500"
                     >
                       <option value="A contacter">À contacter</option>
                       <option value="Contacté">Contacté</option>
@@ -282,7 +282,7 @@ export default function BrandDetailPage() {
                     value={noteContent}
                     onChange={(e) => setNoteContent(e.target.value)}
                     placeholder="Notes internes pour l'équipe (ex: budget demandé, personne contactée, conditions de sponsoring)..."
-                    className="w-full bg-[#0a101f] border border-[#1a2642] focus:border-blue-500 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all"
                   />
                   <div className="flex justify-end">
                     <button
@@ -299,12 +299,12 @@ export default function BrandDetailPage() {
               </div>
 
               {/* Collaborations History Table */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl shadow-xl overflow-hidden space-y-4 p-5">
-                <div className="flex items-center justify-between pb-3 border-b border-[#18233a]">
-                  <h3 className="font-bold text-white text-base">
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden space-y-4 p-5">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <h3 className="font-bold text-slate-900 text-base">
                     Historique des Collaborations avec les Créateurs ({brandData.collaborations.length})
                   </h3>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     Preuves sourcées et liens vérifiés
                   </span>
                 </div>
@@ -313,7 +313,7 @@ export default function BrandDetailPage() {
                   {brandData.collaborations.map((collab: any, idx: number) => (
                     <div
                       key={idx}
-                      className="bg-[#0b1120] border border-[#18233a] rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         {collab.video?.thumbnailUrl && (
@@ -326,10 +326,10 @@ export default function BrandDetailPage() {
                           />
                         )}
                         <div className="min-w-0">
-                          <span className="font-bold text-white text-xs block truncate hover:text-blue-400">
+                          <span className="font-bold text-slate-900 text-xs block truncate hover:text-blue-400">
                             {collab.video?.title || "Vidéo Sponsorisée"}
                           </span>
-                          <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-1">
                             <span className="text-blue-400 font-semibold">{collab.channel?.name || "Créateur"}</span>
                             <span>•</span>
                             <span>{formatDate(collab.video?.publishedAt)}</span>
@@ -341,7 +341,7 @@ export default function BrandDetailPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-400 italic line-clamp-1 mt-1">
+                          <p className="text-[11px] text-slate-500 italic line-clamp-1 mt-1">
                             Preuve : {collab.evidence}
                           </p>
                         </div>
@@ -356,7 +356,7 @@ export default function BrandDetailPage() {
                             href={collab.video.videoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg bg-[#141e33] hover:bg-blue-600 text-slate-300 hover:text-white transition-colors"
+                            className="p-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-300 hover:text-white transition-colors"
                             title="Ouvrir sur YouTube"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />

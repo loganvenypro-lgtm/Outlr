@@ -57,17 +57,17 @@ export function KpiCards({ channel }: KpiCardsProps) {
         return (
           <div
             key={idx}
-            className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 flex flex-col justify-between shadow-lg relative overflow-hidden"
+            className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-lg relative overflow-hidden"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400">{kpi.title}</span>
+              <span className="text-xs font-semibold text-slate-500">{kpi.title}</span>
               <div className={`p-2 rounded-xl ${kpi.bgColor} border ${kpi.borderColor}`}>
                 <Icon className={`w-4 h-4 ${kpi.iconColor}`} />
               </div>
             </div>
 
             <div className="mt-3">
-              <div className="text-2xl font-black text-white tracking-tight">
+              <div className="text-2xl font-black text-slate-900 tracking-tight">
                 {kpi.value}
               </div>
               <p className="text-[11px] text-slate-500 mt-1 truncate" title={kpi.exact}>

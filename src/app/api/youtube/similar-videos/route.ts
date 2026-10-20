@@ -76,9 +76,10 @@ export async function GET(request: NextRequest) {
     const searchQueries = extractSimilarSearchKeywords(baseTitle);
     const discoveredIds = new Set<string>();
 
-    // Scrape YouTube without quota via InnerTube
-    const scrapePromises = searchQueries.map(q => scrapeRealYouTubeVideoIds(q, 35));
-    const scrapeResults = await Promise.all(scrapePromises);
+    const scrapeResults: string[][] = [];
+    for (const q of searchQueries.slice(0, 2)) {
+      scrapeResults.push(await scrapeRealYouTubeVideoIds(q, 28, { sort: "view_count", uploadDate: "month" }));
+    }
 
     for (const batch of scrapeResults) {
       for (const id of batch) {

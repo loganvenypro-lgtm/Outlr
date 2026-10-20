@@ -233,7 +233,7 @@ export default function ChannelTrackingPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -246,16 +246,16 @@ export default function ChannelTrackingPage() {
 
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-7xl mx-auto w-full space-y-6">
           {/* Top Banner and Quick Actions */}
-          <div className="bg-[#0e1628] border border-[#1e2a44] rounded-2xl p-6 relative overflow-hidden shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 relative overflow-hidden shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
                 <BellRing className="w-3.5 h-3.5" />
                 <span>Radar Concurrentiel & Alerte Vidéos Virales</span>
               </div>
-              <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 Surveillez vos concurrents et détectez leurs breakouts.
               </h1>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-500">
                 Organisez vos chaînes cibles dans des dossiers thématiques, soyez alerté dès qu'une vidéo surperforme et analysez les formats qui percent.
               </p>
             </div>
@@ -265,7 +265,7 @@ export default function ChannelTrackingPage() {
                 type="button"
                 onClick={() => fetchTrackingData(true)}
                 disabled={syncing}
-                className="px-3.5 py-2 rounded-xl bg-[#141f36] hover:bg-[#1a2947] border border-[#1e2d4d] text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin text-blue-400" : ""}`} />
                 <span>{syncing ? "Scan des vidéos..." : "Synchroniser"}</span>
@@ -285,7 +285,7 @@ export default function ChannelTrackingPage() {
               <button
                 type="button"
                 onClick={() => setShowFolderModal(true)}
-                className="px-3.5 py-2 rounded-xl bg-[#141f36] hover:bg-[#1a2947] border border-[#1e2d4d] text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <FolderPlus className="w-3.5 h-3.5 text-blue-400" />
                 <span>Nouveau Dossier</span>
@@ -305,40 +305,40 @@ export default function ChannelTrackingPage() {
           {/* KPI Summary Bar */}
           {data && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-xl p-4 space-y-1">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <Users className="w-4 h-4 text-blue-400" />
                   <span>Chaînes Surveillées</span>
                 </div>
-                <div className="text-2xl font-black text-white">{data.stats.totalTrackedChannels}</div>
-                <span className="text-[10px] text-slate-400">Scannées en temps réel</span>
+                <div className="text-2xl font-black text-slate-900">{data.stats.totalTrackedChannels}</div>
+                <span className="text-[10px] text-slate-500">Scannées en temps réel</span>
               </div>
 
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-xl p-4 space-y-1">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <FolderIcon className="w-4 h-4 text-purple-400" />
                   <span>Dossiers Thématiques</span>
                 </div>
                 <div className="text-2xl font-black text-purple-400">{data.stats.activeFoldersCount}</div>
-                <span className="text-[10px] text-slate-400">Pour segmenter vos niches</span>
+                <span className="text-[10px] text-slate-500">Pour segmenter vos niches</span>
               </div>
 
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-xl p-4 space-y-1">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <Bell className="w-4 h-4 text-amber-400" />
                   <span>Alertes Détectées</span>
                 </div>
                 <div className="text-2xl font-black text-amber-400">{data.stats.totalAlertsCount}</div>
-                <span className="text-[10px] text-slate-400">{data.stats.unreadAlertsCount} non lues</span>
+                <span className="text-[10px] text-slate-500">{data.stats.unreadAlertsCount} non lues</span>
               </div>
 
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-xl p-4 space-y-1">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-slate-500 text-xs">
                   <Flame className="w-4 h-4 text-rose-400" />
                   <span>Vidéos Breakout Récentes</span>
                 </div>
                 <div className="text-2xl font-black text-rose-400">{data.recentPerformers.length}</div>
-                <span className="text-[10px] text-slate-400">Surperformances &gt; 2.5x</span>
+                <span className="text-[10px] text-slate-500">Surperformances &gt; 2.5x</span>
               </div>
             </div>
           )}
@@ -352,7 +352,7 @@ export default function ChannelTrackingPage() {
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 flex items-center gap-1.5 border ${
                   selectedFolderId === "all"
                     ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30"
-                    : "bg-[#0e1628] text-slate-300 hover:text-white border-[#1e2a44]"
+                    : "bg-white text-slate-300 hover:text-white border-slate-200"
                 }`}
               >
                 <span>Toutes les chaînes</span>
@@ -371,7 +371,7 @@ export default function ChannelTrackingPage() {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 flex items-center gap-1.5 border ${
                       selectedFolderId === f.id
                         ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30"
-                        : "bg-[#0e1628] text-slate-300 hover:text-white border-[#1e2a44]"
+                        : "bg-white text-slate-300 hover:text-white border-slate-200"
                     }`}
                   >
                     <FolderIcon className="w-3.5 h-3.5" />
@@ -386,7 +386,7 @@ export default function ChannelTrackingPage() {
           )}
 
           {/* Navigation View Switcher */}
-          <div className="flex items-center justify-between border-b border-[#1a253a] pb-2">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center gap-4 text-xs font-bold">
               <button
                 type="button"
@@ -394,7 +394,7 @@ export default function ChannelTrackingPage() {
                 className={`pb-2 border-b-2 transition-colors flex items-center gap-1.5 ${
                   activeTab === "channels"
                     ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-slate-400 hover:text-slate-200"
+                    : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -407,7 +407,7 @@ export default function ChannelTrackingPage() {
                 className={`pb-2 border-b-2 transition-colors flex items-center gap-1.5 ${
                   activeTab === "alerts"
                     ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-slate-400 hover:text-slate-200"
+                    : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
                 <Bell className="w-4 h-4" />
@@ -422,7 +422,7 @@ export default function ChannelTrackingPage() {
                 className={`pb-2 border-b-2 transition-colors flex items-center gap-1.5 ${
                   activeTab === "performers"
                     ? "border-blue-500 text-blue-400"
-                    : "border-transparent text-slate-400 hover:text-slate-200"
+                    : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
                 <Flame className="w-4 h-4" />
@@ -434,7 +434,7 @@ export default function ChannelTrackingPage() {
               <button
                 type="button"
                 onClick={() => handleMarkRead("all")}
-                className="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
+                className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
               >
                 <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
                 <span>Tout marquer comme lu</span>
@@ -448,16 +448,16 @@ export default function ChannelTrackingPage() {
               {loading ? (
                 <div className="py-20 text-center space-y-3">
                   <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
-                  <p className="text-xs text-slate-400">Chargement de votre liste de surveillance...</p>
+                  <p className="text-xs text-slate-500">Chargement de votre liste de surveillance...</p>
                 </div>
               ) : data && data.channels.length === 0 ? (
-                <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center space-y-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto">
                     <Users className="w-6 h-6" />
                   </div>
                   <div className="space-y-1 max-w-md mx-auto">
-                    <h3 className="text-base font-bold text-white">Aucune chaîne dans ce dossier</h3>
-                    <p className="text-xs text-slate-400">
+                    <h3 className="text-base font-bold text-slate-900">Aucune chaîne dans ce dossier</h3>
+                    <p className="text-xs text-slate-500">
                       Ajoutez des chaînes concurrentes ou inspirantes pour suivre automatiquement leurs nouvelles vidéos et identifier leurs pics d'audience.
                     </p>
                   </div>
@@ -476,7 +476,7 @@ export default function ChannelTrackingPage() {
                     return (
                       <div
                         key={chan.id}
-                        className="bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl transition-all space-y-4 group"
+                        className="bg-white border border-slate-200 hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl transition-all space-y-4 group"
                       >
                         {/* Channel Header */}
                         <div className="flex items-start justify-between gap-3">
@@ -492,10 +492,10 @@ export default function ChannelTrackingPage() {
                               className="w-12 h-12 rounded-full border border-slate-700 object-cover shrink-0"
                             />
                             <div className="min-w-0">
-                              <h3 className="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors">
+                              <h3 className="font-bold text-slate-900 text-sm truncate group-hover:text-blue-400 transition-colors">
                                 {chan.name}
                               </h3>
-                              <span className="text-xs text-slate-400 block truncate">{chan.handle}</span>
+                              <span className="text-xs text-slate-500 block truncate">{chan.handle}</span>
                             </div>
                           </div>
 
@@ -527,39 +527,39 @@ export default function ChannelTrackingPage() {
                           )}
 
                           {chan.notes && (
-                            <span className="px-2 py-0.5 rounded-lg bg-[#141d33] border border-[#1b2642] text-slate-300 text-[10px] truncate max-w-[150px]">
+                            <span className="px-2 py-0.5 rounded-lg bg-[#141d33] border border-slate-200 text-slate-600 text-[10px] truncate max-w-[150px]">
                               "{chan.notes}"
                             </span>
                           )}
                         </div>
 
                         {/* Channel Core Metrics */}
-                        <div className="grid grid-cols-3 gap-2 bg-[#090e1a] rounded-xl p-3 border border-[#162035] text-center text-xs">
+                        <div className="grid grid-cols-3 gap-2 bg-white rounded-xl p-3 border border-slate-200 text-center text-xs">
                           <div>
-                            <span className="text-[10px] text-slate-400 block uppercase">Abonnés</span>
-                            <span className="font-extrabold text-white text-sm mt-0.5 block">
+                            <span className="text-[10px] text-slate-500 block uppercase">Abonnés</span>
+                            <span className="font-extrabold text-slate-900 text-sm mt-0.5 block">
                               {formatCompactNumber(chan.subscribers)}
                             </span>
                           </div>
 
                           <div>
-                            <span className="text-[10px] text-slate-400 block uppercase">Médiane</span>
+                            <span className="text-[10px] text-slate-500 block uppercase">Médiane</span>
                             <span className="font-extrabold text-emerald-400 text-sm mt-0.5 block">
                               ~{formatCompactNumber(chan.baselineViews)}
                             </span>
                           </div>
 
                           <div>
-                            <span className="text-[10px] text-slate-400 block uppercase">Vidéos</span>
-                            <span className="font-bold text-white text-sm mt-0.5 block">
+                            <span className="text-[10px] text-slate-500 block uppercase">Vidéos</span>
+                            <span className="font-bold text-slate-900 text-sm mt-0.5 block">
                               {chan.videoCount}
                             </span>
                           </div>
                         </div>
 
                         {/* Actions Bar */}
-                        <div className="pt-2 border-t border-[#1a253a] flex items-center justify-between">
-                          <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                        <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1">
                             <Clock className="w-3 h-3 text-slate-500" />
                             <span>Ajouté {formatDate(chan.addedAt)}</span>
                           </span>
@@ -585,10 +585,10 @@ export default function ChannelTrackingPage() {
           {activeTab === "alerts" && (
             <div className="space-y-4">
               {data && data.alerts.length === 0 ? (
-                <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center space-y-3">
+                <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-3">
                   <Bell className="w-8 h-8 text-slate-500 mx-auto" />
-                  <h3 className="text-base font-bold text-white">Aucune alerte pour l'instant</h3>
-                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  <h3 className="text-base font-bold text-slate-900">Aucune alerte pour l'instant</h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
                     Dès qu'une chaîne suivie publie une vidéo qui surperforme anormalement (ratio &gt; 2.5x), une alerte automatique sera générée ici.
                   </p>
                 </div>
@@ -599,8 +599,8 @@ export default function ChannelTrackingPage() {
                       key={alert.id}
                       className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                         alert.isRead
-                          ? "bg-[#0b101c] border-[#18233a] opacity-80"
-                          : "bg-[#0f172a] border-blue-500/30 shadow-lg shadow-blue-950/20"
+                          ? "bg-white border-slate-200 opacity-80"
+                          : "bg-white border-blue-500/30 shadow-lg shadow-blue-950/20"
                       }`}
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
@@ -634,10 +634,10 @@ export default function ChannelTrackingPage() {
                               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                             )}
                           </div>
-                          <h4 className="text-xs sm:text-sm font-bold text-white truncate max-w-xl">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate max-w-xl">
                             {alert.videoTitle}
                           </h4>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-500">
                             {alert.message} ({formatCompactNumber(alert.views)} vues vs médiane ~{formatCompactNumber(alert.baselineViews)})
                           </p>
                         </div>
@@ -648,7 +648,7 @@ export default function ChannelTrackingPage() {
                           href={`https://www.youtube.com/watch?v=${alert.videoId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-1.5 rounded-lg bg-[#141f36] hover:bg-[#1a2947] border border-[#1e2d4d] text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                         >
                           <span>Voir sur YouTube</span>
                           <ExternalLink className="w-3 h-3" />
@@ -658,7 +658,7 @@ export default function ChannelTrackingPage() {
                           <button
                             type="button"
                             onClick={() => handleMarkRead(alert.id)}
-                            className="p-1.5 rounded-lg bg-[#141f36] hover:bg-[#1a2947] text-slate-400 hover:text-white transition-colors"
+                            className="p-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 transition-colors"
                             title="Marquer comme lu"
                           >
                             <Check className="w-4 h-4" />
@@ -676,10 +676,10 @@ export default function ChannelTrackingPage() {
           {activeTab === "performers" && (
             <div className="space-y-4">
               {data && data.recentPerformers.length === 0 ? (
-                <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-12 text-center space-y-3">
+                <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-3">
                   <Flame className="w-8 h-8 text-slate-500 mx-auto" />
-                  <h3 className="text-base font-bold text-white">Aucun breakout détecté récemment</h3>
-                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  <h3 className="text-base font-bold text-slate-900">Aucun breakout détecté récemment</h3>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto">
                     Cliquez sur <strong>"Synchroniser"</strong> en haut pour scanner les vidéos récentes de vos chaînes suivies.
                   </p>
                 </div>
@@ -688,7 +688,7 @@ export default function ChannelTrackingPage() {
                   {data?.recentPerformers.map((item, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/50 rounded-2xl overflow-hidden flex flex-col justify-between shadow-xl transition-all group"
+                      className="bg-white border border-slate-200 hover:border-blue-500/50 rounded-2xl overflow-hidden flex flex-col justify-between shadow-xl transition-all group"
                     >
                       <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
                         <img
@@ -717,16 +717,16 @@ export default function ChannelTrackingPage() {
                               crossOrigin="anonymous"
                               className="w-5 h-5 rounded-full object-cover border border-slate-700"
                             />
-                            <span className="text-xs font-semibold text-slate-300 truncate">
+                            <span className="text-xs font-semibold text-slate-600 truncate">
                               {item.channel.name}
                             </span>
                           </div>
-                          <h4 className="text-xs sm:text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
                             {item.video.title}
                           </h4>
                         </div>
 
-                        <div className="pt-2 border-t border-[#1a253a] flex items-center justify-between text-xs">
+                        <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
                           <span className="font-mono text-emerald-400 font-bold">
                             {formatCompactNumber(item.video.views)} vues
                           </span>
@@ -734,7 +734,7 @@ export default function ChannelTrackingPage() {
                             href={`https://www.youtube.com/watch?v=${item.video.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 rounded-lg bg-[#141f36] hover:bg-[#1a2947] text-slate-300 hover:text-white text-[11px] font-semibold flex items-center gap-1 transition-colors"
+                            className="px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-[11px] font-semibold flex items-center gap-1 transition-colors"
                           >
                             <span>Regarder</span>
                             <ExternalLink className="w-3 h-3" />
@@ -751,13 +751,13 @@ export default function ChannelTrackingPage() {
           {/* MODAL: ADD CHANNEL */}
           {showAddModal && (
             <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-white">Ajouter une chaîne à suivre</h3>
+                  <h3 className="text-base font-bold text-slate-900">Ajouter une chaîne à suivre</h3>
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="text-slate-400 hover:text-white text-xs"
+                    className="text-slate-500 hover:text-slate-900 text-xs"
                   >
                     Fermer
                   </button>
@@ -765,7 +765,7 @@ export default function ChannelTrackingPage() {
 
                 <form onSubmit={handleAddChannel} className="space-y-4 text-xs">
                   <div className="space-y-1">
-                    <label className="text-slate-300 font-semibold block">
+                    <label className="text-slate-600 font-semibold block">
                       Nom de la chaîne, @handle ou URL
                     </label>
                     <input
@@ -774,16 +774,16 @@ export default function ChannelTrackingPage() {
                       onChange={(e) => setChannelQuery(e.target.value)}
                       placeholder="ex: @MrBeast, Squeezie ou youtube.com/@..."
                       required
-                      className="w-full bg-[#080d1a] border border-[#1e2b47] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-slate-300 font-semibold block">Dossier de classement</label>
+                    <label className="text-slate-600 font-semibold block">Dossier de classement</label>
                     <select
                       value={targetFolderId}
                       onChange={(e) => setTargetFolderId(e.target.value)}
-                      className="w-full bg-[#080d1a] border border-[#1e2b47] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-blue-500"
                     >
                       <option value="">(Aucun dossier)</option>
                       {data?.folders.map((f) => (
@@ -795,13 +795,13 @@ export default function ChannelTrackingPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-slate-300 font-semibold block">Notes internes (optionnel)</label>
+                    <label className="text-slate-600 font-semibold block">Notes internes (optionnel)</label>
                     <input
                       type="text"
                       value={channelNotes}
                       onChange={(e) => setChannelNotes(e.target.value)}
                       placeholder="ex: Concurrent direct à surveiller pour les titres"
-                      className="w-full bg-[#080d1a] border border-[#1e2b47] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -831,13 +831,13 @@ export default function ChannelTrackingPage() {
           {/* MODAL: CREATE FOLDER */}
           {showFolderModal && (
             <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-white">Créer un dossier de surveillance</h3>
+                  <h3 className="text-base font-bold text-slate-900">Créer un dossier de surveillance</h3>
                   <button
                     type="button"
                     onClick={() => setShowFolderModal(false)}
-                    className="text-slate-400 hover:text-white text-xs"
+                    className="text-slate-500 hover:text-slate-900 text-xs"
                   >
                     Fermer
                   </button>
@@ -845,19 +845,19 @@ export default function ChannelTrackingPage() {
 
                 <form onSubmit={handleCreateFolder} className="space-y-4 text-xs">
                   <div className="space-y-1">
-                    <label className="text-slate-300 font-semibold block">Nom du dossier</label>
+                    <label className="text-slate-600 font-semibold block">Nom du dossier</label>
                     <input
                       type="text"
                       value={folderName}
                       onChange={(e) => setFolderName(e.target.value)}
                       placeholder="ex: Inspiration Gaming US, Concurrents Bourse..."
                       required
-                      className="w-full bg-[#080d1a] border border-[#1e2b47] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-slate-300 font-semibold block">Couleur</label>
+                    <label className="text-slate-600 font-semibold block">Couleur</label>
                     <div className="flex items-center gap-3 pt-1">
                       {["blue", "emerald", "purple", "amber", "rose"].map((c) => (
                         <button

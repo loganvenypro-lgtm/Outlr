@@ -141,23 +141,23 @@ L'équipe commerciale de ${brandName}`
   };
 
   return (
-    <div className="bg-[#0e1628] border border-blue-500/30 rounded-2xl p-6 shadow-xl space-y-6 relative overflow-hidden">
+    <div className="bg-white border border-blue-500/30 rounded-2xl p-6 shadow-xl space-y-6 relative overflow-hidden">
       {/* Decorative gradient glow */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1c2944]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-blue-600/20 text-blue-400">
               <Briefcase className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-white text-lg">Sponsor & Agency Outreach Hub</h3>
+            <h3 className="font-bold text-slate-900 text-lg">Sponsor & Agency Outreach Hub</h3>
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
               Pro Lead
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Détectez l'email commercial, estimez la valeur de sponsoring et générez des pitches personnalisés.
           </p>
         </div>
@@ -166,7 +166,7 @@ L'équipe commerciale de ${brandName}`
         <div className="flex items-center gap-2.5">
           <a
             href={`/channel/${channel.id}/sponsors`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#141e33] hover:bg-[#1a2742] border border-[#1e2b47] text-slate-200 hover:text-white text-xs sm:text-sm font-semibold transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-semibold transition-all shadow-sm"
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>Historique Sponsors & Timecodes</span>
@@ -200,9 +200,9 @@ L'équipe commerciale de ${brandName}`
       {/* Grid: Email & Value Estimation */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Email Box */}
-        <div className="bg-[#0b1120] border border-[#1a263f] rounded-xl p-4 flex flex-col justify-between space-y-3">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
               <Mail className="w-4 h-4 text-blue-400" /> Email de Contact Détecté
             </span>
             {email && (
@@ -214,7 +214,7 @@ L'équipe commerciale de ${brandName}`
 
           <div>
             {email ? (
-              <div className="flex items-center justify-between bg-[#11192e] p-2.5 rounded-lg border border-[#1e2a44]">
+              <div className="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200">
                 <span className="font-mono text-sm text-blue-300 font-semibold truncate select-all">
                   {email}
                 </span>
@@ -225,14 +225,14 @@ L'équipe commerciale de ${brandName}`
                     setCopiedEmail(true);
                     setTimeout(() => setCopiedEmail(false), 2000);
                   }}
-                  className="p-1.5 text-slate-400 hover:text-white transition-colors ml-2"
+                  className="p-1.5 text-slate-500 hover:text-slate-900 transition-colors ml-2"
                   title="Copier l'email"
                 >
                   {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             ) : (
-              <div className="bg-[#11192e] p-2.5 rounded-lg border border-[#1e2a44] text-xs text-slate-400 flex items-center justify-between">
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200 text-xs text-slate-500 flex items-center justify-between">
                 <span>Non public dans la bio (disponible via CAPTCHA YouTube)</span>
                 <a
                   href={`https://www.youtube.com/${channel.customUrl || "channel/" + channel.id}/about`}
@@ -253,42 +253,42 @@ L'équipe commerciale de ${brandName}`
         </div>
 
         {/* Estimation Sponsoring Box */}
-        <div className="bg-[#0b1120] border border-[#1a263f] rounded-xl p-4 flex flex-col justify-between space-y-3">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
               <DollarSign className="w-4 h-4 text-emerald-400" /> Estimation Sponsor / Intégration
             </span>
             <span className="text-[10px] text-slate-500">CPM Benchmark 15-32$</span>
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-white">
+            <span className="text-2xl font-black text-slate-900">
               {lowSponsorEst > 0 ? `${formatCompactNumber(lowSponsorEst)}€ - ${formatCompactNumber(highSponsorEst)}€` : "Sur devis"}
             </span>
-            <span className="text-xs text-slate-400">/ vidéo</span>
+            <span className="text-xs text-slate-500">/ vidéo</span>
           </div>
 
           <p className="text-[11px] text-slate-500">
-            Calculé sur la base de <strong className="text-slate-300">{formatCompactNumber(estimatedViews)} vues moyennes</strong> par upload récent.
+            Calculé sur la base de <strong className="text-slate-600">{formatCompactNumber(estimatedViews)} vues moyennes</strong> par upload récent.
           </p>
         </div>
       </div>
 
       {/* Outreach Templates Generator */}
-      <div className="space-y-4 pt-2 border-t border-[#1a263f]">
+      <div className="space-y-4 pt-2 border-t border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h4 className="text-sm font-bold text-white flex items-center gap-2">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
               <span>Générateur de Mail de Démarchage Prêt à l'Emploi</span>
             </h4>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Sélectionnez un modèle et personnalisez le nom de votre marque.
             </p>
           </div>
 
           {/* Template Switcher */}
-          <div className="flex items-center bg-[#090f1d] border border-[#1c2944] rounded-xl p-1 self-start sm:self-auto">
+          <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setSelectedTemplate("standard")}
@@ -321,22 +321,22 @@ L'équipe commerciale de ${brandName}`
 
         {/* Brand name input */}
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-400 font-medium shrink-0">Votre Agence / Marque :</span>
+          <span className="text-xs text-slate-500 font-medium shrink-0">Votre Agence / Marque :</span>
           <input
             type="text"
             placeholder="Ex: NordVPN, Airalo, MonEntreprise..."
             value={customBrand}
             onChange={(e) => setCustomBrand(e.target.value)}
-            className="w-full sm:w-72 bg-[#090f1d] border border-[#1c2944] rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full sm:w-72 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
           />
         </div>
 
         {/* Preview of the pitch */}
-        <div className="bg-[#090f1d] border border-[#18233a] rounded-xl p-4 space-y-3">
-          <div className="text-xs font-semibold text-slate-300 pb-2 border-b border-[#162137]">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+          <div className="text-xs font-semibold text-slate-600 pb-2 border-b border-slate-200">
             <span className="text-slate-500">Objet :</span> {currentTemplate.subject}
           </div>
-          <div className="text-xs text-slate-300 font-mono whitespace-pre-line leading-relaxed max-h-56 overflow-y-auto">
+          <div className="text-xs text-slate-600 font-mono whitespace-pre-line leading-relaxed max-h-56 overflow-y-auto">
             {currentTemplate.body}
           </div>
         </div>
@@ -346,7 +346,7 @@ L'équipe commerciale de ${brandName}`
           <button
             type="button"
             onClick={handleCopyPitch}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141e33] hover:bg-[#1a2742] border border-[#1e2b47] text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors"
           >
             {copiedPitch ? (
               <>

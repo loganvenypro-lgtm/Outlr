@@ -136,7 +136,7 @@ function ChannelAnalyticsContent() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Retour aux recherches</span>
@@ -176,7 +176,7 @@ function ChannelAnalyticsContent() {
               type="button"
               onClick={() => fetchChannelData(true)}
               disabled={refreshing || loading}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 hover:text-white text-xs font-semibold transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-blue-400" : ""}`} />
               <span>{refreshing ? "Actualisation..." : "Actualiser"}</span>
@@ -186,11 +186,11 @@ function ChannelAnalyticsContent() {
 
         {/* Loading State */}
         {loading && (
-          <div className="py-24 text-center space-y-4 bg-[#0c1017] border border-[#1c2433] rounded-2xl p-8">
+          <div className="py-24 text-center space-y-4 bg-white border border-slate-200 rounded-2xl p-8">
             <Loader2 className="w-10 h-10 animate-spin text-blue-500 mx-auto" />
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">Analyse de la chaîne en cours</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-base font-bold text-slate-900">Analyse de la chaîne en cours</h3>
+              <p className="text-xs text-slate-500">
                 Récupération des métadonnées, statistiques abonnés et historique des vidéos...
               </p>
             </div>
@@ -199,13 +199,13 @@ function ChannelAnalyticsContent() {
 
         {/* Error State */}
         {error && !loading && (
-          <div className="bg-[#0c1017] border border-rose-900/50 rounded-2xl p-8 text-center space-y-4">
+          <div className="bg-white border border-rose-900/50 rounded-2xl p-8 text-center space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="space-y-1 max-w-md mx-auto">
-              <h3 className="text-lg font-bold text-white">Erreur de chargement</h3>
-              <p className="text-xs text-slate-400">{error}</p>
+              <h3 className="text-lg font-bold text-slate-900">Erreur de chargement</h3>
+              <p className="text-xs text-slate-500">{error}</p>
             </div>
             <div className="pt-2">
               <button
@@ -255,10 +255,10 @@ function ChannelAnalyticsContent() {
 
 export default function ChannelAnalyticsPage() {
   return (
-    <div className="flex min-h-screen bg-[#070a0f]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <Suspense fallback={
-        <div className="flex-1 flex items-center justify-center text-slate-400">
+        <div className="flex-1 flex items-center justify-center text-slate-500">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
         </div>
       }>

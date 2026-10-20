@@ -62,7 +62,7 @@ export default function LeadsPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -81,11 +81,11 @@ export default function LeadsPage() {
                 <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400">
                   <Briefcase className="w-5 h-5" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                   Pipeline & CRM Sponsors
                 </h2>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Gérez vos chaînes YouTube cibles, suivez vos prises de contact et lancez vos campagnes de sponsoring.
               </p>
             </div>
@@ -96,20 +96,20 @@ export default function LeadsPage() {
           </div>
 
           {/* Filter Bar */}
-          <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
             <div className="relative w-full sm:w-72">
               <input
                 type="text"
                 placeholder="Rechercher par nom, handle ou email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-[#090f1d] border border-[#1c2944] rounded-xl px-3 py-2 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-              <span className="text-xs text-slate-400 font-medium whitespace-nowrap">Statut :</span>
+              <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Statut :</span>
               {["all", "identified", "contacted", "negotiating", "signed"].map((st) => (
                 <button
                   key={st}
@@ -118,7 +118,7 @@ export default function LeadsPage() {
                   className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize whitespace-nowrap transition-all ${
                     statusFilter === st
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-[#090f1d] text-slate-400 hover:text-slate-200 border border-[#1c2944]"
+                      : "bg-white text-slate-400 hover:text-slate-200 border border-slate-200"
                   }`}
                 >
                   {st === "all" ? "Tous" : st}
@@ -129,11 +129,11 @@ export default function LeadsPage() {
 
           {/* Leads Table */}
           {filteredLeads.length > 0 ? (
-            <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-[#1c2944] bg-[#0a1120] text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+                    <tr className="border-b border-slate-200 bg-white text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                       <th className="py-3 px-4">Chaîne</th>
                       <th className="py-3 px-4">Abonnés</th>
                       <th className="py-3 px-4">Vues Moyennes</th>
@@ -142,9 +142,9 @@ export default function LeadsPage() {
                       <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#152037]">
+                  <tbody className="divide-y divide-slate-200">
                     {filteredLeads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-[#11192e] transition-colors">
+                      <tr key={lead.id} className="hover:bg-slate-50 transition-colors">
                         <td className="py-3.5 px-4">
                           <div 
                             className="flex items-center gap-3 cursor-pointer group"
@@ -158,11 +158,11 @@ export default function LeadsPage() {
                               className="w-10 h-10 rounded-full border border-slate-700 object-cover shrink-0 group-hover:scale-105 transition-transform"
                             />
                             <div className="min-w-0">
-                              <span className="font-bold text-white text-sm group-hover:text-blue-400 transition-colors truncate block">
+                              <span className="font-bold text-slate-900 text-sm group-hover:text-blue-400 transition-colors truncate block">
                                 {lead.title}
                               </span>
                               {lead.customUrl && (
-                                <span className="text-[11px] text-slate-400 block">
+                                <span className="text-[11px] text-slate-500 block">
                                   {lead.customUrl.startsWith("@") ? lead.customUrl : `@${lead.customUrl}`}
                                 </span>
                               )}
@@ -170,7 +170,7 @@ export default function LeadsPage() {
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-bold text-slate-200">
+                        <td className="py-3.5 px-4 font-bold text-slate-700">
                           {formatCompactNumber(lead.subscriberCount)}
                         </td>
 
@@ -198,7 +198,7 @@ export default function LeadsPage() {
                           <select
                             value={lead.status}
                             onChange={(e) => updateStatus(lead.id, e.target.value as any)}
-                            className="bg-[#090f1d] border border-[#1e2c4a] rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-300 focus:outline-none focus:border-blue-500"
+                            className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 focus:outline-none focus:border-blue-500"
                           >
                             <option value="identified">Identifié</option>
                             <option value="contacted">Email envoyé</option>
@@ -213,7 +213,7 @@ export default function LeadsPage() {
                             <button
                               type="button"
                               onClick={() => router.push(`/channel/${lead.id}`)}
-                              className="p-1.5 rounded-lg bg-[#141e33] hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
+                              className="p-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
                               title="Voir Analytics"
                             >
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -221,7 +221,7 @@ export default function LeadsPage() {
                             <button
                               type="button"
                               onClick={() => removeLead(lead.id)}
-                              className="p-1.5 rounded-lg bg-[#141e33] hover:bg-rose-600 text-slate-400 hover:text-white transition-colors"
+                              className="p-1.5 rounded-lg bg-white hover:bg-rose-600 text-slate-400 hover:text-white transition-colors"
                               title="Retirer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -235,13 +235,13 @@ export default function LeadsPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-12 text-center space-y-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto">
                 <Briefcase className="w-6 h-6" />
               </div>
               <div className="space-y-1 max-w-md mx-auto">
-                <h3 className="text-base font-bold text-white">Aucune chaîne dans vos leads sponsors</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-base font-bold text-slate-900">Aucune chaîne dans vos leads sponsors</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
                   Recherchez des chaînes YouTube depuis la page d'accueil, ouvrez leur dashboard analytique et cliquez sur le bouton <strong>"Enregistrer dans mes Leads"</strong> pour centraliser vos opportunités.
                 </p>
               </div>

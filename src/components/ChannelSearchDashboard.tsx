@@ -201,26 +201,26 @@ export function ChannelSearchDashboard() {
           <span>YouTube Creator Intelligence</span>
         </div>
 
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 max-w-3xl mx-auto leading-tight">
           Discover YouTube channels and explore their{" "}
           <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">
             real-time performance
           </span>
         </h1>
 
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+        <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
           Access verified statistics, recent video analytics, view distributions, and public creator KPIs inspired by ViewStats.
         </p>
 
         {/* Search Bar Input Container with Floating Live Suggestions */}
         <div className="max-w-3xl mx-auto pt-4 relative" ref={dropdownRef}>
           <form onSubmit={handleSubmit}>
-            <div className={`relative flex items-center bg-[#11192e] border-2 transition-all p-2 shadow-2xl shadow-blue-950/20 ${
+            <div className={`relative flex items-center bg-white border-2 transition-all p-2 shadow-2xl shadow-blue-950/20 ${
               showDropdown && (suggestions.length > 0 || isSuggesting)
                 ? "border-blue-500 rounded-t-2xl rounded-b-none border-b-[#1c2944]"
-                : "border-[#1e2a47] focus-within:border-blue-500 rounded-2xl"
+                : "border-slate-200 focus-within:border-blue-500 rounded-2xl"
             }`}>
-              <Search className="w-6 h-6 text-slate-400 ml-3.5 mr-2 shrink-0" />
+              <Search className="w-6 h-6 text-slate-500 ml-3.5 mr-2 shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
@@ -234,7 +234,7 @@ export function ChannelSearchDashboard() {
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search by channel name, handle (@MrBeast), ID, or YouTube link..."
-                className="w-full bg-transparent text-white text-base placeholder-slate-500 focus:outline-none px-2 py-2"
+                className="w-full bg-transparent text-slate-900 text-base placeholder-slate-400 focus:outline-none px-2 py-2"
                 autoFocus
               />
 
@@ -251,7 +251,7 @@ export function ChannelSearchDashboard() {
                     setShowDropdown(false);
                     inputRef.current?.focus();
                   }}
-                  className="p-1.5 text-slate-400 hover:text-white mr-2"
+                  className="p-1.5 text-slate-500 hover:text-slate-900 mr-2"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -279,7 +279,7 @@ export function ChannelSearchDashboard() {
 
           {/* Autocomplete Suggestions Dropdown (Styled exactly like ViewStats) */}
           {showDropdown && (suggestions.length > 0 || isSuggesting) && (
-            <div className="absolute left-0 right-0 top-full bg-[#11192e] border-2 border-t-0 border-blue-500 rounded-b-2xl shadow-2xl shadow-black/80 overflow-hidden z-50 divide-y divide-[#1a253d] max-h-96 overflow-y-auto">
+            <div className="absolute left-0 right-0 top-full bg-white border-2 border-t-0 border-blue-500 rounded-b-2xl shadow-2xl shadow-black/80 overflow-hidden z-50 divide-y divide-slate-200 max-h-96 overflow-y-auto">
               {suggestions.map((item, idx) => {
                 const isSelected = idx === selectedIndex;
                 return (
@@ -303,10 +303,10 @@ export function ChannelSearchDashboard() {
                         className="w-10 h-10 rounded-full border border-slate-700 object-cover shrink-0"
                       />
                       <div className="min-w-0 text-left">
-                        <div className="font-bold text-white text-sm truncate flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 text-sm truncate flex items-center gap-1.5">
                           <span>{item.title}</span>
                         </div>
-                        <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
                           {item.customUrl ? (
                             <span className="text-blue-400 font-medium">
                               {item.customUrl.startsWith("@") ? item.customUrl : `@${item.customUrl}`}
@@ -317,7 +317,7 @@ export function ChannelSearchDashboard() {
                           {item.subscriberCount !== undefined && !item.hiddenSubscriberCount && (
                             <>
                               <span className="text-slate-600">•</span>
-                              <span className="text-slate-300 font-medium">
+                              <span className="text-slate-600 font-medium">
                                 {formatCompactNumber(item.subscriberCount)} subs
                               </span>
                             </>
@@ -330,7 +330,7 @@ export function ChannelSearchDashboard() {
                       {item.viewCount !== undefined && (
                         <div className="hidden sm:flex flex-col text-right">
                           <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Views</span>
-                          <span className="text-xs font-bold text-slate-300">{formatCompactNumber(item.viewCount)}</span>
+                          <span className="text-xs font-bold text-slate-600">{formatCompactNumber(item.viewCount)}</span>
                         </div>
                       )}
                       <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? "text-blue-400 translate-x-0.5" : "text-slate-600"}`} />
@@ -340,7 +340,7 @@ export function ChannelSearchDashboard() {
               })}
 
               {isSuggesting && suggestions.length === 0 && (
-                <div className="p-4 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                <div className="p-4 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                   <span>Searching channels...</span>
                 </div>
@@ -348,7 +348,7 @@ export function ChannelSearchDashboard() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400 mt-3">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 mt-3">
             <span className="text-slate-500">Try searching:</span>
             {["@MrBeast", "Veritasium", "MKBHD", "Fireship"].map((tag) => (
               <button
@@ -358,7 +358,7 @@ export function ChannelSearchDashboard() {
                   setQuery(tag);
                   executeSearch(tag);
                 }}
-                className="px-2.5 py-1 rounded-md bg-[#162035] hover:bg-[#1f2d4a] hover:text-blue-400 text-slate-300 transition-colors"
+                className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 hover:text-blue-400 text-slate-600 transition-colors"
               >
                 {tag}
               </button>
@@ -369,9 +369,9 @@ export function ChannelSearchDashboard() {
 
       {/* Recently Searched Channels */}
       {recentChannels.length > 0 && (
-        <section className="bg-[#0f172a]/60 border border-[#1e293b] rounded-2xl p-5">
+        <section className="bg-white/60 border border-slate-200 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <History className="w-4 h-4 text-blue-400" />
               <span>Recently Searched</span>
             </div>
@@ -392,7 +392,7 @@ export function ChannelSearchDashboard() {
               <div
                 key={item.id}
                 onClick={() => router.push(`/channel/${item.id}`)}
-                className="group relative flex flex-col items-center p-3 rounded-xl bg-[#141d33] border border-[#1e2a47] hover:border-blue-500/50 hover:bg-[#1a2642] cursor-pointer transition-all"
+                className="group relative flex flex-col items-center p-3 rounded-xl bg-[#141d33] border border-slate-200 hover:border-blue-500/50 hover:bg-slate-50 cursor-pointer transition-all"
               >
                 <button
                   type="button"
@@ -412,11 +412,11 @@ export function ChannelSearchDashboard() {
                   }}
                   className="w-12 h-12 rounded-full border border-slate-700 object-cover mb-2 group-hover:scale-105 transition-transform"
                 />
-                <span className="text-xs font-medium text-slate-200 truncate w-full text-center">
+                <span className="text-xs font-medium text-slate-700 truncate w-full text-center">
                   {item.title}
                 </span>
                 {item.customUrl && (
-                  <span className="text-[10px] text-slate-400 truncate w-full text-center">
+                  <span className="text-[10px] text-slate-500 truncate w-full text-center">
                     {item.customUrl}
                   </span>
                 )}
@@ -435,7 +435,7 @@ export function ChannelSearchDashboard() {
             <p className="text-rose-300/90 mt-0.5">{error}</p>
             {error.includes("YOUTUBE_API_KEY") && (
               <p className="text-xs text-rose-400 mt-2 bg-rose-950/70 p-2 rounded">
-                Please add your official YouTube Data API v3 key inside <code className="text-white">.env.local</code> as <code className="text-white">YOUTUBE_API_KEY=YOUR_KEY</code>.
+                Please add your official YouTube Data API v3 key inside <code className="text-slate-900">.env.local</code> as <code className="text-slate-900">YOUTUBE_API_KEY=YOUR_KEY</code>.
               </p>
             )}
           </div>
@@ -445,13 +445,13 @@ export function ChannelSearchDashboard() {
       {/* Loading Skeleton */}
       {loading && (
         <div className="space-y-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
             <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
             <span>Searching YouTube API...</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="animate-pulse bg-[#0f172a] border border-[#1e293b] rounded-2xl p-5 flex gap-4">
+              <div key={i} className="animate-pulse bg-white border border-slate-200 rounded-2xl p-5 flex gap-4">
                 <div className="w-16 h-16 rounded-full bg-slate-800 shrink-0"></div>
                 <div className="flex-1 space-y-2 py-1">
                   <div className="h-4 bg-slate-800 rounded w-1/2"></div>
@@ -468,13 +468,13 @@ export function ChannelSearchDashboard() {
       {!loading && hasSearched && results.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-white flex items-center gap-2">
+            <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
               <span>Matching Channels</span>
               <span className="text-xs font-medium bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">
                 {results.length} found
               </span>
             </h2>
-            <span className="text-xs text-slate-400">Click a channel to open full analytics</span>
+            <span className="text-xs text-slate-500">Click a channel to open full analytics</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -482,7 +482,7 @@ export function ChannelSearchDashboard() {
               <div
                 key={channel.id}
                 onClick={() => handleSelectChannel(channel)}
-                className="group relative bg-[#0e1628] hover:bg-[#14203a] border border-[#1e2b46] hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer shadow-lg hover:shadow-blue-900/10"
+                className="group relative bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all cursor-pointer shadow-lg hover:shadow-blue-900/10"
               >
                 <div className="flex items-start gap-4">
                   <img
@@ -497,49 +497,49 @@ export function ChannelSearchDashboard() {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-bold text-white text-base truncate group-hover:text-blue-400 transition-colors">
+                      <h3 className="font-bold text-slate-900 text-base truncate group-hover:text-blue-400 transition-colors">
                         {channel.title}
                       </h3>
                       <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all shrink-0" />
                     </div>
 
                     {channel.customUrl && (
-                      <p className="text-xs text-slate-400 font-medium">
+                      <p className="text-xs text-slate-500 font-medium">
                         {channel.customUrl.startsWith("@") ? channel.customUrl : `@${channel.customUrl}`}
                       </p>
                     )}
 
-                    <p className="text-xs text-slate-400 line-clamp-2 mt-1.5">
+                    <p className="text-xs text-slate-500 line-clamp-2 mt-1.5">
                       {channel.description || "No description provided."}
                     </p>
                   </div>
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-[#1a253d] text-center">
-                  <div className="bg-[#0b1120] p-2 rounded-lg">
-                    <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1 font-medium">
+                <div className="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-slate-200 text-center">
+                  <div className="bg-white p-2 rounded-lg">
+                    <span className="text-[10px] text-slate-500 flex items-center justify-center gap-1 font-medium">
                       <Users className="w-3 h-3 text-blue-400" /> Subscribers
                     </span>
-                    <span className="text-xs font-bold text-white mt-0.5 block">
+                    <span className="text-xs font-bold text-slate-900 mt-0.5 block">
                       {channel.hiddenSubscriberCount ? "Hidden" : formatCompactNumber(channel.subscriberCount)}
                     </span>
                   </div>
 
-                  <div className="bg-[#0b1120] p-2 rounded-lg">
-                    <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1 font-medium">
+                  <div className="bg-white p-2 rounded-lg">
+                    <span className="text-[10px] text-slate-500 flex items-center justify-center gap-1 font-medium">
                       <Eye className="w-3 h-3 text-emerald-400" /> Total Views
                     </span>
-                    <span className="text-xs font-bold text-white mt-0.5 block">
+                    <span className="text-xs font-bold text-slate-900 mt-0.5 block">
                       {formatCompactNumber(channel.viewCount)}
                     </span>
                   </div>
 
-                  <div className="bg-[#0b1120] p-2 rounded-lg">
-                    <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1 font-medium">
+                  <div className="bg-white p-2 rounded-lg">
+                    <span className="text-[10px] text-slate-500 flex items-center justify-center gap-1 font-medium">
                       <Video className="w-3 h-3 text-indigo-400" /> Videos
                     </span>
-                    <span className="text-xs font-bold text-white mt-0.5 block">
+                    <span className="text-xs font-bold text-slate-900 mt-0.5 block">
                       {formatCompactNumber(channel.videoCount)}
                     </span>
                   </div>
@@ -552,10 +552,10 @@ export function ChannelSearchDashboard() {
 
       {/* No results empty state */}
       {!loading && hasSearched && results.length === 0 && !error && (
-        <div className="text-center py-12 bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-8 space-y-3">
+        <div className="text-center py-12 bg-white border border-slate-200 rounded-2xl p-8 space-y-3">
           <Search className="w-10 h-10 text-slate-500 mx-auto" />
-          <h3 className="text-lg font-bold text-white">No channels found</h3>
-          <p className="text-sm text-slate-400 max-w-md mx-auto">
+          <h3 className="text-lg font-bold text-slate-900">No channels found</h3>
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
             We couldn't find any channels matching <span className="text-blue-400 font-medium">"{query}"</span>. Try searching with an exact handle (e.g. @MrBeast) or the channel ID.
           </p>
         </div>
@@ -564,32 +564,32 @@ export function ChannelSearchDashboard() {
       {/* Value props overview (Clean & informative) */}
       {!hasSearched && (
         <section className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4">
-          <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 space-y-2.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2.5">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <Users className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-white text-base">Verified Channel KPIs</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="font-bold text-slate-900 text-base">Verified Channel KPIs</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
               Retrieve official subscriber counts, lifetime video uploads, total accumulated view counts, and channel metadata directly from YouTube.
             </p>
           </div>
 
-          <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 space-y-2.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2.5">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-white text-base">Recent Video Performance</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="font-bold text-slate-900 text-base">Recent Video Performance</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
               Analyze the latest 10–12 uploaded videos, comparing views, likes, comments, and engagement distributions with interactive charts.
             </p>
           </div>
 
-          <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-5 space-y-2.5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2.5">
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
               <Eye className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-white text-base">No Fabricated Data</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="font-bold text-slate-900 text-base">No Fabricated Data</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
               True-to-source analytics. Calculated statistics like sample median views and averages are transparently labeled from retrieved data.
             </p>
           </div>

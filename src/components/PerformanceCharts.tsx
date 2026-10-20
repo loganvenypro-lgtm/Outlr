@@ -90,32 +90,32 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#0b1222] border border-[#233558] p-3.5 rounded-xl shadow-2xl max-w-xs space-y-1.5 text-xs">
-          <p className="font-bold text-white line-clamp-2 leading-snug">{data.fullTitle}</p>
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl shadow-2xl max-w-xs space-y-1.5 text-xs">
+          <p className="font-bold text-slate-900 line-clamp-2 leading-snug">{data.fullTitle}</p>
+          <div className="flex items-center justify-between text-[11px] text-slate-500">
             <span>{data.date}</span>
-            <span className="font-mono bg-[#162035] px-1.5 py-0.5 rounded text-slate-300">⏱ {data.duration}</span>
+            <span className="font-mono bg-white px-1.5 py-0.5 rounded text-slate-600">⏱ {data.duration}</span>
           </div>
-          <div className="pt-2 border-t border-[#1e2a44] space-y-1 text-xs">
+          <div className="pt-2 border-t border-slate-200 space-y-1 text-xs">
             <p className="text-blue-400 font-semibold flex justify-between gap-4">
               <span>Views:</span>
-              <span className="font-mono text-white">{data.views.toLocaleString()}</span>
+              <span className="font-mono text-slate-900">{data.views.toLocaleString()}</span>
             </p>
             {data.likes > 0 && (
               <p className="text-emerald-400 font-semibold flex justify-between gap-4">
                 <span>Likes:</span>
-                <span className="font-mono text-white">{data.likes.toLocaleString()}</span>
+                <span className="font-mono text-slate-900">{data.likes.toLocaleString()}</span>
               </p>
             )}
             {data.comments > 0 && (
               <p className="text-indigo-400 font-semibold flex justify-between gap-4">
                 <span>Comments:</span>
-                <span className="font-mono text-white">{data.comments.toLocaleString()}</span>
+                <span className="font-mono text-slate-900">{data.comments.toLocaleString()}</span>
               </p>
             )}
-            <p className="text-amber-400 font-semibold flex justify-between gap-4 pt-1 border-t border-[#18233a]">
+            <p className="text-amber-400 font-semibold flex justify-between gap-4 pt-1 border-t border-slate-200">
               <span>Engagement rate:</span>
-              <span className="font-mono text-white">{data.engagement}%</span>
+              <span className="font-mono text-slate-900">{data.engagement}%</span>
             </p>
           </div>
         </div>
@@ -128,28 +128,28 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
     <div className="space-y-6">
       {/* Derived metrics banner (ViewStats Pro layout) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Sample Avg Views
           </span>
-          <span className="text-base font-bold text-white block">
+          <span className="text-base font-bold text-slate-900 block">
             {formatCompactNumber(avgSampleViews)}
           </span>
           <span className="text-[10px] text-slate-500">Last {videos.length} uploads</span>
         </div>
 
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Sample Median Views
           </span>
-          <span className="text-base font-bold text-white block">
+          <span className="text-base font-bold text-slate-900 block">
             {formatCompactNumber(medianSampleViews)}
           </span>
           <span className="text-[10px] text-slate-500">Robust center point</span>
         </div>
 
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Highest in Batch
           </span>
           <span className="text-base font-bold text-emerald-400 block truncate">
@@ -160,8 +160,8 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
           </span>
         </div>
 
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Avg Engagement Rate
           </span>
           <span className="text-base font-bold text-sky-400 block">
@@ -170,21 +170,21 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
           <span className="text-[10px] text-slate-500">(Likes + Comms) / Views</span>
         </div>
 
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Avg Likes / Video
           </span>
-          <span className="text-base font-bold text-white block">
+          <span className="text-base font-bold text-slate-900 block">
             {formatCompactNumber(avgLikes)}
           </span>
           <span className="text-[10px] text-slate-500">From public counts</span>
         </div>
 
-        <div className="bg-[#0e1628] border border-[#1e2b46] rounded-xl p-3.5 space-y-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1">
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
             Avg Comments / Video
           </span>
-          <span className="text-base font-bold text-white block">
+          <span className="text-base font-bold text-slate-900 block">
             {formatCompactNumber(avgComments)}
           </span>
           <span className="text-[10px] text-slate-500">From public counts</span>
@@ -192,14 +192,14 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
       </div>
 
       {/* Main Interactive Chart Card */}
-      <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-[#18233a]">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-slate-200">
           <div>
             <div className="flex items-center gap-2">
               <Activity className="w-5 h-5 text-blue-500" />
-              <h3 className="font-bold text-white text-base">Recent Video Performance Distribution</h3>
+              <h3 className="font-bold text-slate-900 text-base">Recent Video Performance Distribution</h3>
             </div>
-            <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <span>
                 Displays progression across the last {videos.length} uploads from oldest to newest.
@@ -209,7 +209,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Chart Type Toggle (Area vs Bar) */}
-            <div className="flex items-center bg-[#090f1d] border border-[#1c2944] rounded-xl p-1 shrink-0">
+            <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 shrink-0">
               <button
                 type="button"
                 onClick={() => setChartType("area")}
@@ -233,7 +233,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
             </div>
 
             {/* Metric Selector Buttons */}
-            <div className="flex items-center bg-[#090f1d] border border-[#1c2944] rounded-xl p-1 shrink-0">
+            <div className="flex items-center bg-white border border-slate-200 rounded-xl p-1 shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveMetric("views")}
@@ -372,10 +372,10 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
           </ResponsiveContainer>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-500 px-2 pt-2 border-t border-[#18233a]">
+        <div className="flex items-center justify-between text-[11px] text-slate-500 px-2 pt-2 border-t border-slate-200">
           <span>← Plus ancienne du lot</span>
           <span className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1 text-slate-400">
+            <span className="inline-flex items-center gap-1 text-slate-500">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
               <span>Progression récente</span>
             </span>

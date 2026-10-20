@@ -74,7 +74,7 @@ export default function ComparePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -93,42 +93,42 @@ export default function ComparePage() {
                 <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400">
                   <ArrowLeftRight className="w-5 h-5" />
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
                   Comparateur de Concurrents
                 </h1>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
                   ViewStats Head-to-Head
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Comparez les performances réelles de 2 créateurs YouTube côte à côte (abonnés, ratio vues/vidéo, volume d'uploads).
               </p>
             </div>
           </div>
 
           {/* Compare Input Bar */}
-          <form onSubmit={handleCompare} className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-4 shadow-xl">
+          <form onSubmit={handleCompare} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xl">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={query1}
                   onChange={(e) => setQuery1(e.target.value)}
                   placeholder="Chaîne 1 (ex: @MrBeast)..."
-                  className="w-full bg-[#0a101f] border border-[#1a2642] focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none"
+                  className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none"
                 />
               </div>
 
               <div className="relative flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={query2}
                     onChange={(e) => setQuery2(e.target.value)}
                     placeholder="Chaîne 2 (ex: Veritasium)..."
-                    className="w-full bg-[#0a101f] border border-[#1a2642] focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-3 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none"
                   />
                 </div>
                 <button
@@ -155,7 +155,7 @@ export default function ComparePage() {
               {/* Top Profile Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Channel 1 */}
-                <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl relative overflow-hidden flex items-center justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <img
                       src={channel1.avatar}
@@ -165,20 +165,20 @@ export default function ComparePage() {
                       className="w-16 h-16 rounded-2xl border border-slate-700 object-cover shadow-lg"
                     />
                     <div>
-                      <h3 className="font-extrabold text-white text-lg">{channel1.title}</h3>
+                      <h3 className="font-extrabold text-slate-900 text-lg">{channel1.title}</h3>
                       <p className="text-xs text-blue-400">{channel1.customUrl || channel1.id}</p>
                     </div>
                   </div>
                   <a
                     href={`/channel/${channel1.id}`}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#141e33] hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
                   >
                     Voir Analytics
                   </a>
                 </div>
 
                 {/* Channel 2 */}
-                <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl relative overflow-hidden flex items-center justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <img
                       src={channel2.avatar}
@@ -188,13 +188,13 @@ export default function ComparePage() {
                       className="w-16 h-16 rounded-2xl border border-slate-700 object-cover shadow-lg"
                     />
                     <div>
-                      <h3 className="font-extrabold text-white text-lg">{channel2.title}</h3>
+                      <h3 className="font-extrabold text-slate-900 text-lg">{channel2.title}</h3>
                       <p className="text-xs text-blue-400">{channel2.customUrl || channel2.id}</p>
                     </div>
                   </div>
                   <a
                     href={`/channel/${channel2.id}`}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#141e33] hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
                   >
                     Voir Analytics
                   </a>
@@ -202,8 +202,8 @@ export default function ComparePage() {
               </div>
 
               {/* Head to Head Metrics Table */}
-              <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2 pb-2 border-b border-[#18233a]">
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-200">
                   <Trophy className="w-5 h-5 text-amber-400" />
                   <span>Face-à-Face des Métriques Réelles</span>
                 </h3>
@@ -241,17 +241,17 @@ export default function ComparePage() {
                   ].map((row, idx) => {
                     const win = getWinner(row.v1, row.v2);
                     return (
-                      <div key={idx} className="bg-[#0b1120] border border-[#18233a] rounded-xl p-4 flex items-center justify-between gap-4">
-                        <div className={`flex-1 text-left ${win === 1 ? "text-emerald-400 font-extrabold" : "text-white font-bold"}`}>
+                      <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-4">
+                        <div className={`flex-1 text-left ${win === 1 ? "text-emerald-400 font-extrabold" : "text-slate-900 font-bold"}`}>
                           <span className="text-lg font-mono block">{row.formatted1}</span>
                           {win === 1 && <span className="text-[10px] uppercase font-semibold text-emerald-400">En tête (+{formatCompactNumber(row.v1 - row.v2)})</span>}
                         </div>
 
                         <div className="text-center px-4">
-                          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">{row.label}</span>
+                          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">{row.label}</span>
                         </div>
 
-                        <div className={`flex-1 text-right ${win === 2 ? "text-emerald-400 font-extrabold" : "text-white font-bold"}`}>
+                        <div className={`flex-1 text-right ${win === 2 ? "text-emerald-400 font-extrabold" : "text-slate-900 font-bold"}`}>
                           <span className="text-lg font-mono block">{row.formatted2}</span>
                           {win === 2 && <span className="text-[10px] uppercase font-semibold text-emerald-400">En tête (+{formatCompactNumber(row.v2 - row.v1)})</span>}
                         </div>

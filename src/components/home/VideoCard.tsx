@@ -54,85 +54,86 @@ export function VideoCard({
   const mult = outlierMultiplier ? outlierMultiplier.toFixed(1) : "1.5";
   const numMult = parseFloat(mult);
   
-  // Badge color: purple/indigo for high outliers (4x+), blue/navy for standard outliers (1.3x - 3.9x)
+  // Badge color: emerald = "surperformance". Solid for big outliers, soft pill otherwise.
   const isHighOutlier = numMult >= 4.0;
   const badgeClasses = isHighOutlier
-    ? "bg-[#6d28d9] text-white"
-    : "bg-[#1e293b] text-white";
+    ? "bg-emerald-600 text-white"
+    : "bg-white/95 text-emerald-700 ring-1 ring-emerald-600/20 backdrop-blur";
 
   const approxBaseline = baselineViews || Math.round(viewCount / Math.max(numMult, 1));
 
   return (
     <Link
       href={`/watch?v=${id}`}
-      className="group flex flex-col focus:outline-none"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_12px_32px_-12px_rgba(15,23,42,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
       prefetch={false}
     >
-      {/* 1. Thumbnail container with dark overlay duration tag */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-900 shadow-sm border border-slate-200/60">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
+      {/* 1. Thumbnail */}
+      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+        {thumbnail ? (
+          <img
+            src={thumbnail}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-slate-100 text-xs font-medium text-slate-500">
+            Aperçu indisponible
+          </div>
+        )}
 
-        {/* Duration badge */}
+        {/* Outlier badge — top left */}
+        <div
+          className={`absolute left-2.5 top-2.5 rounded-lg px-2 py-1 text-[11px] font-extrabold tabular-nums shadow-sm ${badgeClasses}`}
+          title={`${mult}x la médiane de la chaîne`}
+        >
+          {mult}x
+        </div>
+
+        {/* Duration badge — bottom right */}
         {durationFormatted && (
-          <div className="absolute bottom-2 right-2 rounded-md bg-black/85 px-1.5 py-0.5 text-[11px] font-bold text-white tracking-tight">
+          <div className="absolute bottom-2.5 right-2.5 rounded-md bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-white">
             {durationFormatted}
           </div>
         )}
       </div>
 
-      {/* 2. Metadata details */}
-      <div className="pt-2.5 pb-1 flex flex-col gap-1">
-        {/* Title row with inline multiplier pill */}
-        <div className="flex items-start gap-2">
-          <span
-            className={`inline-flex shrink-0 items-center justify-center rounded px-1.5 py-0.5 text-[11px] font-extrabold leading-none ${badgeClasses}`}
-          >
-            {mult}x
-          </span>
-          <h3
-            className="text-[13px] font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors"
-            title={title}
-          >
-            {title}
-          </h3>
-        </div>
+      {/* 2. Metadata */}
+      <div className="flex flex-1 flex-col gap-1.5 p-4">
+        <h3
+          className="line-clamp-2 text-[14px] font-semibold leading-snug text-slate-900 transition-colors group-hover:text-blue-700"
+          title={title}
+        >
+          {title}
+        </h3>
 
-        {/* Channel info & Sub count */}
-        <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5 truncate">
-          <span className="text-slate-600 font-semibold truncate hover:underline">
-            {displayHandle}
-          </span>
-          {channelSubs !== undefined && channelSubs > 0 && (
-            <>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-400">
-                {formatCompactNumber(channelSubs)} abonnés
-              </span>
-            </>
-          )}
-        </div>
+        <p className="truncate text-[13px] font-medium text-slate-500">
+          {displayHandle}
+        </p>
 
-        {/* Views vs Channel Average & Relative Date */}
-        <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium pt-0.5">
-          <div className="truncate">
-            <span className="text-slate-700 font-semibold">
-              {formatCompactNumber(viewCount)} vues
-            </span>
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-[12.5px]">
+          <p className="truncate text-slate-500">
+            <span className="font-semibold tabular-nums text-slate-800">
+              {formatCompactNumber(viewCount)}
+            </span>{" "}
+            vues
             {approxBaseline > 0 && (
-              <span className="text-slate-400 ml-1">
-                contre {formatCompactNumber(approxBaseline)} moy.
+              <span className="text-slate-500">
+                {" "}· moy. {formatCompactNumber(approxBaseline)}
               </span>
             )}
-          </div>
-          <span className="shrink-0 text-slate-400 text-[10px]">
+          </p>
+          <span className="shrink-0 tabular-nums text-slate-500">
             {getRelativeTimeFrench(publishedAt)}
           </span>
         </div>
+
+        {channelSubs !== undefined && channelSubs > 0 && (
+          <p className="text-[12px] tabular-nums text-slate-500">
+            {formatCompactNumber(channelSubs)} abonnés
+          </p>
+        )}
       </div>
     </Link>
   );

@@ -1,4 +1,4 @@
-import { ChannelDetail, ChannelSearchResult, RecentVideo } from "@/types/youtube";
+﻿import { ChannelDetail, ChannelSearchResult, RecentVideo } from "@/types/youtube";
 import { parseISO8601Duration } from "./utils";
 import { scrapeChannelRss, scrapeInnerTubeSearch, scrapeChannelAllVideosInnerTube } from "./youtube-scraper";
 import {
@@ -21,6 +21,39 @@ interface CacheEntry<T> {
 }
 
 const memoryCache = new Map<string, CacheEntry<any>>();
+
+/**
+ * Lightweight in-memory YouTube Data API quota guard (per server instance).
+ * Free quota = 10 000 units/day. search.list = 100 units, others ~= 1-3 units.
+ * This does NOT persist across restarts â€” it's a safety rail, not billing.
+ */
+const QUOTA_DAILY_LIMIT = 9000;
+const QUOTA_COSTS = { search: 100, list: 1 } as const;
+let quotaUsed = 0;
+let quotaWindowStart = Date.now();
+
+function resetQuotaWindowIfNeeded() {
+  const now = Date.now();
+  if (now - quotaWindowStart > 24 * 60 * 60 * 1000) {
+    quotaWindowStart = now;
+    quotaUsed = 0;
+  }
+}
+
+export function getYoutubeQuotaStatus() {
+  resetQuotaWindowIfNeeded();
+  return { used: quotaUsed, limit: QUOTA_DAILY_LIMIT, remaining: Math.max(0, QUOTA_DAILY_LIMIT - quotaUsed) };
+}
+
+function consumeQuota(cost: number): boolean {
+  resetQuotaWindowIfNeeded();
+  if (quotaUsed + cost > QUOTA_DAILY_LIMIT) {
+    console.warn(`[YouTube quota] Blocked call (cost ${cost}). Used ${quotaUsed}/${QUOTA_DAILY_LIMIT}.`);
+    return false;
+  }
+  quotaUsed += cost;
+  return true;
+}
 
 function getCached<T>(key: string): T | null {
   const entry = memoryCache.get(key);
@@ -201,6 +234,10 @@ export async function searchChannels(query: string): Promise<ChannelSearchResult
 }
 
 async function searchListFallback(query: string, apiKey: string): Promise<string[]> {
+  if (!consumeQuota(QUOTA_COSTS.search)) {
+    console.warn("[YouTube quota] searchListFallback blocked - daily safety limit reached.");
+    return [];
+  }
   const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&type=channel&maxResults=8&q=${encodeURIComponent(query)}&key=${apiKey}`;
   const res = await fetch(searchUrl, { next: { revalidate: 7200 } });
   const data = await res.json();
@@ -622,4 +659,6 @@ export async function getAllChannelVideos(
     fromCache: false,
   };
 }
+
+
 

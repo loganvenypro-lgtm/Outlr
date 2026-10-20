@@ -23,7 +23,7 @@ export function NavProjects({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
+      <SidebarGroupLabel className="text-[11px] font-bold uppercase tracking-wider text-slate-500 px-3 mb-1">
         Dossiers de veille
       </SidebarGroupLabel>
       <SidebarMenu className="space-y-1">

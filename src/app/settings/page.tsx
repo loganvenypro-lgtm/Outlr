@@ -14,7 +14,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#07090e] text-slate-100 overflow-hidden font-sans">
+    <div className="h-screen bg-white text-slate-900 overflow-hidden font-sans">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         <TopNav />
@@ -24,19 +24,19 @@ export default function SettingsPage() {
               <Settings className="w-6 h-6 text-blue-500" />
               Paramètres & Configuration
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Gérez les clés API, vos préférences d'alertes Discord et vos paramètres système.
             </p>
           </div>
 
           <div className="space-y-6">
             {/* Clés API */}
-            <div className="bg-[#0e121a] border border-[#1b2233] rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2.5 text-base font-semibold text-white">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 text-base font-semibold text-slate-900">
                 <Key className="w-4 h-4 text-amber-400" />
                 <span>YouTube Data API</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 leading-relaxed">
                 Votre clé YouTube est configurée via les variables d&apos;environnement Vercel (<code>YOUTUBE_API_KEY</code>).
                 En mode découverte hybride, le système utilise les endpoints InnerTube résilients à quota zéro.
               </p>
@@ -47,37 +47,37 @@ export default function SettingsPage() {
             </div>
 
             {/* Alertes & Notifications */}
-            <div className="bg-[#0e121a] border border-[#1b2233] rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2.5 text-base font-semibold text-white">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 text-base font-semibold text-slate-900">
                 <Bell className="w-4 h-4 text-indigo-400" />
                 <span>Alertes Webhook Discord</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 leading-relaxed">
                 Recevez les pépites et outliers automatiquement sur Discord lorsque le pipeline détecte une anomalie virale (&gt; 2.5x médiane).
               </p>
               <div className="space-y-2">
-                <label className="text-xs text-slate-300 font-medium">URL Webhook Discord</label>
+                <label className="text-xs text-slate-600 font-medium">URL Webhook Discord</label>
                 <input
                   type="password"
                   placeholder="https://discord.com/api/webhooks/..."
                   defaultValue="https://discord.com/api/webhooks/***"
                   disabled
-                  className="w-full bg-[#07090e] border border-[#1e2638] rounded-xl px-3.5 py-2 text-xs text-slate-400 cursor-not-allowed"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-500 cursor-not-allowed"
                 />
               </div>
             </div>
 
             {/* Moteur de Recherche */}
-            <div className="bg-[#0e121a] border border-[#1b2233] rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2.5 text-base font-semibold text-white">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-2.5 text-base font-semibold text-slate-900">
                 <Database className="w-4 h-4 text-cyan-400" />
                 <span>Moteur Deep Crawl (Discovery Engine)</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 leading-relaxed">
                 Mode d&apos;exploration automatique des tendances, des vidéos à fort ratio vues/abonnés et des anomalies statistiques.
               </p>
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-[#1b2233]">
-                <span className="text-slate-300">Vitesse de calcul & résilience</span>
+              <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
+                <span className="text-slate-600">Vitesse de calcul & résilience</span>
                 <span className="font-semibold text-emerald-400">Mode Cloud Serverless Hybride</span>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function SettingsPage() {
             >
               {saved ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-white" />
+                  <Check className="w-3.5 h-3.5 text-slate-900" />
                   <span>Enregistré !</span>
                 </>
               ) : (

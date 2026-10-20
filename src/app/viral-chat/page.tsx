@@ -156,7 +156,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
   };
 
   return (
-    <div className="flex h-screen bg-[#070a0f] text-slate-100 font-sans antialiased overflow-hidden">
+    <div className="h-screen bg-white text-slate-900 font-sans antialiased overflow-hidden">
       {/* Sidebar */}
       <Sidebar />
 
@@ -167,21 +167,21 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
         {/* Chat Area */}
         <div className="flex-1 flex flex-col max-w-6xl w-full mx-auto p-4 md:p-6 overflow-hidden">
           {/* Header Bar */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#182130] shrink-0">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-950">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg md:text-xl font-black text-white tracking-tight">
+                  <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
                     YouTube Viral AI Strategist
                   </h1>
                   <span className="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-[10px] font-bold">
                     120B Reasoning • RAG 14.6k+
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Pose tes questions sur pourquoi une vidéo a marché, analyse un titre ou demande un plan d'action.
                 </p>
               </div>
@@ -190,14 +190,14 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
             <div className="flex items-center gap-2">
               <Link
                 href="/niche-finder"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 text-xs font-medium transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 text-xs font-medium transition-colors"
               >
                 <Flame className="w-3.5 h-3.5 text-rose-400" />
                 <span>Radar Outliers</span>
               </Link>
               <Link
                 href="/stats"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1c2433] text-slate-300 text-xs font-medium transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 text-xs font-medium transition-colors"
               >
                 <Database className="w-3.5 h-3.5 text-blue-400" />
                 <span>Base de Données</span>
@@ -224,12 +224,12 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                     className={`max-w-[85%] md:max-w-[78%] rounded-2xl p-4 shadow-xl ${
                       isUser
                         ? "bg-purple-600 text-white rounded-tr-sm"
-                        : "bg-[#0c1017] border border-[#1c2433] text-slate-200 rounded-tl-sm"
+                        : "bg-white border border-slate-200 text-slate-200 rounded-tl-sm"
                     }`}
                   >
                     {/* Header info */}
-                    <div className="flex items-center justify-between gap-4 mb-2 pb-1.5 border-b border-white/10 text-[11px] text-slate-400">
-                      <span className="font-semibold text-slate-300">
+                    <div className="flex items-center justify-between gap-4 mb-2 pb-1.5 border-b border-white/10 text-[11px] text-slate-500">
+                      <span className="font-semibold text-slate-600">
                         {isUser ? "Toi" : "Viral Strategist IA"}
                       </span>
                       <div className="flex items-center gap-2">
@@ -238,7 +238,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                           <button
                             type="button"
                             onClick={() => handleCopy(msg.content, msg.id)}
-                            className="hover:text-white transition-colors"
+                            className="hover:text-slate-900 transition-colors"
                             title="Copier la réponse"
                           >
                             {copiedId === msg.id ? (
@@ -258,7 +258,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
 
                     {/* Matched Outlier Cards if present */}
                     {msg.matchedVideos && msg.matchedVideos.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-[#1a2332] space-y-2">
+                      <div className="mt-4 pt-3 border-t border-slate-200 space-y-2">
                         <div className="text-[11px] font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1">
                           <Flame className="w-3 h-3" />
                           <span>Pépites associées dans la base :</span>
@@ -270,13 +270,13 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                               href={`https://www.youtube.com/watch?v=${vid.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-2.5 rounded-xl bg-[#070a0f] border border-[#161f2c] hover:border-purple-500/40 transition-colors flex items-center justify-between gap-2 group"
+                              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-purple-500/40 transition-colors flex items-center justify-between gap-2 group"
                             >
                               <div className="min-w-0">
-                                <div className="text-xs font-semibold text-white truncate group-hover:text-purple-300">
+                                <div className="text-xs font-semibold text-slate-900 truncate group-hover:text-purple-300">
                                   {vid.title}
                                 </div>
-                                <div className="text-[10px] text-slate-400">
+                                <div className="text-[10px] text-slate-500">
                                   {vid.channelTitle} • {vid.viewCount.toLocaleString()} vues
                                 </div>
                               </div>
@@ -300,11 +300,11 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
             })}
 
             {loading && (
-              <div className="flex gap-3 justify-start items-center text-slate-400 text-xs">
+              <div className="flex gap-3 justify-start items-center text-slate-500 text-xs">
                 <div className="w-8 h-8 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="p-3.5 rounded-2xl bg-[#0c1017] border border-[#1c2433] flex items-center gap-2">
+                <div className="p-3.5 rounded-2xl bg-white border border-slate-200 flex items-center gap-2">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-400" />
                   <span>L'IA analyse la base de données et rétro-ingénie l'algorithme...</span>
                 </div>
@@ -316,7 +316,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
 
           {/* Presets Questions Suggestions */}
           <div className="py-2 shrink-0">
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2 font-medium">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2 font-medium">
               <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
               <span>Questions fréquentes pré-configurées :</span>
             </div>
@@ -327,12 +327,12 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                   type="button"
                   onClick={() => handleSend(q.prompt)}
                   disabled={loading}
-                  className="p-2.5 rounded-xl bg-[#0c1017] hover:bg-[#121824] border border-[#1a2332] hover:border-purple-500/30 text-left transition-all group disabled:opacity-50"
+                  className="p-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-purple-500/30 text-left transition-all group disabled:opacity-50"
                 >
                   <div className="text-[10px] font-mono text-purple-400 font-bold mb-0.5">
                     {q.badge}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 group-hover:text-white line-clamp-1">
+                  <div className="text-xs font-semibold text-slate-700 group-hover:text-white line-clamp-1">
                     {q.title}
                   </div>
                 </button>
@@ -355,7 +355,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ex: Pourquoi la vidéo X a fait 5M de vues ? / Analyse ce lien : https://www.youtube.com/watch?v=..."
                 disabled={loading}
-                className="w-full bg-[#0c1017] border border-[#1e2738] focus:border-purple-500/60 rounded-2xl px-4 py-3.5 pr-24 text-sm text-white placeholder-slate-500 focus:outline-none transition-colors shadow-2xl"
+                className="w-full bg-white border border-slate-200 focus:border-purple-500/60 rounded-2xl px-4 py-3.5 pr-24 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-colors shadow-2xl"
               />
               <div className="absolute right-2 flex items-center gap-1">
                 <button

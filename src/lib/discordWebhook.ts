@@ -2,8 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export const DISCORD_WEBHOOK_URL =
-  process.env.DISCORD_OUTLIERS_WEBHOOK_URL ||
-  "https://discord.com/api/webhooks/1561429174768635914/wuA6VK1FrfSxNBCVzPTZcHFAO6ySe4w1QYqytLiywoEb_KBrrw-Z3vtLSAqdTGR9TIkT";
+  process.env.DISCORD_OUTLIERS_WEBHOOK_URL || "";
 
 export interface OutlierVideoAlert {
   id: string;
@@ -148,6 +147,10 @@ export async function sendSingleConsolidatedReportToDiscord(
   report: ConsolidatedScanReport,
   webhookUrl: string = DISCORD_WEBHOOK_URL
 ): Promise<{ success: boolean; sentCount: number; error?: string }> {
+  if (!webhookUrl || webhookUrl.trim() === "") {
+    console.warn("[Discord Webhook] Skipped: DISCORD_OUTLIERS_WEBHOOK_URL is not configured.");
+    return { success: false, sentCount: 0, error: "webhook_not_configured" };
+  }
   if (!report.outliers || report.outliers.length === 0) {
     return { success: true, sentCount: 0 };
   }

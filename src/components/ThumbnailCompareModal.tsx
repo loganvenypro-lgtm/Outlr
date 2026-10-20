@@ -54,22 +54,22 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-[#0b1120] border border-[#1b263e] rounded-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-[#162238] flex items-center justify-between gap-3 bg-[#0d1424]">
+        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between gap-3 bg-white">
           <div className="min-w-0 space-y-1">
             <div className="flex items-center gap-2">
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider ${badge.bg}`}>
                 {badge.label}
               </span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 font-mono">
                 Indice de confiance : {video.abTestConfidenceScore}%
               </span>
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-white truncate max-w-2xl">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate max-w-2xl">
               {video.currentTitle}
             </h3>
-            <p className="text-xs text-slate-400 flex items-center gap-2">
+            <p className="text-xs text-slate-500 flex items-center gap-2">
               <span>{video.channelTitle}</span>
               <span>•</span>
               <span>Publié le {formatDate(video.publishedAt)}</span>
@@ -81,7 +81,7 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
               href={`https://www.youtube.com/watch?v=${video.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-[#141e33] hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-white hover:bg-blue-600 text-slate-400 hover:text-white transition-colors"
               title="Ouvrir sur YouTube"
             >
               <ExternalLink className="w-4 h-4" />
@@ -89,7 +89,7 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl bg-[#141e33] hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-white hover:bg-slate-700 text-slate-500 hover:text-slate-900 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -101,24 +101,24 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
           {/* Side-by-Side Comparison Area */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Split className="w-4 h-4 text-blue-400" />
                 <span>Comparateur Côte-à-Côte des Versions</span>
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 {versions.length} version{versions.length > 1 ? "s" : ""} observée{versions.length > 1 ? "s" : ""}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Version */}
-              <div className="bg-[#080d1a] border border-[#162238] rounded-2xl p-4 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400">Comparer avec :</span>
+                  <span className="text-xs font-semibold text-slate-500">Comparer avec :</span>
                   <select
                     value={leftVersionIndex}
                     onChange={(e) => setLeftVersionIndex(parseInt(e.target.value, 10))}
-                    className="bg-[#11192e] border border-[#1b263e] text-xs font-bold text-white rounded-lg px-2.5 py-1 focus:outline-none"
+                    className="bg-white border border-slate-200 text-xs font-bold text-slate-900 rounded-lg px-2.5 py-1 focus:outline-none"
                   >
                     {versions.map((ver, idx) => (
                       <option key={ver.id} value={idx}>
@@ -145,31 +145,31 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
                     Titre sous cette version :
                   </span>
-                  <p className="text-xs font-semibold text-white leading-snug line-clamp-2">
+                  <p className="text-xs font-semibold text-slate-900 leading-snug line-clamp-2">
                     {leftVersion.title}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-[#141f33] grid grid-cols-2 gap-2 text-xs">
+                <div className="pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span className="text-[10px] text-slate-500 block">Première observation</span>
-                    <span className="text-slate-300 font-mono text-[11px]">{formatDate(leftVersion.firstObservedAt)}</span>
+                    <span className="text-slate-600 font-mono text-[11px]">{formatDate(leftVersion.firstObservedAt)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-500 block">Vues au snapshot</span>
-                    <span className="text-white font-bold">{formatCompactNumber(leftVersion.metricsSnapshot.viewCount)}</span>
+                    <span className="text-slate-900 font-bold">{formatCompactNumber(leftVersion.metricsSnapshot.viewCount)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Right Version */}
-              <div className="bg-[#080d1a] border border-[#162238] rounded-2xl p-4 space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400">Comparer avec :</span>
+                  <span className="text-xs font-semibold text-slate-500">Comparer avec :</span>
                   <select
                     value={rightVersionIndex}
                     onChange={(e) => setRightVersionIndex(parseInt(e.target.value, 10))}
-                    className="bg-[#11192e] border border-[#1b263e] text-xs font-bold text-white rounded-lg px-2.5 py-1 focus:outline-none"
+                    className="bg-white border border-slate-200 text-xs font-bold text-slate-900 rounded-lg px-2.5 py-1 focus:outline-none"
                   >
                     {versions.map((ver, idx) => (
                       <option key={ver.id} value={idx}>
@@ -196,19 +196,19 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
                     Titre sous cette version :
                   </span>
-                  <p className="text-xs font-semibold text-white leading-snug line-clamp-2">
+                  <p className="text-xs font-semibold text-slate-900 leading-snug line-clamp-2">
                     {rightVersion.title}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-[#141f33] grid grid-cols-2 gap-2 text-xs">
+                <div className="pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span className="text-[10px] text-slate-500 block">Dernière observation</span>
-                    <span className="text-slate-300 font-mono text-[11px]">{formatDate(rightVersion.lastObservedAt)}</span>
+                    <span className="text-slate-600 font-mono text-[11px]">{formatDate(rightVersion.lastObservedAt)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-slate-500 block">Vues au snapshot</span>
-                    <span className="text-white font-bold">{formatCompactNumber(rightVersion.metricsSnapshot.viewCount)}</span>
+                    <span className="text-slate-900 font-bold">{formatCompactNumber(rightVersion.metricsSnapshot.viewCount)}</span>
                   </div>
                 </div>
               </div>
@@ -217,9 +217,9 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
 
           {/* Performance Before & After Analysis */}
           {video.performanceAnalysis && (
-            <div className="bg-gradient-to-r from-[#0d1627] to-[#0a1120] border border-[#1c2a47] rounded-2xl p-4 sm:p-5 space-y-3">
+            <div className="bg-gradient-to-r from-[#0d1627] to-[#0a1120] border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
                   <span>Impact de Vélocité Avant / Après Changement</span>
                 </span>
@@ -234,29 +234,29 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="bg-[#080d1a] border border-[#152136] rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Période Avant Changement</span>
-                  <p className="text-base font-extrabold text-white mt-1">
-                    {video.performanceAnalysis.preChangeViewsPerHour} <span className="text-xs font-normal text-slate-400">vues/h</span>
+                <div className="bg-white border border-slate-200 rounded-xl p-3">
+                  <span className="text-[11px] text-slate-500 block">Période Avant Changement</span>
+                  <p className="text-base font-extrabold text-slate-900 mt-1">
+                    {video.performanceAnalysis.preChangeViewsPerHour} <span className="text-xs font-normal text-slate-500">vues/h</span>
                   </p>
                   <span className="text-[10px] text-slate-500 font-mono">
                     +{formatCompactNumber(video.performanceAnalysis.preChangeViewsGained)} vues sur {video.performanceAnalysis.preChangeWindowHours}h
                   </span>
                 </div>
 
-                <div className="bg-[#080d1a] border border-[#152136] rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Période Après Changement</span>
+                <div className="bg-white border border-slate-200 rounded-xl p-3">
+                  <span className="text-[11px] text-slate-500 block">Période Après Changement</span>
                   <p className="text-base font-extrabold text-emerald-400 mt-1">
-                    {video.performanceAnalysis.postChangeViewsPerHour} <span className="text-xs font-normal text-slate-400">vues/h</span>
+                    {video.performanceAnalysis.postChangeViewsPerHour} <span className="text-xs font-normal text-slate-500">vues/h</span>
                   </p>
                   <span className="text-[10px] text-slate-500 font-mono">
                     +{formatCompactNumber(video.performanceAnalysis.postChangeViewsGained)} vues sur {video.performanceAnalysis.postChangeWindowHours}h
                   </span>
                 </div>
 
-                <div className="bg-[#080d1a] border border-[#152136] rounded-xl p-3">
-                  <span className="text-[11px] text-slate-400 block">Verdict de Performance</span>
-                  <p className="text-sm font-bold text-white mt-1">
+                <div className="bg-white border border-slate-200 rounded-xl p-3">
+                  <span className="text-[11px] text-slate-500 block">Verdict de Performance</span>
+                  <p className="text-sm font-bold text-slate-900 mt-1">
                     {video.performanceAnalysis.summaryVerdict === "significant_acceleration" && "Accélération nette 🚀"}
                     {video.performanceAnalysis.summaryVerdict === "slight_improvement" && "Légère progression 📈"}
                     {video.performanceAnalysis.summaryVerdict === "neutral" && "Rythme stable ⚖️"}
@@ -269,12 +269,12 @@ export function ThumbnailCompareModal({ video, onClose }: ThumbnailCompareModalP
           )}
 
           {/* Evidence & Methodology Transparency */}
-          <div className="bg-[#080e1b] border border-[#18233a] rounded-xl p-4 space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
               <span>Preuves d'analyse & Limites Techniques</span>
             </span>
-            <ul className="list-disc list-inside text-xs text-slate-300 space-y-1">
+            <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
               {video.abTestEvidence.map((ev, i) => (
                 <li key={i}>{ev}</li>
               ))}

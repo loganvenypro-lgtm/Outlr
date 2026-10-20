@@ -31,7 +31,7 @@ export function TopNav({ title = "Dashboard", breadcrumbs }: TopNavProps) {
           <nav className="flex min-w-0 items-center text-[13px] font-medium text-slate-500" aria-label="Fil d'Ariane">
             {breadcrumbs.map((b, idx) => (
               <span key={idx} className="flex min-w-0 items-center">
-                {idx > 0 && <span className="mx-2 shrink-0 text-slate-300">/</span>}
+                {idx > 0 && <span className="mx-2 shrink-0 text-slate-600">/</span>}
                 {b.href ? (
                   <a
                     href={b.href}
@@ -63,7 +63,7 @@ export function TopNav({ title = "Dashboard", breadcrumbs }: TopNavProps) {
             aria-label="Recherche rapide"
             className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-[13px] text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10"
           />
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
         </form>
 
         {/* Live Radar Badge */}

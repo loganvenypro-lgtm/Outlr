@@ -201,7 +201,7 @@ function SimilarChannelsContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#080c14]">
+    <div className="min-h-screen bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -214,31 +214,31 @@ function SimilarChannelsContent() {
 
         <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 max-w-7xl mx-auto w-full space-y-6">
           {/* Top Hero Banner */}
-          <div className="bg-gradient-to-b from-[#0f172a] to-[#0b101e] border border-[#1e293b] rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl space-y-4">
+          <div className="bg-gradient-to-b from-[#0f172a] to-[#0b101e] border border-slate-200 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl space-y-4">
             <div className="max-w-3xl space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
                 <Users className="w-3.5 h-3.5" />
                 <span>Même Niche & Audience Partagée — Graphe de Co-occurrence YouTube</span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
                 Trouver les Chaînes de ta Niche (Même Audience)
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Entre l'URL ou le @handle de ta chaîne (ou de n'importe quelle chaîne de référence). Notre moteur analyse en direct les métadonnées, le rythme, les formules de titres et les co-occurrences YouTube pour te sortir tous les créateurs de la même niche qui attirent et captent la même audience que toi.
               </p>
             </div>
 
             {/* Input URL Form */}
             <form onSubmit={handleSubmit} className="pt-2 max-w-2xl">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#080d1a] border border-[#1e2a44] focus-within:border-blue-500 rounded-xl p-1.5 shadow-xl transition-all">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-white border border-slate-200 focus-within:border-blue-500 rounded-xl p-1.5 shadow-xl transition-all">
                 <div className="flex items-center flex-1 px-2.5">
-                  <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
+                  <Search className="w-4 h-4 text-slate-500 mr-2 shrink-0" />
                   <input
                     type="text"
                     value={inputUrl}
                     onChange={(e) => setInputUrl(e.target.value)}
                     placeholder="Entrez une chaîne ou @handle (ex: fern, @Veritasium, MrBeast)..."
-                    className="w-full bg-transparent text-white text-xs sm:text-sm placeholder-slate-500 focus:outline-none"
+                    className="w-full bg-transparent text-slate-900 text-xs sm:text-sm placeholder-slate-400 focus:outline-none"
                   />
                 </div>
 
@@ -262,7 +262,7 @@ function SimilarChannelsContent() {
                       setInputUrl(demo);
                       fetchSimilarChannels(demo);
                     }}
-                    className="text-slate-400 hover:text-blue-400 underline underline-offset-2"
+                    className="text-slate-500 hover:text-blue-400 underline underline-offset-2"
                   >
                     {demo}
                   </button>
@@ -273,7 +273,7 @@ function SimilarChannelsContent() {
 
           {/* Reference Channel Editorial Profile */}
           {data?.reference && (
-            <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-6 shadow-xl relative overflow-hidden space-y-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl relative overflow-hidden space-y-4">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                   <img
@@ -285,41 +285,41 @@ function SimilarChannelsContent() {
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-lg sm:text-xl font-black text-white">{data.reference.title}</h2>
+                      <h2 className="text-lg sm:text-xl font-black text-slate-900">{data.reference.title}</h2>
                       <span className="px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 text-[10px] font-bold border border-blue-500/30">
                         Chaîne Référence
                       </span>
                     </div>
-                    <span className="text-xs text-slate-400 block">{data.reference.handle}</span>
-                    <p className="text-xs text-slate-300 mt-1 line-clamp-1 max-w-xl">
+                    <span className="text-xs text-slate-500 block">{data.reference.handle}</span>
+                    <p className="text-xs text-slate-600 mt-1 line-clamp-1 max-w-xl">
                       {data.reference.description || "Aucune description renseignée."}
                     </p>
                   </div>
                 </div>
 
                 {/* Reference Stats */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs shrink-0 bg-[#090f1d] p-3.5 rounded-xl border border-[#162238]">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs shrink-0 bg-white p-3.5 rounded-xl border border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Abonnés</span>
-                    <span className="font-extrabold text-white text-sm block">
+                    <span className="text-[10px] text-slate-500 block uppercase">Abonnés</span>
+                    <span className="font-extrabold text-slate-900 text-sm block">
                       {data.reference.subscriberCount > 0 ? formatCompactNumber(data.reference.subscriberCount) : "Masqués"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Médiane Vues</span>
+                    <span className="text-[10px] text-slate-500 block uppercase">Médiane Vues</span>
                     <span className="font-extrabold text-emerald-400 text-sm block">
                       ~{formatCompactNumber(data.reference.typicalViews)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Durée Moy.</span>
-                    <span className="font-extrabold text-white text-sm block">
+                    <span className="text-[10px] text-slate-500 block uppercase">Durée Moy.</span>
+                    <span className="font-extrabold text-slate-900 text-sm block">
                       {data.reference.avgDurationFormatted}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase">Vidéos</span>
-                    <span className="font-extrabold text-white text-sm block">
+                    <span className="text-[10px] text-slate-500 block uppercase">Vidéos</span>
+                    <span className="font-extrabold text-slate-900 text-sm block">
                       {data.reference.videoCount}
                     </span>
                   </div>
@@ -328,9 +328,9 @@ function SimilarChannelsContent() {
 
               {/* Data Moat: Reference Audience Demographics & Intent Card */}
               {data.reference.demographics && (
-                <div className="bg-[#090f1d] p-3.5 rounded-xl border border-[#1a263d] grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="bg-white p-3.5 rounded-xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Tranche d'Âge Principale</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Tranche d'Âge Principale</span>
                     <span className="font-mono text-purple-400 font-bold text-sm block mt-0.5">
                       {data.reference.demographics.primaryAgeBracket} ans
                     </span>
@@ -340,7 +340,7 @@ function SimilarChannelsContent() {
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Intention d'Audience</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Intention d'Audience</span>
                     <span className="font-bold text-amber-400 text-xs block mt-0.5">
                       {data.reference.demographics.intentArchetype}
                     </span>
@@ -350,7 +350,7 @@ function SimilarChannelsContent() {
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Cœur Géographique</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Cœur Géographique</span>
                     <span className="font-mono text-blue-400 font-bold text-xs block mt-0.5">
                       {data.reference.demographics.geographicCore.join(", ")}
                     </span>
@@ -358,7 +358,7 @@ function SimilarChannelsContent() {
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Fourchette RPM Estimée</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Fourchette RPM Estimée</span>
                     <span className="font-mono text-emerald-400 font-bold text-sm block mt-0.5">
                       {data.reference.demographics.estimatedPacingRPM}
                     </span>
@@ -368,7 +368,7 @@ function SimilarChannelsContent() {
               )}
 
               {/* Editorial Signature Block */}
-              <div className="pt-4 border-t border-[#1a253a] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 font-bold flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5" />
@@ -376,13 +376,13 @@ function SimilarChannelsContent() {
                   </span>
 
                   {data.reference.editorialTags.map((tag, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-md bg-[#121c32] text-slate-300 border border-[#1d2a48] text-[11px]">
+                    <span key={i} className="px-2 py-0.5 rounded-md bg-[#121c32] text-slate-600 border border-slate-200 text-[11px]">
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="text-[11px] text-slate-400 font-mono">
+                <div className="text-[11px] text-slate-500 font-mono">
                   {data.competitors.length} concurrents évalués en {data.executionTimeMs}ms
                 </div>
               </div>
@@ -391,10 +391,10 @@ function SimilarChannelsContent() {
 
           {/* Filters Bar */}
           {data && !loading && (
-            <div className="bg-[#0e1628] border border-[#1e2a44] rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-semibold">Similarité min :</span>
+                  <span className="text-slate-500 font-semibold">Similarité min :</span>
                   <input
                     type="range"
                     min="20"
@@ -404,15 +404,15 @@ function SimilarChannelsContent() {
                     onChange={(e) => setMinScore(parseInt(e.target.value, 10))}
                     className="accent-blue-500 w-24"
                   />
-                  <span className="font-mono text-white font-bold">{minScore}%</span>
+                  <span className="font-mono text-slate-900 font-bold">{minScore}%</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-semibold">Taille d'audience :</span>
+                  <span className="text-slate-500 font-semibold">Taille d'audience :</span>
                   <select
                     value={sizeFilter}
                     onChange={(e) => setSizeFilter(e.target.value as any)}
-                    className="bg-[#080d1a] border border-[#1e2b47] rounded-lg px-2.5 py-1 text-white focus:outline-none"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 focus:outline-none"
                   >
                     <option value="all">Toutes tailles</option>
                     <option value="smaller">Plus petites (Émergentes)</option>
@@ -422,11 +422,11 @@ function SimilarChannelsContent() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-semibold">Marché :</span>
+                  <span className="text-slate-500 font-semibold">Marché :</span>
                   <select
                     value={marketCountry}
                     onChange={(e) => setMarketCountry(e.target.value)}
-                    className="bg-[#080d1a] border border-[#1e2b47] rounded-lg px-2.5 py-1 text-white focus:outline-none"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 focus:outline-none"
                   >
                     <option value="all">Tous pays</option>
                     <option value="US">🇺🇸 USA</option>
@@ -437,11 +437,11 @@ function SimilarChannelsContent() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-semibold">Trier par :</span>
+                  <span className="text-slate-500 font-semibold">Trier par :</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="bg-[#080d1a] border border-[#1e2b47] rounded-lg px-2.5 py-1 text-white focus:outline-none"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 focus:outline-none"
                   >
                     <option value="score">Score Éditorial (Recommandé)</option>
                     <option value="subscribers">Nombre d'abonnés</option>
@@ -455,12 +455,12 @@ function SimilarChannelsContent() {
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                     placeholder="Filtrer créateur..."
-                    className="bg-[#080d1a] border border-[#1e2b47] rounded-lg px-2.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none w-32"
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder-slate-400 focus:outline-none w-32"
                   />
                 </div>
               </div>
 
-              <div className="text-slate-400 text-[11px]">
+              <div className="text-slate-500 text-[11px]">
                 <strong>{filteredCandidates.length}</strong> concurrents directs qualifiés
               </div>
             </div>
@@ -468,16 +468,16 @@ function SimilarChannelsContent() {
 
           {/* Loading State with Progress Bar */}
           {loading && (
-            <div className="py-12 px-6 sm:px-12 space-y-6 bg-[#0f172a] border border-[#1e293b] rounded-2xl shadow-2xl max-w-3xl mx-auto">
+            <div className="py-12 px-6 sm:px-12 space-y-6 bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-3xl mx-auto">
               <div className="text-center space-y-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-semibold animate-pulse">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Analyse Concurrentielle & Même Niche</span>
                 </div>
-                <h3 className="text-lg sm:text-xl font-black text-white">
+                <h3 className="text-lg sm:text-xl font-black text-slate-900">
                   Analyse de la chaîne en cours...
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Détection des créateurs qui partagent votre audience cible et vos concepts de vidéos.
                 </p>
               </div>
@@ -489,16 +489,16 @@ function SimilarChannelsContent() {
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>{analysisSteps[loadingStep]?.title || "Traitement..."}</span>
                   </span>
-                  <span className="text-white font-black">{progressPercent}%</span>
+                  <span className="text-slate-900 font-black">{progressPercent}%</span>
                 </div>
 
-                <div className="w-full h-3 bg-[#080d1a] rounded-full overflow-hidden border border-[#1e2b47] p-0.5 shadow-inner">
+                <div className="w-full h-3 bg-white rounded-full overflow-hidden border border-slate-200 p-0.5 shadow-inner">
                   <div
                     className="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 rounded-full transition-all duration-500 shadow-md shadow-blue-500/50"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 italic">
+                <p className="text-[11px] text-slate-500 italic">
                   {analysisSteps[loadingStep]?.desc}
                 </p>
               </div>
@@ -517,7 +517,7 @@ function SimilarChannelsContent() {
                           ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-300"
                           : isCurrent
                           ? "bg-blue-950/30 border-blue-500/40 text-blue-200 ring-1 ring-blue-500/30"
-                          : "bg-[#090f1d] border-[#162035] text-slate-500"
+                          : "bg-white border-slate-200 text-slate-500"
                       }`}
                     >
                       <div
@@ -543,10 +543,10 @@ function SimilarChannelsContent() {
 
           {/* Error State */}
           {error && !loading && (
-            <div className="bg-[#0f172a] border border-rose-900/50 rounded-2xl p-8 text-center space-y-3">
+            <div className="bg-white border border-rose-900/50 rounded-2xl p-8 text-center space-y-3">
               <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
-              <h3 className="text-base font-bold text-white">Recherche impossible</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">{error}</p>
+              <h3 className="text-base font-bold text-slate-900">Recherche impossible</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">{error}</p>
             </div>
           )}
 
@@ -560,7 +560,7 @@ function SimilarChannelsContent() {
                 return (
                   <div
                     key={cand.channel.id}
-                    className="bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/50 rounded-2xl p-5 shadow-xl transition-all flex flex-col justify-between space-y-4 group"
+                    className="bg-white border border-slate-200 hover:border-blue-500/50 rounded-2xl p-5 shadow-xl transition-all flex flex-col justify-between space-y-4 group"
                   >
                     {/* Header: Candidate Info & Score Pill */}
                     <div className="flex items-start justify-between gap-3">
@@ -577,7 +577,7 @@ function SimilarChannelsContent() {
                         />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-bold text-white text-sm sm:text-base truncate group-hover:text-blue-400 transition-colors">
+                            <h3 className="font-bold text-slate-900 text-sm sm:text-base truncate group-hover:text-blue-400 transition-colors">
                               {cand.channel.title}
                             </h3>
                             {cand.coOccurrenceCount >= 2 && (
@@ -586,7 +586,7 @@ function SimilarChannelsContent() {
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-slate-400 block truncate">{cand.channel.handle}</span>
+                          <span className="text-xs text-slate-500 block truncate">{cand.channel.handle}</span>
                         </div>
                       </div>
 
@@ -604,14 +604,14 @@ function SimilarChannelsContent() {
                     </div>
 
                     {/* Explanatory Alignment Pill */}
-                    <p className="text-[11px] text-slate-300 bg-[#090f1d] p-2.5 rounded-xl border border-[#162238] leading-relaxed">
+                    <p className="text-[11px] text-slate-600 bg-white p-2.5 rounded-xl border border-slate-200 leading-relaxed">
                       {cand.breakdown.comparableExplanations}
                     </p>
 
                     {/* Data Moats: Audience Overlap & Packaging Similarity */}
-                    <div className="bg-[#090f1d] p-2.5 rounded-xl border border-[#162238] grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 grid grid-cols-3 gap-2 text-center text-xs">
                       <div>
-                        <span className="text-[10px] text-slate-400 block uppercase">Audience Commune</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">Audience Commune</span>
                         <span className="font-mono text-emerald-400 font-extrabold text-xs block mt-0.5">
                           {cand.audienceOverlapRatio}%
                         </span>
@@ -619,7 +619,7 @@ function SimilarChannelsContent() {
                       </div>
 
                       <div>
-                        <span className="text-[10px] text-slate-400 block uppercase">Cible Démographique</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">Cible Démographique</span>
                         <span className="font-mono text-purple-400 font-extrabold text-xs block mt-0.5">
                           {cand.audienceDemographics.primaryAgeBracket} ans
                         </span>
@@ -629,7 +629,7 @@ function SimilarChannelsContent() {
                       </div>
 
                       <div>
-                        <span className="text-[10px] text-slate-400 block uppercase">Packaging & CTR Match</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">Packaging & CTR Match</span>
                         <span className="font-mono text-blue-400 font-extrabold text-xs block mt-0.5">
                           {cand.packagingSimilarity}%
                         </span>
@@ -640,7 +640,7 @@ function SimilarChannelsContent() {
                     {/* Breakdown Scores Bars */}
                     <div className="grid grid-cols-3 gap-2 text-[11px]">
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Archétype Éditorial (35%)</span>
+                        <span className="text-slate-500 block text-[10px]">Archétype Éditorial (35%)</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <div className="flex-1 bg-slate-800 rounded-full h-1.5 overflow-hidden">
                             <div
@@ -648,14 +648,14 @@ function SimilarChannelsContent() {
                               style={{ width: `${cand.breakdown.editorialArchetypeScore}%` }}
                             />
                           </div>
-                          <span className="font-mono text-slate-300 font-bold">
+                          <span className="font-mono text-slate-600 font-bold">
                             {cand.breakdown.editorialArchetypeScore}%
                           </span>
                         </div>
                       </div>
 
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Sujets Communs (25%)</span>
+                        <span className="text-slate-500 block text-[10px]">Sujets Communs (25%)</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <div className="flex-1 bg-slate-800 rounded-full h-1.5 overflow-hidden">
                             <div
@@ -663,14 +663,14 @@ function SimilarChannelsContent() {
                               style={{ width: `${cand.breakdown.semanticTopicScore}%` }}
                             />
                           </div>
-                          <span className="font-mono text-slate-300 font-bold">
+                          <span className="font-mono text-slate-600 font-bold">
                             {cand.breakdown.semanticTopicScore}%
                           </span>
                         </div>
                       </div>
 
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Formule Titre & Format (30%)</span>
+                        <span className="text-slate-500 block text-[10px]">Formule Titre & Format (30%)</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <div className="flex-1 bg-slate-800 rounded-full h-1.5 overflow-hidden">
                             <div
@@ -678,7 +678,7 @@ function SimilarChannelsContent() {
                               style={{ width: `${Math.round((cand.breakdown.titleFormulaScore + cand.breakdown.formatPacingScore) / 2)}%` }}
                             />
                           </div>
-                          <span className="font-mono text-slate-300 font-bold">
+                          <span className="font-mono text-slate-600 font-bold">
                             {Math.round((cand.breakdown.titleFormulaScore + cand.breakdown.formatPacingScore) / 2)}%
                           </span>
                         </div>
@@ -688,7 +688,7 @@ function SimilarChannelsContent() {
                     {/* Candidate Sample Videos */}
                     {cand.topSimilarVideos.length > 0 && (
                       <div className="space-y-1.5 pt-1">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
                           Vidéos représentatives de son storytelling :
                         </span>
                         <div className="grid grid-cols-3 gap-2">
@@ -708,7 +708,7 @@ function SimilarChannelsContent() {
                                 className="w-full h-full object-cover group-hover/v:scale-105 transition-transform"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-1">
-                                <span className="text-[9px] text-slate-200 truncate font-medium">
+                                <span className="text-[9px] text-slate-700 truncate font-medium">
                                   {formatCompactNumber(v.views)} vues
                                 </span>
                               </div>
@@ -719,8 +719,8 @@ function SimilarChannelsContent() {
                     )}
 
                     {/* Bottom Action Bar */}
-                    <div className="pt-3 border-t border-[#1a253a] flex items-center justify-between gap-3 text-xs">
-                      <div className="flex items-center gap-3 text-slate-300 font-mono text-[11px]">
+                    <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-3 text-slate-600 font-mono text-[11px]">
                         <span>{formatCompactNumber(cand.channel.subscriberCount)} abonnés</span>
                         <span>•</span>
                         <span>~{formatCompactNumber(cand.channel.typicalViews)} vues typ.</span>
@@ -735,7 +735,7 @@ function SimilarChannelsContent() {
                           className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border ${
                             isTracked
                               ? "bg-emerald-600/20 text-emerald-400 border-emerald-500/30"
-                              : "bg-[#141f36] hover:bg-[#1a2947] text-slate-300 hover:text-white border-[#1e2d4d]"
+                              : "bg-white hover:bg-slate-50 text-slate-300 hover:text-white border-slate-200"
                           }`}
                         >
                           {isTracked ? (
@@ -779,7 +779,7 @@ export default function SimilarChannelsPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen bg-[#080c14] items-center justify-center">
+        <div className="min-h-screen bg-white items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
         </div>
       }

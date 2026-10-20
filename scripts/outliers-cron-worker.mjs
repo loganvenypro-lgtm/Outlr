@@ -5,7 +5,8 @@
  */
 
 const INTERVAL_MINUTES = 10;
-const API_URL = "http://localhost:3000/api/pipeline/sync-outliers?limit=60&maxDays=7&minMultiplier=2.0";
+const PORT = process.env.PORT || 3001;
+const API_URL = `http://localhost:${PORT}/api/pipeline/sync-outliers?limit=60&maxDays=7&minMultiplier=2.0`;
 
 async function runScan() {
   const timestamp = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });

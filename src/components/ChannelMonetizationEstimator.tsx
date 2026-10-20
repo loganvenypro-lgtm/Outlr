@@ -55,16 +55,16 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
   };
 
   return (
-    <div className="bg-[#0e1628] border border-[#1e2b46] rounded-2xl p-6 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#18233a]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
             <DollarSign className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-white text-base">
+              <h3 className="font-extrabold text-slate-900 text-base">
                 Estimation des Revenus & Monétisation Adsense
               </h3>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
@@ -75,7 +75,7 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
                 {defaultEstimation.isMonetizedLikely ? "Monétisée (YPP Éligible)" : "Vérification Requise"}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Calculé à partir du volume de vues mensuel et du benchmark RPM réel de la niche.
             </p>
           </div>
@@ -83,14 +83,14 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
 
         {/* Niche Selector Tag */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-medium">Niche détectée :</span>
+          <span className="text-xs text-slate-500 font-medium">Niche détectée :</span>
           <select
             value={selectedNiche}
             onChange={(e) => handleNicheChange(e.target.value)}
-            className="bg-[#0a0f1d] border border-[#23334d] text-emerald-400 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer"
+            className="bg-white border border-slate-200 text-emerald-400 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer"
           >
             {Object.entries(NICHE_RPM_BENCHMARKS).map(([key, item]) => (
-              <option key={key} value={key} className="bg-[#0e1628] text-white">
+              <option key={key} value={key} className="bg-white text-slate-900">
                 {item.niche} (~${item.avgRpm} RPM)
               </option>
             ))}
@@ -101,9 +101,9 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
       {/* Main Revenue Cards (Monthly & Yearly Range) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Estimated Monthly Revenue */}
-        <div className="bg-[#080d1a] border border-[#18233a] rounded-xl p-4 space-y-1 relative overflow-hidden group">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 relative overflow-hidden group">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Revenus Estimés / Mois
             </span>
             <div className="p-1 rounded bg-emerald-500/10 text-emerald-400 text-xs">
@@ -112,31 +112,31 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
           </div>
           <div className="text-2xl font-black text-emerald-400 tracking-tight">
             ${formatCompactNumber(monthlyAvg)}
-            <span className="text-xs font-normal text-slate-400 ml-1">/mois</span>
+            <span className="text-xs font-normal text-slate-500 ml-1">/mois</span>
           </div>
-          <div className="text-[11px] text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-[#141b2a]">
+          <div className="text-[11px] text-slate-500 font-mono flex items-center justify-between pt-1 border-t border-slate-200">
             <span>Fourchette :</span>
-            <span className="text-slate-200 font-semibold">
+            <span className="text-slate-700 font-semibold">
               ${formatCompactNumber(monthlyMin)} - ${formatCompactNumber(monthlyMax)}
             </span>
           </div>
         </div>
 
         {/* Card 2: Estimated Annual Revenue */}
-        <div className="bg-[#080d1a] border border-[#18233a] rounded-xl p-4 space-y-1 relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Revenus Estimés / An
             </span>
             <div className="p-1 rounded bg-blue-500/10 text-blue-400 text-xs">
               <Calendar className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-white tracking-tight">
+          <div className="text-2xl font-black text-slate-900 tracking-tight">
             ${formatCompactNumber(annualAvg)}
-            <span className="text-xs font-normal text-slate-400 ml-1">/an</span>
+            <span className="text-xs font-normal text-slate-500 ml-1">/an</span>
           </div>
-          <div className="text-[11px] text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-[#141b2a]">
+          <div className="text-[11px] text-slate-500 font-mono flex items-center justify-between pt-1 border-t border-slate-200">
             <span>Projection 12 mois :</span>
             <span className="text-blue-400 font-semibold">
               ${formatCompactNumber(monthlyMin * 12)} - ${formatCompactNumber(monthlyMax * 12)}
@@ -145,9 +145,9 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
         </div>
 
         {/* Card 3: Estimated RPM */}
-        <div className="bg-[#080d1a] border border-[#18233a] rounded-xl p-4 space-y-1 relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               RPM Estimé (Par 1k Vues)
             </span>
             <div className="p-1 rounded bg-purple-500/10 text-purple-400 text-xs">
@@ -157,18 +157,18 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
           <div className="text-2xl font-black text-purple-300 font-mono tracking-tight">
             ${rpm.toFixed(2)}
           </div>
-          <div className="text-[11px] text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-[#141b2a]">
+          <div className="text-[11px] text-slate-500 font-mono flex items-center justify-between pt-1 border-t border-slate-200">
             <span>Plage marché :</span>
-            <span className="text-slate-200">
+            <span className="text-slate-700">
               ${currentBenchmark.minRpm.toFixed(1)} - ${currentBenchmark.maxRpm.toFixed(1)}
             </span>
           </div>
         </div>
 
         {/* Card 4: Estimated Monthly Views */}
-        <div className="bg-[#080d1a] border border-[#18233a] rounded-xl p-4 space-y-1 relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-1 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Vues Mensuelles Estimées
             </span>
             <div className="p-1 rounded bg-sky-500/10 text-sky-400 text-xs">
@@ -178,9 +178,9 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
           <div className="text-2xl font-black text-sky-300 tracking-tight">
             {formatCompactNumber(views)}
           </div>
-          <div className="text-[11px] text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-[#141b2a]">
+          <div className="text-[11px] text-slate-500 font-mono flex items-center justify-between pt-1 border-t border-slate-200">
             <span>Vues / jour moy. :</span>
-            <span className="text-slate-200 font-semibold">
+            <span className="text-slate-700 font-semibold">
               +{formatCompactNumber(Math.round(views / 30))}/j
             </span>
           </div>
@@ -188,25 +188,25 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
       </div>
 
       {/* Interactive Simulation Sliders (Collapsible) */}
-      <div className="bg-[#090f1d] border border-[#18233a] rounded-xl p-4 space-y-3">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center justify-between w-full text-xs font-bold text-slate-300 hover:text-white transition-colors"
+          className="flex items-center justify-between w-full text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors"
         >
           <span className="flex items-center gap-1.5">
             <Sparkles className="w-4 h-4 text-emerald-400" />
             <span>Simulateur & Paramètres Personnalisés de Revenus</span>
           </span>
-          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${showAdvanced ? "rotate-180" : ""}`} />
         </button>
 
         {showAdvanced && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-[#141d2e] text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-slate-200 text-xs">
             {/* Slider 1: RPM */}
             <div className="space-y-2">
               <div className="flex justify-between font-semibold">
-                <span className="text-slate-400">Ajuster le RPM (€ / $ par 1000 vues) :</span>
+                <span className="text-slate-500">Ajuster le RPM (€ / $ par 1000 vues) :</span>
                 <span className="text-emerald-400 font-mono font-bold">${rpm.toFixed(2)}</span>
               </div>
               <input
@@ -228,7 +228,7 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
             {/* Slider 2: Monthly Views */}
             <div className="space-y-2">
               <div className="flex justify-between font-semibold">
-                <span className="text-slate-400">Ajuster le volume de vues mensuel :</span>
+                <span className="text-slate-500">Ajuster le volume de vues mensuel :</span>
                 <span className="text-sky-400 font-mono font-bold">{formatCompactNumber(views)} vues</span>
               </div>
               <input
@@ -251,7 +251,7 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
       </div>
 
       {/* Assumptions & Methodology Footer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400 pt-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 pt-1">
         <div className="flex items-center gap-1.5">
           <Info className="w-3.5 h-3.5 text-slate-500 shrink-0" />
           <span>

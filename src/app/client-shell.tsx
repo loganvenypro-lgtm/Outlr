@@ -13,7 +13,7 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
     document.documentElement.classList.remove("dark");
-    document.body.style.background = "#f8fafc";
+    document.body.style.background = "#ffffff";
     document.body.style.color = "#0f172a";
   }, []);
 
@@ -34,10 +34,10 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-[#f8fafc] font-sans text-slate-900 antialiased">
+      <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased">
         <AppSidebar />
-        <SidebarInset className="flex min-w-0 flex-1 flex-col bg-[#f8fafc]">
-          <div className="flex-1 overflow-y-auto bg-[#f8fafc]">{children}</div>
+        <SidebarInset className="flex min-w-0 flex-1 flex-col bg-white">
+          <div className="flex-1 overflow-y-auto bg-white">{children}</div>
         </SidebarInset>
         <FloatingAiAssistant />
       </div>
