@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
             : sql`v.relevance_score DESC NULLS LAST, v.outlier_multiplier DESC NULLS LAST`;
 
   try {
-    const [rows, [{ total }], languages] = await Promise.all([
+    const [rows, [{ total }], languages, [lastScan]] = await Promise.all([
       sql`
         SELECT
           v.youtube_video_id, v.title, v.thumbnail_url, v.published_at, v.view_count, v.like_count,
@@ -91,6 +91,7 @@ export async function GET(request: NextRequest) {
         GROUP BY 1
         ORDER BY 2 DESC
         LIMIT 12`,
+      sql`SELECT max(finished_at) AS at FROM scan_runs WHERE status = 'ok'`,
     ]);
 
     const items = rows.map((r) => {
@@ -130,6 +131,7 @@ export async function GET(request: NextRequest) {
       pageSize: PAGE_SIZE,
       hasMore: (page + 1) * PAGE_SIZE < total,
       languages,
+      updatedAt: lastScan?.at ? new Date(lastScan.at).toISOString() : null,
     });
   } catch (err) {
     console.error("[api/outliers]", err);

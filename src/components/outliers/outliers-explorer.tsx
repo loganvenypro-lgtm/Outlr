@@ -2,14 +2,39 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Database, Flame, Loader2, SearchX } from "lucide-react";
+import { Database, Flame, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatCompactNumber } from "@/lib/utils";
-import { ALL_VIDEOS_DEFAULTS, DEFAULT_FILTERS, toApiParams, type FilterKey, type Filters } from "./filter-options";
+import {
+  ActiveFilters,
+  EmptyState,
+  ExplorerHeader,
+  FilterSelect,
+  ResultsBar,
+  SessionExpiredError,
+  SessionExpiredState,
+  TopicChips,
+  fetchJson,
+  type ActiveChip,
+  type Option,
+} from "@/components/explorer/explorer-ui";
+import {
+  ALL_VIDEOS_DEFAULTS,
+  CATEGORY_OPTIONS,
+  DEFAULT_FILTERS,
+  FORMAT_OPTIONS,
+  LANGUAGE_LABELS,
+  MULTIPLIER_OPTIONS,
+  PERIOD_OPTIONS,
+  SORT_OPTIONS,
+  SUBS_OPTIONS,
+  VIEWS_OPTIONS,
+  toApiParams,
+  type FilterKey,
+  type Filters,
+} from "./filter-options";
 import { OutlierCard, type OutlierVideo } from "./outlier-card";
 import { OutlierFilters } from "./outlier-filters";
 
@@ -19,25 +44,35 @@ interface ApiResponse {
   page: number;
   hasMore: boolean;
   languages: { code: string; count: number }[];
+  updatedAt: string | null;
 }
 
 // Results are tagged with the query they answer, so "loading" is derived instead of set in effects.
 type Result = ApiResponse & { key: string };
 
+// Quick topics: each one is just a preset of filters.
+const TOPICS: { label: string; filters: Partial<Filters> }[] = [
+  { label: "Gaming", filters: { category: "20" } },
+  { label: "Documentaires", filters: { q: "documentary" } },
+  { label: "Minecraft", filters: { q: "minecraft" } },
+  { label: "True crime", filters: { q: "crime" } },
+  { label: "Éducation", filters: { category: "27" } },
+  { label: "Science & Tech", filters: { category: "28" } },
+  { label: "Humour", filters: { category: "23" } },
+  { label: "Sport", filters: { category: "17" } },
+];
+
+function baselineFor(view: string): Filters {
+  return view === "all" ? { ...DEFAULT_FILTERS, ...ALL_VIDEOS_DEFAULTS, view: "all" } : { ...DEFAULT_FILTERS };
+}
+
 function readFilters(params: URLSearchParams): Filters {
-  const view = params.get("view") === "all" ? "all" : "outliers";
-  const filters: Filters = view === "all" ? { ...DEFAULT_FILTERS, ...ALL_VIDEOS_DEFAULTS, view } : { ...DEFAULT_FILTERS };
+  const filters = baselineFor(params.get("view") === "all" ? "all" : "outliers");
   for (const key of Object.keys(DEFAULT_FILTERS) as FilterKey[]) {
     const value = params.get(key);
     if (value) filters[key] = value;
   }
   return filters;
-}
-
-async function fetchOutliers(params: URLSearchParams): Promise<ApiResponse> {
-  const res = await fetch(`/api/outliers?${params}`);
-  if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? "Erreur de chargement.");
-  return res.json();
 }
 
 export function OutliersExplorer() {
@@ -47,10 +82,11 @@ export function OutliersExplorer() {
 
   const filters = useMemo(() => readFilters(new URLSearchParams(searchParams.toString())), [searchParams]);
   const queryKey = toApiParams(filters, 0).toString();
+  const baseline = baselineFor(filters.view);
 
   const [search, setSearch] = useState(filters.q);
   const [result, setResult] = useState<Result | null>(null);
-  const [error, setError] = useState<{ key: string; message: string } | null>(null);
+  const [error, setError] = useState<{ key: string; error: Error } | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
 
@@ -59,12 +95,11 @@ export function OutliersExplorer() {
   // Only values that differ from the tab's defaults go in the URL, so links stay short and shareable.
   const updateFilters = useCallback(
     (next: Filters) => {
-      const baseline: Filters =
-        next.view === "all" ? { ...DEFAULT_FILTERS, ...ALL_VIDEOS_DEFAULTS, view: "all" } : DEFAULT_FILTERS;
+      const base = baselineFor(next.view);
       const params = new URLSearchParams();
       if (next.view === "all") params.set("view", "all");
       for (const key of Object.keys(DEFAULT_FILTERS) as FilterKey[]) {
-        if (key !== "view" && next[key] !== baseline[key]) params.set(key, next[key]);
+        if (key !== "view" && next[key] !== base[key]) params.set(key, next[key]);
       }
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
@@ -76,10 +111,13 @@ export function OutliersExplorer() {
 
   const switchView = (view: string) => {
     setSearch("");
-    updateFilters(view === "all" ? { ...DEFAULT_FILTERS, ...ALL_VIDEOS_DEFAULTS, view: "all" } : { ...DEFAULT_FILTERS });
+    updateFilters(baselineFor(view));
   };
 
-  const resetFilters = () => switchView(filters.view);
+  const resetFilters = () => {
+    setSearch("");
+    updateFilters({ ...baseline, sort: filters.sort });
+  };
 
   // Debounce the search box into the URL.
   useEffect(() => {
@@ -90,13 +128,9 @@ export function OutliersExplorer() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchOutliers(new URLSearchParams(queryKey))
-      .then((data) => {
-        if (!cancelled) setResult({ ...data, key: queryKey });
-      })
-      .catch((err) => {
-        if (!cancelled) setError({ key: queryKey, message: err instanceof Error ? err.message : "Erreur de chargement." });
-      });
+    fetchJson<ApiResponse>(`/api/outliers?${queryKey}`)
+      .then((data) => !cancelled && setResult({ ...data, key: queryKey }))
+      .catch((err: Error) => !cancelled && setError({ key: queryKey, error: err }));
     return () => {
       cancelled = true;
     };
@@ -106,45 +140,63 @@ export function OutliersExplorer() {
     if (!result) return;
     setLoadingMore(true);
     try {
-      const data = await fetchOutliers(toApiParams(filters, result.page + 1));
+      const data = await fetchJson<ApiResponse>(`/api/outliers?${toApiParams(filters, result.page + 1)}`);
       setResult((prev) => (prev && prev.key === queryKey ? { ...data, key: queryKey, items: [...prev.items, ...data.items] } : prev));
     } catch (err) {
-      setError({ key: queryKey, message: err instanceof Error ? err.message : "Erreur de chargement." });
+      setError({ key: queryKey, error: err as Error });
     } finally {
       setLoadingMore(false);
     }
   };
 
-  const retry = () => {
-    setError(null);
-    setReloadToken((n) => n + 1);
-  };
+  const languageOptions: Option[] = [
+    { value: "all", label: "Toutes langues" },
+    ...(result?.languages ?? []).map((l) => ({ value: l.code, label: LANGUAGE_LABELS[l.code] ?? l.code.toUpperCase() })),
+  ];
+  if (filters.language !== "all" && !languageOptions.some((o) => o.value === filters.language)) {
+    languageOptions.push({ value: filters.language, label: LANGUAGE_LABELS[filters.language] ?? filters.language });
+  }
+
+  // Removable chips for every filter that differs from the tab's defaults.
+  const labelOf = (options: Option[], value: string) => options.find((o) => o.value === value)?.label ?? value;
+  const chipSources: [FilterKey, Option[]][] = [
+    ["format", FORMAT_OPTIONS],
+    ["period", PERIOD_OPTIONS],
+    ["category", CATEGORY_OPTIONS],
+    ["language", languageOptions],
+    ["subs", SUBS_OPTIONS],
+    ["minViews", VIEWS_OPTIONS],
+    ["minMultiplier", MULTIPLIER_OPTIONS],
+  ];
+  const chips: ActiveChip[] = [];
+  if (filters.q) chips.push({ key: "q", label: `« ${filters.q} »` });
+  for (const [key, options] of chipSources) {
+    if (filters[key] !== baseline[key]) chips.push({ key, label: labelOf(options, filters[key]) });
+  }
+  if (filters.view !== "all" && filters.relevant !== baseline.relevant) {
+    chips.push({ key: "relevant", label: "Toutes les vidéos (non filtrées)" });
+  }
 
   const items = result?.key === queryKey ? result.items : [];
-  const total = result?.key === queryKey ? result.total : 0;
   const isAllView = filters.view === "all";
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-1 data-vertical:h-4 data-vertical:self-auto" />
-        <h1 className="text-sm font-medium">{isAllView ? "Toutes les vidéos" : "Outliers"}</h1>
-        <span className="ml-auto hidden text-xs text-muted-foreground sm:inline">
-          Données mises à jour toutes les 30 min
-        </span>
-      </header>
+      <ExplorerHeader
+        title={isAllView ? "Toutes les vidéos" : "Vidéos virales"}
+        icon={<Flame className="size-4 text-muted-foreground" />}
+      />
 
-      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-6 px-4 py-6 md:px-6">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-5 px-4 py-6 md:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-semibold tracking-tight">
-              {isAllView ? "Toute la base de vidéos" : "Vidéos qui surperforment"}
+              {isAllView ? "Toute la base de vidéos" : "Vidéos virales"}
             </h2>
-            <p className="max-w-2xl text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {isAllView
-                ? "Toutes les vidéos collectées par le scanner, sans filtre de pertinence. Idéal pour explorer une niche en entier."
-                : "Les vidéos qui font bien plus de vues que d'habitude sur leur chaîne. Filtre par format, taille de chaîne, niche ou langue pour trouver ta prochaine idée."}
+                ? "Toutes les vidéos collectées par le scanner, sans filtre de pertinence."
+                : "Les vidéos qui explosent en ce moment, comparées à la normale de leur chaîne."}
             </p>
           </div>
           <Tabs value={filters.view} onValueChange={(v) => switchView(String(v))}>
@@ -161,32 +213,65 @@ export function OutliersExplorer() {
           </Tabs>
         </div>
 
-        <OutlierFilters
-          filters={filters}
-          search={search}
-          languages={result?.languages ?? []}
-          onSearchChange={setSearch}
-          onChange={setFilter}
-          onReset={resetFilters}
-        />
-
-        <div className="text-sm text-muted-foreground">
-          {loading ? (
-            "Chargement…"
-          ) : (
-            <>
-              <span className="font-medium text-foreground tabular-nums">{formatCompactNumber(total)}</span> vidéo
-              {total > 1 ? "s" : ""} trouvée{total > 1 ? "s" : ""}
-            </>
-          )}
+        <div className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher une vidéo, une chaîne, une niche…"
+            className="h-10 pl-9"
+          />
         </div>
 
+        <TopicChips
+          topics={TOPICS.map((topic) => ({
+            label: topic.label,
+            active: Object.entries(topic.filters).every(([k, v]) => filters[k as FilterKey] === v),
+            onPick: () => {
+              setSearch(topic.filters.q ?? "");
+              updateFilters({ ...baseline, sort: filters.sort, ...topic.filters });
+            },
+          }))}
+        />
+
+        <OutlierFilters filters={filters} languageOptions={languageOptions} onChange={setFilter} />
+
+        <ActiveFilters
+          chips={chips}
+          onRemove={(key) => {
+            if (key === "q") setSearch("");
+            setFilter(key as FilterKey, baseline[key as FilterKey]);
+          }}
+          onClear={resetFilters}
+        />
+
+        <ResultsBar
+          loading={loading}
+          total={result?.key === queryKey ? result.total : 0}
+          noun={["vidéo trouvée", "vidéos trouvées"]}
+          updatedAt={result?.updatedAt ?? null}
+          sort={
+            <FilterSelect value={filters.sort} options={SORT_OPTIONS} onChange={(v) => setFilter("sort", v)} className="w-auto" />
+          }
+        />
+
         {error?.key === queryKey ? (
-          <EmptyState title="Impossible de charger les vidéos" description={error.message}>
-            <Button variant="outline" size="sm" onClick={retry}>
-              Réessayer
-            </Button>
-          </EmptyState>
+          error.error instanceof SessionExpiredError ? (
+            <SessionExpiredState />
+          ) : (
+            <EmptyState title="Impossible de charger les vidéos" description={error.error.message}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setError(null);
+                  setReloadToken((n) => n + 1);
+                }}
+              >
+                Réessayer
+              </Button>
+            </EmptyState>
+          )
         ) : loading ? (
           <Grid>
             {Array.from({ length: 8 }, (_, i) => (
@@ -233,27 +318,4 @@ export function OutliersExplorer() {
 
 function Grid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">{children}</div>;
-}
-
-function EmptyState({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-16 text-center">
-      <div className="flex size-10 items-center justify-center rounded-full bg-muted">
-        <SearchX className="size-5 text-muted-foreground" />
-      </div>
-      <div className="flex flex-col gap-1">
-        <p className="font-medium">{title}</p>
-        <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
-      </div>
-      {children}
-    </div>
-  );
 }

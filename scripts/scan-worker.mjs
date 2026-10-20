@@ -340,7 +340,7 @@ async function refreshChannelStats(stats, maxCalls) {
     SELECT c.youtube_channel_id
     FROM channels c
     LEFT JOIN tracked_channels tc ON tc.channel_id = c.youtube_channel_id
-    WHERE c.last_stats_at IS NULL OR c.last_stats_at < now() - interval '3 days'
+    WHERE c.rss_error_count < 5 AND (c.last_stats_at IS NULL OR c.last_stats_at < now() - interval '20 hours')
     ORDER BY (tc.channel_id IS NOT NULL) DESC, c.last_stats_at NULLS FIRST
     LIMIT ${maxCalls * 50}`;
   stats.channels.requested = channels.length;
@@ -366,6 +366,14 @@ async function refreshChannelStats(stats, maxCalls) {
             last_stats_at = now(),
             updated_at = now()
           WHERE youtube_channel_id = ${item.id}`;
+        // Daily history for Channel Trends (+views / +subscribers over 24 h).
+        await tx`
+          INSERT INTO channel_stat_snapshots (youtube_channel_id, subscriber_count, total_views, video_count)
+          VALUES (
+            ${item.id}, ${s.hiddenSubscriberCount ? null : Number(s.subscriberCount ?? 0)},
+            ${Number(s.viewCount ?? 0)}, ${Number(s.videoCount ?? 0)}
+          )
+          ON CONFLICT DO NOTHING`;
         stats.channels.refreshed++;
       }
       // Terminated/unknown channels: stop polling them.
@@ -770,6 +778,7 @@ async function computeScores() {
     WHERE s.youtube_video_id = v.youtube_video_id`;
 
   await sql`DELETE FROM video_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
+  await sql`DELETE FROM channel_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
 }
 
 // ---------------------------------------------------------------------------
