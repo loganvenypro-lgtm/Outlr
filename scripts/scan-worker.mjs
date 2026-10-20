@@ -321,6 +321,18 @@ async function refreshVideoStats(stats, maxCalls) {
           INSERT INTO video_stat_snapshots (youtube_video_id, view_count, like_count, comment_count)
           VALUES (${item.id}, ${views}, ${likes}, ${comments})
           ON CONFLICT DO NOTHING`;
+        if (snippet.title) {
+          const [variant] = await tx`
+            INSERT INTO video_variants (youtube_video_id, kind, value)
+            VALUES (${item.id}, 'title', ${snippet.title})
+            ON CONFLICT (youtube_video_id, kind, value) DO UPDATE SET last_seen_at = now()
+            RETURNING (xmax = 0) AS inserted`;
+          if (variant.inserted) {
+            const [{ n }] = await tx`
+              SELECT count(*)::int AS n FROM video_variants WHERE youtube_video_id = ${item.id} AND kind = 'title'`;
+            if (n > 1) stats.variants.titleChanges++;
+          }
+        }
         stats.videos.refreshed++;
         if (hotIds.has(item.id)) stats.videos.hot++;
       }
@@ -332,6 +344,49 @@ async function refreshVideoStats(stats, maxCalls) {
       }
     });
   }
+}
+
+// Thumbnail A/B tests: i.ytimg.com's ETag is the Unix time the current thumbnail
+// was set, so a new ETag means the creator (or a Test & Compare run) changed it.
+// Plain HEAD requests on the public CDN, no API quota.
+async function checkThumbnails(stats) {
+  const videos = await sql`
+    SELECT v.youtube_video_id
+    FROM videos v
+    JOIN channels c ON c.id = v.channel_id
+    LEFT JOIN tracked_channels tc ON tc.channel_id = c.youtube_channel_id
+    WHERE v.published_at > now() - interval '7 days'
+      AND (v.relevance_score IS NOT NULL OR tc.channel_id IS NOT NULL OR c.trend_score >= 50)
+      AND (v.thumb_checked_at IS NULL OR v.thumb_checked_at < now() - interval '3 hours')
+    ORDER BY v.thumb_checked_at NULLS FIRST, v.published_at DESC
+    LIMIT 600`;
+
+  await mapLimit(videos, 6, async ({ youtube_video_id: id }) => {
+    try {
+      const res = await fetch(`https://i.ytimg.com/vi/${id}/hqdefault.jpg`, {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(8000),
+      });
+      const etag = res.headers.get('etag')?.replace(/"/g, '');
+      await sql`UPDATE videos SET thumb_checked_at = now() WHERE youtube_video_id = ${id}`;
+      if (!res.ok || !etag) return;
+      stats.variants.thumbnailsChecked++;
+
+      const setAt = /^\d{9,11}$/.test(etag) ? new Date(Number(etag) * 1000) : null;
+      const [variant] = await sql`
+        INSERT INTO video_variants (youtube_video_id, kind, value, set_at)
+        VALUES (${id}, 'thumbnail', ${etag}, ${setAt})
+        ON CONFLICT (youtube_video_id, kind, value) DO UPDATE SET last_seen_at = now()
+        RETURNING (xmax = 0) AS inserted`;
+      if (variant.inserted) {
+        const [{ n }] = await sql`
+          SELECT count(*)::int AS n FROM video_variants WHERE youtube_video_id = ${id} AND kind = 'thumbnail'`;
+        if (n > 1) stats.variants.thumbnailChanges++;
+      }
+    } catch {
+      // Network hiccup: retried on a later scan.
+    }
+  });
 }
 
 async function refreshChannelStats(stats, maxCalls) {
@@ -890,6 +945,8 @@ function buildSummaryEmbed(runId, stats, totals, relevance) {
         stats.videos.unavailable && `Privées / supprimées : ${fmt(stats.videos.unavailable)}`,
         `Chaînes rafraîchies : **${fmt(stats.channels.refreshed)}** / ${fmt(stats.channels.requested)}`,
         stats.channels.missing && `Chaînes disparues : ${fmt(stats.channels.missing)}`,
+        (stats.variants.titleChanges || stats.variants.thumbnailChanges) &&
+          `🧪 Tests A/B détectés : ${fmt(stats.variants.titleChanges)} titre(s) · ${fmt(stats.variants.thumbnailChanges)} miniature(s)`,
       ),
       inline: true,
     },
@@ -1171,6 +1228,7 @@ async function runScan() {
   const stats = {
     rss: { attempted: 0, ok: 0, notFound: 0, failed: 0, rateLimited: false, entries: 0, newVideos: 0, newFreshVideos: 0 },
     videos: { requested: 0, refreshed: 0, hot: 0, unavailable: 0, apiCalls: 0 },
+    variants: { thumbnailsChecked: 0, thumbnailChanges: 0, titleChanges: 0 },
     channels: { requested: 0, refreshed: 0, missing: 0, apiCalls: 0 },
     quota: { usedThisScan: 0, usedToday: 0, workerDailyBudget: 0, exhausted: false },
     durationMs: 0,
@@ -1211,6 +1269,7 @@ async function runScan() {
     try {
       await refreshVideoStats(stats, budget - channelCalls);
       await refreshChannelStats(stats, channelCalls);
+      await checkThumbnails(stats);
     } catch (err) {
       if (!err.quotaExceeded) throw err;
       stats.quota.exhausted = true;
