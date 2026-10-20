@@ -118,81 +118,128 @@ export default function OnboardingPage() {
         throw new Error(data.error || "Impossible de récupérer les informations de la chaîne.");
       }
 
-      const source = data.sourceChannel;
-      const editorial = data.editorialProfile;
-      const foundCompetitors = data.similarChannels || [];
+      // Support both API structures (data.reference and data.sourceChannel)
+      const source = data.reference || data.sourceChannel;
+      if (!source) {
+        throw new Error("Impossible de trouver cette chaîne YouTube. Vérifiez le lien ou le @handle.");
+      }
+
+      const editorial = data.editorialProfile || data.editorialSignature;
+      const rawCompetitors = data.competitors || data.similarChannels || [];
 
       // Set Scraped Channel
       const formattedChannel: ScrapedChannel = {
         id: source.id,
-        title: source.title,
-        handle: source.handle || `@${source.title.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+        title: source.title || "Ma Chaîne YouTube",
+        handle: source.handle || `@${(source.title || "chaine").toLowerCase().replace(/[^a-z0-9]/g, "")}`,
         avatar: source.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&h=128&fit=crop",
-        subscribers: source.subscribers || 45000,
-        totalViews: source.viewCount || 1200000,
-        videoCount: source.videoCount || 34,
+        subscribers: source.subscriberCount ?? source.subscribers ?? 0,
+        totalViews: source.totalViews ?? source.viewCount ?? 0,
+        videoCount: source.videoCount ?? 0,
         country: source.country || "FR",
-        dominantFormat: editorial?.dominantFormats?.[0] || "Long format (12-25 min)",
+        dominantFormat: source.archetypeLabel || editorial?.dominantFormats?.[0] || "Format Niche & Longs formats",
       };
       setChannelData(formattedChannel);
 
       // Content pillars
+      const rawPillars = source.editorialTags || editorial?.contentPillars || editorial?.keyThemes || [];
       setContentPillars(
-        editorial?.contentPillars && editorial.contentPillars.length > 0
-          ? editorial.contentPillars
-          : ["Storytelling approfondi", "Analyses et études de cas", "Stratégies concrètes", "Vidéos essais"]
+        rawPillars.length > 0
+          ? rawPillars
+          : ["E-commerce & Growth", "Stratégies Organiques & Ventes", "Études de cas & Résultats", "Analyses Approfondies"]
       );
 
       // Competitors
-      const comps: Competitor[] = foundCompetitors.slice(0, 6).map((c: any) => ({
-        id: c.id,
-        title: c.title,
-        handle: c.handle || `@${c.title.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
-        avatar: c.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop",
-        subscribers: c.subscribers || 85000,
-        similarityScore: Math.round(c.similarityScore || 85),
-        topVideo: c.topVideos?.[0]
-          ? {
-              title: c.topVideos[0].title,
-              views: c.topVideos[0].viewCount || 250000,
-              multiplier: c.topVideos[0].outlierMultiplier || 3.8,
-            }
-          : undefined,
-      }));
+      const comps: Competitor[] = rawCompetitors.slice(0, 6).map((c: any) => {
+        const ch = c.channel || c;
+        const topV = c.topSimilarVideos?.[0] || c.topVideos?.[0];
+        return {
+          id: ch.id || `comp-${Math.random()}`,
+          title: ch.title || "Créateur Niche",
+          handle: ch.handle || `@${(ch.title || "createur").toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+          avatar: ch.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop",
+          subscribers: ch.subscriberCount ?? ch.subscribers ?? 25000,
+          similarityScore: Math.round(c.similarityScore || 82),
+          topVideo: topV
+            ? {
+                title: topV.title,
+                views: topV.views ?? topV.viewCount ?? 120000,
+                multiplier: topV.multiplier ?? topV.outlierMultiplier ?? 3.8,
+              }
+            : undefined,
+        };
+      });
       setCompetitors(comps);
 
-      // Generate customized topics / video concepts
-      const primaryPillar = editorial?.label || "votre niche";
-      setRecommendedTopics([
-        {
-          title: `Pourquoi 99% des créateurs échouent dans ${primaryPillar} (L'erreur fatale)`,
-          hook: "La plupart des créateurs pensent que c'est une question de chance, mais l'algorithme privilégie ce schéma précis...",
-          angle: "Contre-intuitif & Déconstruction d'un mythe",
-          estimatedMultiplier: "⚡ 6.4x",
-          category: "Analyse Profonde",
-        },
-        {
-          title: `L'histoire secrète derrière l'empire le plus rentable de ${primaryPillar}`,
-          hook: "En moins de 18 mois, ils ont généré des millions sans jamais montrer leur visage. Voici la formule exacte...",
-          angle: "Étude de cas immersive (Storytelling)",
-          estimatedMultiplier: "⚡ 5.1x",
-          category: "Cas d'école",
-        },
-        {
-          title: `Ce que YouTube ne veut pas que vous sachiez sur la rétention en 2026`,
-          hook: "Si vous appliquez cette structure dès les 15 premières secondes, votre taux de complétion double instantanément...",
-          angle: "Secret & Tuto avancé",
-          estimatedMultiplier: "⚡ 4.7x",
-          category: "Stratégie",
-        },
-        {
-          title: `J'ai testé les 5 stratégies virales de mes plus gros concurrents (Voici le résultat)`,
-          hook: "J'ai passé 30 jours à reproduire les miniatures et accroches des leaders de la niche...",
-          angle: "Expérience réelle & Challenge",
-          estimatedMultiplier: "⚡ 7.2x",
-          category: "Format Challenge",
-        },
-      ]);
+      // Generate customized topics / video concepts tailored to the channel
+      const channelSubject = source.title || "votre niche";
+      const channelDesc = (source.description || "").toLowerCase();
+      const isEcom = channelDesc.includes("ecom") || channelDesc.includes("dropshipping") || channelSubject.toLowerCase().includes("ecom");
+
+      if (isEcom) {
+        setRecommendedTopics([
+          {
+            title: "Comment générer 10 000€/mois en Dropshipping Organique sans dépenser 1€ en pub",
+            hook: "Tout le monde paie des milliers d'euros en Meta Ads alors que cette méthode gratuite surpasse 90% des boutiques...",
+            angle: "Contre-intuitif & Preuve concrète à l'appui",
+            estimatedMultiplier: "⚡ 7.4x",
+            category: "Stratégie Organique",
+          },
+          {
+            title: "J'ai analysé la boutique la plus virale de TikTok (Le produit secret révélé)",
+            hook: "En seulement 14 jours, ils ont fait 45 000 vues par reel sans jamais montrer leur visage. Voici leur structure exacte...",
+            angle: "Déconstruction & Étude de cas immersive",
+            estimatedMultiplier: "⚡ 6.1x",
+            category: "Étude de Cas",
+          },
+          {
+            title: "La méthode des 3 Hooks : Pourquoi 99% de vos vidéos courtes ne convertissent pas",
+            hook: "Si votre vidéo ne convertit pas dans les 3 premières secondes, voici l'erreur psychologique que vous faites...",
+            angle: "Tutoriel Avancé & Rétention",
+            estimatedMultiplier: "⚡ 5.5x",
+            category: "Optimisation Taux de Clic",
+          },
+          {
+            title: "De 0 à 50k€/mois avec l'IA : Le blueprint complet que personne ne partage",
+            hook: "J'ai automatisé toute la création de contenu de mon shop avec ces 3 outils IA. Regardez les résultats...",
+            angle: "Automatisation & Futur du Business",
+            estimatedMultiplier: "⚡ 8.2x",
+            category: "IA & Scaling",
+          },
+        ]);
+      } else {
+        const primaryPillar = source.archetypeLabel || "votre thématique";
+        setRecommendedTopics([
+          {
+            title: `Pourquoi 99% des créateurs échouent dans ${primaryPillar} (L'erreur fatale)`,
+            hook: "La plupart des créateurs pensent que c'est une question de chance, mais l'algorithme privilégie ce schéma précis...",
+            angle: "Contre-intuitif & Déconstruction d'un mythe",
+            estimatedMultiplier: "⚡ 6.4x",
+            category: "Analyse Profonde",
+          },
+          {
+            title: `L'histoire secrète derrière l'empire le plus rentable de ${primaryPillar}`,
+            hook: "En moins de 18 mois, ils ont généré des millions sans jamais montrer leur visage. Voici la formule exacte...",
+            angle: "Étude de cas immersive (Storytelling)",
+            estimatedMultiplier: "⚡ 5.1x",
+            category: "Cas d'école",
+          },
+          {
+            title: `Ce que YouTube ne veut pas que vous sachiez sur la rétention en 2026`,
+            hook: "Si vous appliquez cette structure dès les 15 premières secondes, votre taux de complétion double instantanément...",
+            angle: "Secret & Tuto avancé",
+            estimatedMultiplier: "⚡ 4.7x",
+            category: "Stratégie",
+          },
+          {
+            title: `J'ai testé les 5 stratégies virales de mes plus gros concurrents (Voici le résultat)`,
+            hook: "J'ai passé 30 jours à reproduire les miniatures et accroches des leaders de la niche...",
+            angle: "Expérience réelle & Challenge",
+            estimatedMultiplier: "⚡ 7.2x",
+            category: "Format Challenge",
+          },
+        ]);
+      }
 
       // Complete progress animation
       setProgress(100);
