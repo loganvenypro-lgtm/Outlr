@@ -7,7 +7,6 @@ import {
   BarChart3,
   Bookmark,
   Building2,
-  CircleDollarSign,
   Clapperboard,
   Flame,
   FlaskConical,
@@ -56,9 +55,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     items: [
       { title: "Accueil", url: "/", icon: House },
       { title: "Vidéos virales", url: "/dashboard", icon: Flame, badge: "Live" },
-      { title: "Channel Trends", url: "/channel-trends", icon: LineChart, badge: "Live" },
-      { title: "Monetization Tracker", url: "/monetization-tracker", icon: CircleDollarSign },
-      { title: "Tendances YouTube", url: "/trending", icon: TrendingUp },
+      { title: "Channel Trends", url: "/channel-trends", icon: LineChart, badge: "Live" },      { title: "Tendances YouTube", url: "/trending", icon: TrendingUp },
       { title: "Radar global", url: "/radar", icon: Radar },
       { title: "Recherche de niche", url: "/niche-finder", icon: BarChart3 },
       { title: "Trouver une chaîne", url: "/channel-finder", icon: Search },

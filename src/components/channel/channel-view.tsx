@@ -86,7 +86,7 @@ interface ChannelData {
     medianShort: number | null;
     views48h: number;
   };
-  revenue: AdRevenueEstimate & { checkedAt: string | null };
+  revenue: AdRevenueEstimate;
   hourly: { hour: string; views: number }[];
   videos: ChannelVideo[];
   updatedAt: string | null;

@@ -19,9 +19,6 @@ const CONFIG = {
   intervalMinutes: num('SCAN_INTERVAL_MINUTES', 30),
   rssChannelsPerScan: num('SCAN_RSS_CHANNELS', 400),
   rssConcurrency: num('SCAN_RSS_CONCURRENCY', 6),
-  // Monetization Tracker: watch pages read per scan, and how often a channel is re-checked.
-  monetizationChecksPerScan: num('MONETIZATION_CHECKS_PER_SCAN', 150),
-  monetizationRecheckHours: num('MONETIZATION_RECHECK_HOURS', 24),
   dailyQuota: num('YOUTUBE_DAILY_QUOTA', 10000),
   // Share of the daily quota the worker may use; the rest stays for the app.
   workerQuotaShare: num('SCAN_QUOTA_SHARE', 0.7),
@@ -387,101 +384,6 @@ async function checkThumbnails(stats) {
         if (n > 1) stats.variants.thumbnailChanges++;
       }
     } catch {
-      // Network hiccup: retried on a later scan.
-    }
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Monetization Tracker — public watch page, no API quota
-// ---------------------------------------------------------------------------
-
-const WATCH_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
-
-/** true = YouTube serves ads on this video, false = none, null = page unreadable (retry later). */
-async function videoHasAds(videoId) {
-  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}&hl=en`, {
-    headers: { 'User-Agent': WATCH_USER_AGENT, 'Accept-Language': 'en-US,en;q=0.9', Cookie: 'SOCS=CAI; CONSENT=YES+1' },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (res.status === 429) {
-    const err = new Error('YouTube watch page rate limited');
-    err.rateLimited = true;
-    throw err;
-  }
-  if (!res.ok) return null;
-  const html = await res.text();
-  // Geo-blocked or age-gated videos never show ads from here: that says nothing about the channel.
-  if (!html.includes('"videoDetails"') || !html.includes('"playabilityStatus":{"status":"OK"')) return null;
-  return /"key":"yt_ad","value":"1"/.test(html) || html.includes('"adPlacements"') || html.includes('"playerAds"');
-}
-
-// After a 429, watch pages are left alone for a while so RSS (same domain) is not blocked too.
-let monetizationPausedUntil = 0;
-
-async function checkMonetization(stats) {
-  stats.monetization = { checked: 0, monetized: 0, demonetized: 0, unreadable: 0, changes: 0, rateLimited: false };
-  if (CONFIG.monetizationChecksPerScan <= 0 || Date.now() < monetizationPausedUntil) return;
-
-  // Two latest long-form videos old enough for ads to be live: a flip must be confirmed by both.
-  const channels = await sql`
-    SELECT c.id, c.monetized, c.monetization_checked_at, vids.ids
-    FROM channels c
-    CROSS JOIN LATERAL (
-      SELECT array_agg(youtube_video_id) AS ids FROM (
-        SELECT v.youtube_video_id FROM videos v
-        WHERE v.channel_id = c.id AND NOT v.is_short AND v.published_at < now() - interval '12 hours'
-        ORDER BY v.published_at DESC
-        LIMIT 2
-      ) latest
-    ) vids
-    WHERE vids.ids IS NOT NULL
-      AND c.rss_error_count < 5
-      AND c.subscriber_count >= ${CONFIG.minSubscribers}
-      AND (c.monetization_checked_at IS NULL
-        OR c.monetization_checked_at < now() - make_interval(hours => ${CONFIG.monetizationRecheckHours}))
-    ORDER BY c.monetization_checked_at NULLS FIRST, c.subscriber_count DESC
-    LIMIT ${CONFIG.monetizationChecksPerScan}`;
-
-  let stop = false;
-  await mapLimit(channels, 2, async (channel) => {
-    if (stop) return;
-    try {
-      const [first, second] = channel.ids;
-      let monetized = await videoHasAds(first);
-      // A single ad-less video (claim, limited ads) is not proof: confirm a flip with the next one.
-      if (monetized !== null && channel.monetized !== null && monetized !== channel.monetized && second) {
-        const confirm = await videoHasAds(second);
-        if (confirm !== monetized) monetized = confirm === null ? null : channel.monetized;
-      }
-      await sleep(1500);
-
-      if (monetized === null) {
-        stats.monetization.unreadable++;
-        return;
-      }
-      stats.monetization.checked++;
-      stats.monetization[monetized ? 'monetized' : 'demonetized']++;
-
-      const flipped = channel.monetized !== null && monetized !== channel.monetized;
-      if (flipped) {
-        stats.monetization.changes++;
-        await sql`
-          INSERT INTO channel_monetization_events (channel_id, monetized, previous_checked_at, video_id)
-          VALUES (${channel.id}, ${monetized}, ${channel.monetization_checked_at}, ${first})`;
-      }
-      await sql`
-        UPDATE channels SET
-          monetized = ${monetized},
-          monetization_checked_at = now(),
-          monetization_changed_at = CASE WHEN ${flipped} THEN now() ELSE monetization_changed_at END
-        WHERE id = ${channel.id}`;
-    } catch (err) {
-      if (err.rateLimited) {
-        stop = true;
-        stats.monetization.rateLimited = true;
-        monetizationPausedUntil = Date.now() + 2 * 3_600_000;
-      }
       // Network hiccup: retried on a later scan.
     }
   });
@@ -1433,12 +1335,6 @@ async function runScan() {
       stats.quota.exhausted = true;
     }
 
-    try {
-      await checkMonetization(stats);
-    } catch (err) {
-      console.error('❌ Monétisation :', err);
-    }
-
     await computeScores();
 
     longVideos = await pickTopVideos(false, CONFIG.reportTopLong);
@@ -1472,7 +1368,7 @@ async function runScan() {
       error = ${stats.error}
     WHERE id = ${runId}`;
 
-  console.log(`✅ Scan #${runId} :`, JSON.stringify({ rss: stats.rss, videos: stats.videos, channels: stats.channels, monetization: stats.monetization, quota: stats.quota }));
+  console.log(`✅ Scan #${runId} :`, JSON.stringify({ rss: stats.rss, videos: stats.videos, channels: stats.channels, quota: stats.quota }));
   await sendReport(buildSummaryEmbed(runId, stats, totals, relevance), longVideos, shortVideos);
   if (WEBHOOK_URL) await maybeSendGrowthReport(process.argv.includes('--growth-report'));
 }

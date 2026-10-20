@@ -267,7 +267,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     };
     const category = mostCommon(recent.map((v) => v.category_id));
     const revenue = estimateAdRevenue({
-      monetized: channel.monetized ?? null,
+      subscribers: num(channel.subscriber_count),
       name: channel.name,
       titles: recent.slice(0, 30).map((v) => v.title as string),
       categoryId: category != null ? Number(category) : null,
@@ -307,10 +307,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         medianShort: num(kpis.median_short),
         views48h,
       },
-      revenue: {
-        ...revenue,
-        checkedAt: channel.monetization_checked_at ? new Date(channel.monetization_checked_at).toISOString() : null,
-      },
+      revenue,
       hourly: hours,
       daily: daily.map((d) => ({
         day: new Date(d.day).toISOString(),

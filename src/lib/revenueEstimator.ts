@@ -281,7 +281,7 @@ export function estimateChannelRevenue(channel: {
 }
 
 // ---------------------------------------------------------------------------
-// Ad revenue from scanner data — only for channels whose ads were actually seen
+// Ad revenue from scanner data (official API only) — for Partner Program-eligible channels
 // ---------------------------------------------------------------------------
 
 /** YouTube category → niche, used when the titles don't give the niche away. */
@@ -328,8 +328,8 @@ const SHORTS_RPM = { min: 0.03, avg: 0.06, max: 0.1 };
 type Range = { min: number; avg: number; max: number };
 
 export interface AdRevenueEstimate {
-  /** "unknown" until the scan worker has read the channel's ad status. */
-  status: "monetized" | "not_monetized" | "unknown";
+  /** "eligible" = ≥ 1,000 subscribers: the channel can earn ads, but YouTube doesn't say whether it does. */
+  status: "eligible" | "not_eligible";
   nicheKey: string;
   nicheLabel: string;
   /** Blended RPM in USD per 1,000 views, after market and Shorts adjustments. */
@@ -340,7 +340,7 @@ export interface AdRevenueEstimate {
 }
 
 export function estimateAdRevenue(input: {
-  monetized: boolean | null;
+  subscribers: number | null;
   name: string;
   titles: string[];
   categoryId: number | null;
@@ -363,10 +363,10 @@ export function estimateAdRevenue(input: {
     max: blend(benchmark.maxRpm, SHORTS_RPM.max),
   };
 
-  const status = input.monetized === true ? "monetized" : input.monetized === false ? "not_monetized" : "unknown";
+  const status = (input.subscribers ?? 0) >= 1000 ? "eligible" : "not_eligible";
   const dailyViews = input.dailyViews != null ? Math.max(0, input.dailyViews) : null;
   const earn = (days: number): Range | null =>
-    status === "monetized" && dailyViews != null
+    status === "eligible" && dailyViews != null
       ? {
           min: Math.round((dailyViews * days * rpm.min) / 1000),
           avg: Math.round((dailyViews * days * rpm.avg) / 1000),
