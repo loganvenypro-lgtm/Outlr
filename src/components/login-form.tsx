@@ -5,13 +5,6 @@ import { useRouter } from "next/navigation";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Field,
   FieldDescription,
   FieldGroup,
@@ -24,7 +17,7 @@ import { Loader2, AlertCircle } from "lucide-react";
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"form">) {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
@@ -55,7 +48,6 @@ export function LoginForm({
         return;
       }
 
-      // Success -> Redirect to dashboard
       router.push("/");
       router.refresh();
     } catch (err: any) {
@@ -66,125 +58,131 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-slate-200/80 shadow-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-black text-slate-900 tracking-tight">
-            {isSignUp ? "Créer un compte Outlr" : "Bienvenue sur Outlr"}
-          </CardTitle>
-          <CardDescription className="text-slate-500 text-xs">
+    <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
+      <FieldGroup>
+        <div className="flex flex-col items-center gap-1.5 text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            {isSignUp ? "Créer un compte Outlr" : "Connexion à votre compte"}
+          </h1>
+          <p className="text-sm text-balance text-muted-foreground">
             {isSignUp
-              ? "Rejoignez le radar d'outliers YouTube et commencez à détecter les niches à fort potentiel."
-              : "Connectez-vous à votre espace créateur pour accéder au radar."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              {error && (
-                <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
-                  <AlertCircle className="size-4 shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
+              ? "Rejoignez la plateforme et explorez les niches YouTube virales."
+              : "Entrez votre email et mot de passe pour accéder à votre radar."}
+          </p>
+        </div>
 
-              {isSignUp && (
-                <Field>
-                  <FieldLabel htmlFor="name">Nom complet ou pseudonyme</FieldLabel>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Logan"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </Field>
-              )}
+        {error && (
+          <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-              <Field>
-                <FieldLabel htmlFor="email">Adresse Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="nom@exemple.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </Field>
+        {isSignUp && (
+          <Field>
+            <FieldLabel htmlFor="name">Nom complet ou pseudonyme</FieldLabel>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Logan"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </Field>
+        )}
 
-              <Field>
-                <div className="flex items-center justify-between">
-                  <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                  {!isSignUp && (
-                    <a
-                      href="#"
-                      className="text-xs text-blue-600 hover:underline"
-                    >
-                      Mot de passe oublié ?
-                    </a>
-                  )}
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </Field>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </Field>
 
-              <Field>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-500 font-bold py-2.5 rounded-xl shadow-md shadow-blue-500/20 text-white transition-all cursor-pointer"
+        <Field>
+          <div className="flex items-center">
+            <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+            {!isSignUp && (
+              <a
+                href="#"
+                className="ml-auto text-xs text-muted-foreground underline-offset-4 hover:underline"
+              >
+                Mot de passe oublié ?
+              </a>
+            )}
+          </div>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </Field>
+
+        <Field>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-900 text-white hover:bg-slate-800 font-semibold py-2.5 rounded-xl transition-all cursor-pointer"
+          >
+            {loading && <Loader2 className="size-4 animate-spin mr-2" />}
+            {isSignUp ? "Créer mon compte" : "Se connecter"}
+          </Button>
+        </Field>
+
+        <FieldSeparator>Ou continuer avec</FieldSeparator>
+
+        <Field>
+          <Button variant="outline" type="button" className="w-full rounded-xl cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-4 mr-2">
+              <path
+                d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                fill="currentColor"
+              />
+            </svg>
+            Continuer avec Google
+          </Button>
+
+          <FieldDescription className="text-center pt-2">
+            {isSignUp ? (
+              <>
+                Déjà un compte ?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(false);
+                    setError(null);
+                  }}
+                  className="font-semibold text-slate-900 underline underline-offset-4 cursor-pointer"
                 >
-                  {loading && <Loader2 className="size-4 animate-spin mr-2" />}
-                  {isSignUp ? "Créer mon compte" : "Se connecter"}
-                </Button>
-
-                <div className="text-center text-xs text-slate-500 pt-2">
-                  {isSignUp ? (
-                    <>
-                      Vous avez déjà un compte ?{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsSignUp(false);
-                          setError(null);
-                        }}
-                        className="text-blue-600 font-semibold hover:underline cursor-pointer"
-                      >
-                        Se connecter
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      Pas encore de compte ?{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsSignUp(true);
-                          setError(null);
-                        }}
-                        className="text-blue-600 font-semibold hover:underline cursor-pointer"
-                      >
-                        Créer un compte
-                      </button>
-                    </>
-                  )}
-                </div>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-      <FieldDescription className="px-6 text-center text-[11px] text-slate-400">
-        En continuant, vous acceptez nos <a href="#" className="underline">Conditions d&apos;utilisation</a> et notre <a href="#" className="underline">Politique de confidentialité</a>.
-      </FieldDescription>
-    </div>
+                  Se connecter
+                </button>
+              </>
+            ) : (
+              <>
+                Pas encore de compte ?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(true);
+                    setError(null);
+                  }}
+                  className="font-semibold text-slate-900 underline underline-offset-4 cursor-pointer"
+                >
+                  Créer un compte
+                </button>
+              </>
+            )}
+          </FieldDescription>
+        </Field>
+      </FieldGroup>
+    </form>
   );
 }
