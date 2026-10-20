@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { hashPassword, createSessionToken } from "@/lib/auth";
+import { getDicebearAvatar } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     const userId = `usr_${Math.random().toString(36).substring(2, 10)}`;
     const passHash = hashPassword(password);
-    const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`;
+    const avatar = getDicebearAvatar(cleanEmail);
 
     await sql`
       INSERT INTO users (id, email, password_hash, name, avatar, plan)

@@ -49,6 +49,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, formatCompactNumber } from "@/lib/utils";
+import { getDicebearAvatar } from "@/lib/avatar";
 
 const RECENT_SEARCHES_KEY = "newiq_recent_channels";
 
@@ -102,28 +103,28 @@ const DEFAULT_NICHE_COMPETITORS = [
   {
     name: "Gymshark",
     handle: "@gymshark",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop&crop=face",
+    avatar: getDicebearAvatar("@gymshark"),
     subs: "6.2M",
     growth: "+14.2%",
   },
   {
     name: "Loop Earplugs",
     handle: "@loopearplugs",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face",
+    avatar: getDicebearAvatar("@loopearplugs"),
     subs: "890K",
     growth: "+28.5%",
   },
   {
     name: "Arntreal Studio",
     handle: "@arntreal",
-    avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=96&h=96&fit=crop&crop=face",
+    avatar: getDicebearAvatar("@arntreal"),
     subs: "420K",
     growth: "+9.1%",
   },
   {
     name: "Fashion Nova",
     handle: "@fashionnova",
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=96&h=96&fit=crop&crop=face",
+    avatar: getDicebearAvatar("@fashionnova"),
     subs: "4.8M",
     growth: "+5.7%",
   },
@@ -211,7 +212,7 @@ const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
       id: "ch-1",
       name: "Nick Theriot",
       handle: "@nicktheriot",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=96&h=96&fit=crop&crop=face",
+      avatar: getDicebearAvatar("@nicktheriot"),
       subscribers: 54000,
     },
   },
@@ -229,7 +230,7 @@ const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
       id: "ch-2",
       name: "Growth Engine",
       handle: "@growthengine",
-      avatar: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=96&h=96&fit=crop&crop=face",
+      avatar: getDicebearAvatar("@growthengine"),
       subscribers: 120000,
     },
   },
@@ -247,7 +248,7 @@ const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
       id: "ch-3",
       name: "Modern Strategy",
       handle: "@modernstrategy",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=96&h=96&fit=crop&crop=face",
+      avatar: getDicebearAvatar("@modernstrategy"),
       subscribers: 75000,
     },
   },
@@ -265,7 +266,7 @@ const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
       id: "ch-4",
       name: "Vibe Economy",
       handle: "@vibeeconomy",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&h=96&fit=crop&crop=face",
+      avatar: getDicebearAvatar("@vibeeconomy"),
       subscribers: 62000,
     },
   },

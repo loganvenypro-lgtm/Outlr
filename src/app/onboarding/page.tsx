@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { formatCompactNumber } from "@/lib/utils";
+import { getDicebearAvatar } from "@/lib/avatar";
 
 interface ScrapedChannel {
   id: string;
@@ -130,7 +131,7 @@ export default function OnboardingPage() {
         id: resolvedId,
         title: source.title || rawTarget.replace(/^https?:\/\/.*youtube\.com\/@?/, "").replace(/^@/, "") || "Ma Chaîne YouTube",
         handle: source.handle || `@${(source.title || rawTarget).toLowerCase().replace(/[^a-z0-9]/g, "")}`,
-        avatar: source.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&h=128&fit=crop",
+        avatar: source.avatar || getDicebearAvatar(source.handle || source.title || rawTarget),
         subscribers: source.subscriberCount ?? source.subscribers ?? 0,
         totalViews: source.totalViews ?? source.viewCount ?? 0,
         videoCount: source.videoCount ?? 0,
@@ -155,7 +156,7 @@ export default function OnboardingPage() {
           id: ch.id || `comp-${Math.random()}`,
           title: ch.title || "Créateur Niche",
           handle: ch.handle || `@${(ch.title || "createur").toLowerCase().replace(/[^a-z0-9]/g, "")}`,
-          avatar: ch.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop",
+          avatar: ch.avatar || getDicebearAvatar(ch.handle || ch.title || "createur"),
           subscribers: ch.subscriberCount ?? ch.subscribers ?? 25000,
           similarityScore: Math.round(c.similarityScore || 82),
           topVideo: topV

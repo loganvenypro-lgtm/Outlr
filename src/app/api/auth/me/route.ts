@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken } from "@/lib/auth";
+import { getDicebearAvatar } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
         email: payload.email,
         name: payload.name,
         plan: payload.plan,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(payload.name)}`,
+        avatar: getDicebearAvatar(payload.email || payload.name),
       },
     });
   } catch (err: any) {

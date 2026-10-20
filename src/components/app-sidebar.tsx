@@ -5,6 +5,7 @@ import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import { SearchForm } from "@/components/search-form"
+import { getDicebearAvatar } from "@/lib/avatar"
 import {
   Sidebar,
   SidebarContent,
@@ -25,7 +26,7 @@ const data = {
   user: {
     name: "Logan",
     email: "logan@outlr.io",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=LoganOutlr",
+    avatar: getDicebearAvatar("logan@outlr.io"),
   },
   teams: [
     {
@@ -100,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           setCurrentUser({
             name: resData.user.name,
             email: resData.user.email,
-            avatar: resData.user.avatar,
+            avatar: resData.user.avatar || getDicebearAvatar(resData.user.email || resData.user.name),
           })
         }
       })

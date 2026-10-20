@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { verifyPassword, createSessionToken } from "@/lib/auth";
+import { resolveUserAvatar } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
-        avatar: user.avatar,
+        avatar: resolveUserAvatar(user),
         plan: user.plan,
       },
     });
