@@ -1,40 +1,54 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
   Flame,
   ArrowRight,
-  Plus,
+  ArrowUpRight,
   Radio,
   Sparkles,
-  ExternalLink,
   Gift,
-  Lightbulb,
   Folder,
   TrendingUp,
   RefreshCw,
   CheckCircle2,
   Tv,
-  Eye,
   Zap,
   Wand2,
-  SlidersHorizontal,
   History,
   X,
   ChevronRight,
   Loader2,
   Users,
   Compass,
+  Bell,
+  Target,
+  Link2,
+  Image as ImageIcon,
 } from "lucide-react";
 import { VideoCard } from "./VideoCard";
 import { ChartAreaInteractive } from "./ChartAreaInteractive";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { formatCompactNumber } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn, formatCompactNumber } from "@/lib/utils";
 
 const RECENT_SEARCHES_KEY = "newiq_recent_channels";
 
@@ -55,6 +69,13 @@ interface TrackedChannel {
   videoCount?: number;
 }
 
+interface TrackingFolder {
+  id: string;
+  name: string;
+  color?: string;
+  createdAt?: string;
+}
+
 interface Performer {
   video: {
     id: string;
@@ -73,6 +94,8 @@ interface Performer {
     subscribers?: number;
   };
 }
+
+type OutlierFilter = "all" | "top" | "week";
 
 // Initial curated niche competitors for instant preview
 const DEFAULT_NICHE_COMPETITORS = [
@@ -112,6 +135,64 @@ const DEFAULT_FOLDERS = [
   { name: "Micro-SaaS & Growth", itemsCount: 8, timeAgo: "il y a 3j", color: "emerald" },
   { name: "Shorts Viraux Niche", itemsCount: 22, timeAgo: "il y a 12j", color: "purple" },
   { name: "Concurrents Directs", itemsCount: 5, timeAgo: "il y a 33j", color: "amber" },
+];
+
+const FOLDER_DOT: Record<string, string> = {
+  blue: "bg-blue-500",
+  emerald: "bg-emerald-500",
+  green: "bg-emerald-500",
+  purple: "bg-violet-500",
+  amber: "bg-amber-500",
+  rose: "bg-rose-500",
+  red: "bg-rose-500",
+};
+
+const QUICK_PICKS = [
+  { label: "PurePath™", flag: "🇺🇸", query: "PurePath" },
+  { label: "Loop Earplugs", flag: "🇧🇪", query: "Loop Earplugs" },
+  { label: "Organised", flag: "🇬🇧", query: "Organised" },
+  { label: "Primal Queen", flag: "🇺🇸", query: "Primal Queen" },
+  { label: "WagWise", flag: "🇩🇪", query: "WagWise" },
+  { label: "MrBeast", flag: "🇺🇸", query: "MrBeast" },
+];
+
+// Creator tools, each with a one-line explanation so the user knows when to use it
+const CREATOR_TOOLS = [
+  {
+    href: "/radar",
+    title: "Radar Global",
+    description: "Les vidéos qui explosent sur tout YouTube",
+    icon: Radio,
+    tint: "bg-emerald-50 text-emerald-700",
+  },
+  {
+    href: "/title-lab",
+    title: "Title Lab",
+    description: "Génère et teste des titres qui cliquent",
+    icon: Zap,
+    tint: "bg-amber-50 text-amber-700",
+  },
+  {
+    href: "/viral-chat",
+    title: "Viral AI Strategist",
+    description: "Demande une stratégie de contenu à l'IA",
+    icon: Wand2,
+    tint: "bg-violet-50 text-violet-700",
+  },
+  {
+    href: "/thumbnail-intelligence",
+    title: "Thumbnail Intelligence",
+    description: "Analyse les miniatures qui performent",
+    icon: ImageIcon,
+    tint: "bg-rose-50 text-rose-700",
+  },
+  {
+    href: "/tubelab",
+    title: "TubeLab Studio",
+    description: "Ton espace de création tout-en-un",
+    icon: Tv,
+    tint: "bg-blue-50 text-blue-700",
+  },
 ];
 
 // Curated outlier videos
@@ -190,13 +271,100 @@ const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
   },
 ];
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 5 || hour >= 18) return "Bonsoir";
+  return "Bonjour";
+}
+
+function formatHandle(customUrl?: string, fallback?: string): string {
+  if (!customUrl) return fallback || "";
+  return customUrl.startsWith("@") ? customUrl : `@${customUrl}`;
+}
+
+function SectionHeading({
+  icon: Icon,
+  eyebrow,
+  title,
+  description,
+  children,
+}: {
+  icon?: React.ComponentType<{ className?: string }>;
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+      <div className="space-y-1">
+        {eyebrow && (
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-emerald-600">
+            {Icon && <Icon className="size-3.5" />}
+            {eyebrow}
+          </p>
+        )}
+        <h2 className="text-lg font-semibold tracking-tight text-slate-900 md:text-xl">{title}</h2>
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      </div>
+      {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
+    </div>
+  );
+}
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  tint,
+  href,
+  loading,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: React.ReactNode;
+  hint: string;
+  tint: string;
+  href: string;
+  loading?: boolean;
+}) {
+  return (
+    <Link href={href} className="group/stat rounded-2xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <Card className="h-full gap-3 rounded-2xl py-5 shadow-xs ring-slate-200/80 transition-all duration-200 group-hover/stat:-translate-y-0.5 group-hover/stat:shadow-md group-hover/stat:ring-slate-300">
+        <CardHeader className="px-5">
+          <CardDescription className="text-[13px] font-medium text-slate-500">{label}</CardDescription>
+          <CardAction>
+            <div className={cn("flex size-9 items-center justify-center rounded-xl", tint)}>
+              <Icon className="size-[18px]" />
+            </div>
+          </CardAction>
+          <CardTitle className="text-3xl font-semibold tabular-nums tracking-tight text-slate-900">
+            {loading ? <Skeleton className="mt-1 h-8 w-16" /> : value}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-5">
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            {hint}
+            <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover/stat:opacity-100" />
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
 export function HomeWelcome() {
   const router = useRouter();
   const [userName, setUserName] = useState("Logan");
   const [query, setQuery] = useState("");
   const [channels, setChannels] = useState<TrackedChannel[]>([]);
   const [performers, setPerformers] = useState<Performer[]>([]);
+  const [folders, setFolders] = useState<TrackingFolder[]>([]);
+  const [unreadAlerts, setUnreadAlerts] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [outlierFilter, setOutlierFilter] = useState<OutlierFilter>("all");
+  const [weekAgo] = useState(() => Date.now() - 7 * 86400000);
 
   // Channel Connection & Sync state
   const [channelInput, setChannelInput] = useState("");
@@ -249,6 +417,8 @@ export function HomeWelcome() {
         if (cancelled) return;
         const fetchedChannels: TrackedChannel[] = d.channels || [];
         setChannels(fetchedChannels);
+        setFolders(d.folders || []);
+        setUnreadAlerts(d.stats?.unreadAlertsCount || 0);
 
         if (fetchedChannels.length > 0) {
           setConnectedChannel(fetchedChannels[0]);
@@ -315,6 +485,27 @@ export function HomeWelcome() {
 
     return () => clearTimeout(timer);
   }, [query]);
+
+  const bestMultiplier = useMemo(
+    () => performers.reduce((max, p) => Math.max(max, p.video.outlierMultiplier || 0), 0),
+    [performers]
+  );
+
+  const filteredPerformers = useMemo(() => {
+    if (outlierFilter === "top") {
+      return performers.filter((p) => p.video.outlierMultiplier >= 5);
+    }
+    if (outlierFilter === "week") {
+      return performers.filter((p) => new Date(p.video.publishedAt).getTime() >= weekAgo);
+    }
+    return performers;
+  }, [performers, outlierFilter, weekAgo]);
+
+  const todayLabel = useMemo(
+    () =>
+      new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date()),
+    []
+  );
 
   // Save Channel to Recent Searches
   const saveRecentChannel = (channel: StoredChannel) => {
@@ -446,644 +637,679 @@ export function HomeWelcome() {
     }
   };
 
+  const clearQuery = () => {
+    setQuery("");
+    setSuggestions([]);
+    setShowDropdown(false);
+    setHasSearched(false);
+    setSearchResults([]);
+  };
+
+  const dropdownOpen = showDropdown && (suggestions.length > 0 || isSuggesting);
+
   return (
-    <div className="min-h-screen w-full bg-white text-slate-900 pb-24">
-      {/* 1. TOP UTILITY BAR */}
-      <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between px-6 pt-5">
-        <Link
-          href="/onboarding"
-          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/70 hover:bg-emerald-100/70 transition-all shadow-xs"
-        >
-          <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-          <span>Lancer l'Onboarding</span>
-        </Link>
-
-        <div className="flex items-center gap-3">
-          <Link
-            href="/channel-finder"
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-          >
-            <Compass className="h-3.5 w-3.5 text-blue-600" />
-            <span>Channel Finder Dédié</span>
-          </Link>
-          <Link
-            href="/referral"
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-          >
-            <Gift className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Inviter un ami</span>
-          </Link>
-          <button
-            type="button"
-            aria-label="Conseils et astuces"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-600 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-          >
-            <Lightbulb className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10">
-        {/* 2. HERO HEADER WITH CHANNEL FINDER & AUTOCOMPLETE */}
-        <section className="pb-6 pt-8 text-center md:pt-12">
-          {/* Logo badge */}
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#15803d] to-[#22c55e] p-2.5 shadow-lg shadow-green-500/15">
-            <img
-              src="/outlr-logo.png"
-              alt="Outlr Logo"
-              className="h-9 w-9 object-contain"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = "none";
-              }}
-            />
+    <div className="min-h-screen w-full bg-slate-50/60 pb-24 text-slate-900">
+      <div className="mx-auto w-full max-w-[1320px] px-4 sm:px-6 md:px-10">
+        {/* 1. PAGE HEADER */}
+        <header className="flex flex-col gap-4 pb-8 pt-8 sm:flex-row sm:items-end sm:justify-between md:pt-10">
+          <div className="space-y-1.5">
+            <p className="text-sm font-medium capitalize text-muted-foreground">{todayLabel}</p>
+            <h1 className="text-[28px] font-semibold tracking-tight text-slate-900 sm:text-[32px]">
+              {getGreeting()}
+              {userName ? `, ${userName}` : ""} 👋
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Voici ce qui surperforme dans ta niche aujourd’hui.
+            </p>
           </div>
 
-          <h1 className="text-[28px] font-bold tracking-tight text-slate-900 sm:text-[34px]">
-            Welcome back{userName ? `, ${userName}` : ""}.
-          </h1>
-
-          {/* Search bar with live autocomplete dropdown */}
-          <div className="mx-auto mt-7 max-w-2xl relative" ref={dropdownRef}>
-            <form onSubmit={handleSearch} role="search">
-              <div
-                className={`flex w-full items-center bg-slate-100/90 py-2.5 pl-5 pr-2.5 shadow-xs transition-all border ${
-                  showDropdown && (suggestions.length > 0 || isSuggesting)
-                    ? "border-emerald-500 rounded-t-2xl rounded-b-none bg-white ring-4 ring-emerald-500/10"
-                    : "border-slate-200 rounded-full focus-within:border-slate-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5"
-                }`}
-              >
-                <Search className="mr-3 h-[18px] w-[18px] shrink-0 text-slate-400" />
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="Rechercher une chaîne, un @handle, un mot-clé ou coller une URL..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => {
-                    if (suggestions.length > 0) setShowDropdown(true);
-                  }}
-                  aria-label="Rechercher une chaîne"
-                  className="w-full bg-transparent text-[14.5px] text-slate-900 placeholder-slate-400 focus:outline-none"
-                />
-
-                {isSuggesting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-emerald-600 shrink-0" />
-                )}
-
-                {query && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuery("");
-                      setSuggestions([]);
-                      setShowDropdown(false);
-                      setHasSearched(false);
-                      setSearchResults([]);
-                    }}
-                    className="mr-2 p-1 text-slate-400 hover:text-slate-700"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-
-                <button
-                  type="submit"
-                  className="flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-slate-800 shrink-0"
-                >
-                  Rechercher
-                </button>
-              </div>
-            </form>
-
-            {/* Autocomplete Dropdown */}
-            {showDropdown && (suggestions.length > 0 || isSuggesting) && (
-              <div className="absolute left-0 right-0 top-full bg-white border border-t-0 border-emerald-500 rounded-b-2xl shadow-xl overflow-hidden z-50 divide-y divide-slate-100 max-h-80 overflow-y-auto text-left">
-                {suggestions.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelectChannel(item)}
-                    className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img
-                        src={item.thumbnail || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
-                        alt={item.title}
-                        className="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200"
-                      />
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 text-xs truncate">{item.title}</p>
-                        <p className="text-[11px] text-slate-500">
-                          {item.customUrl ? (item.customUrl.startsWith("@") ? item.customUrl : `@${item.customUrl}`) : item.id}
-                          {item.subscriberCount !== undefined && ` · ${formatCompactNumber(item.subscriberCount)} abonnés`}
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/referral"
+              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-xl bg-white px-3.5 shadow-xs")}
+            >
+              <Gift className="text-emerald-600" />
+              Inviter un ami
+            </Link>
+            <Link
+              href="/channel-finder"
+              className={cn(buttonVariants({ size: "lg" }), "rounded-xl px-3.5 shadow-xs")}
+            >
+              <Compass />
+              Channel Finder
+            </Link>
           </div>
+        </header>
 
-          {/* Quick pills row */}
-          <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2">
-            {[
-              { label: "PurePath™", flag: "🇺🇸", query: "PurePath" },
-              { label: "Loop Earplugs", flag: "🇧🇪", query: "Loop Earplugs" },
-              { label: "Organised", flag: "🇬🇧", query: "Organised" },
-              { label: "Primal Queen", flag: "🇺🇸", query: "Primal Queen" },
-              { label: "WagWise", flag: "🇩🇪", query: "WagWise" },
-              { label: "MrBeast", flag: "🇺🇸", query: "MrBeast" },
-              { label: "Historique", icon: "🕒", query: "history" },
-            ].map((pill) => (
-              <button
-                key={pill.label}
-                type="button"
-                onClick={() => {
-                  setQuery(pill.query);
-                  router.push(`/dashboard/similar-channels?url=${encodeURIComponent(pill.query)}`);
-                }}
-                className="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white px-3 py-1 text-[12.5px] font-medium text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-sm"
-              >
-                {pill.flag && <span className="text-xs">{pill.flag}</span>}
-                {pill.icon && <span className="text-[11px]">{pill.icon}</span>}
-                <span>{pill.label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* 3. RECENTLY SEARCHED CHANNELS (CHANNEL FINDER HISTORY) */}
-        {recentChannels.length > 0 && (
-          <section className="mb-8 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
-                <History className="h-4 w-4 text-emerald-600" />
-                <span>Chaînes récemment cherchées</span>
+        {/* 2. SEARCH CARD */}
+        <Card className="mb-6 gap-0 overflow-visible rounded-2xl py-0 shadow-xs ring-slate-200/80">
+          <CardContent className="p-5 sm:p-6">
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-slate-900 text-white">
+                <Search className="size-4" />
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setRecentChannels([]);
-                  localStorage.removeItem(RECENT_SEARCHES_KEY);
-                }}
-                className="text-[11px] font-medium text-slate-400 hover:text-rose-500 transition-colors"
-              >
-                Effacer l'historique
-              </button>
+              <div>
+                <h2 className="text-[15px] font-semibold text-slate-900">Analyser une chaîne</h2>
+                <p className="text-xs text-muted-foreground">
+                  Tape un nom, un @handle ou colle une URL YouTube pour voir ses vidéos outliers.
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5">
-              {recentChannels.map((item) => (
+            <div className="relative" ref={dropdownRef}>
+              <form onSubmit={handleSearch} role="search">
                 <div
-                  key={item.id}
-                  onClick={() => router.push(`/channel/${item.id}`)}
-                  className="group relative flex flex-col items-center rounded-xl border border-slate-200/80 bg-white p-2.5 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs cursor-pointer transition-all text-center"
-                >
-                  <button
-                    type="button"
-                    onClick={(e) => removeRecent(e, item.id)}
-                    className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-0.5 text-slate-400 hover:text-rose-500 transition-opacity"
-                    title="Supprimer"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                  <img
-                    src={item.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
-                    alt={item.title}
-                    className="w-10 h-10 rounded-full object-cover border border-slate-100 mb-1.5 group-hover:scale-105 transition-transform"
-                  />
-                  <span className="text-[11px] font-semibold text-slate-800 truncate w-full">
-                    {item.title}
-                  </span>
-                  {item.customUrl && (
-                    <span className="text-[9.5px] text-slate-400 truncate w-full">
-                      {item.customUrl}
-                    </span>
+                  className={cn(
+                    "flex w-full items-center border bg-slate-50 py-1.5 pl-4 pr-1.5 transition-all",
+                    dropdownOpen
+                      ? "rounded-t-xl rounded-b-none border-emerald-500 bg-white ring-4 ring-emerald-500/10"
+                      : "rounded-xl border-slate-200 focus-within:border-slate-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5"
                   )}
+                >
+                  <Search className="mr-2.5 size-[18px] shrink-0 text-slate-400" />
+                  <Input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Ex : MrBeast, @gymshark, youtube.com/@..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => {
+                      if (suggestions.length > 0) setShowDropdown(true);
+                    }}
+                    aria-label="Rechercher une chaîne"
+                    className="h-9 border-0 bg-transparent px-0 text-[15px] shadow-none focus-visible:ring-0 md:text-[15px] dark:bg-transparent"
+                  />
+
+                  {isSuggesting && <Loader2 className="mr-2 size-4 shrink-0 animate-spin text-emerald-600" />}
+
+                  {query && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={clearQuery}
+                      aria-label="Effacer la recherche"
+                      className="mr-1 text-slate-400"
+                    >
+                      <X />
+                    </Button>
+                  )}
+
+                  <Button type="submit" size="lg" className="rounded-lg px-4">
+                    Rechercher
+                    <ArrowRight />
+                  </Button>
                 </div>
+              </form>
+
+              {/* Autocomplete Dropdown */}
+              {dropdownOpen && (
+                <div className="absolute left-0 right-0 top-full z-50 max-h-80 divide-y divide-slate-100 overflow-y-auto rounded-b-xl border border-t-0 border-emerald-500 bg-white text-left shadow-xl">
+                  {suggestions.map((item) => (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => handleSelectChannel(item)}
+                      className="flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-slate-50"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={item.thumbnail} alt={item.title} />
+                          <AvatarFallback>{item.title?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-slate-900">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatHandle(item.customUrl, item.id)}
+                            {item.subscriberCount !== undefined &&
+                              ` · ${formatCompactNumber(item.subscriberCount)} abonnés`}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className="ml-2 size-4 shrink-0 text-slate-400" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Quick picks */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-xs font-medium text-muted-foreground">Essayer :</span>
+              {QUICK_PICKS.map((pill) => (
+                <Button
+                  key={pill.label}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setQuery(pill.query);
+                    router.push(`/dashboard/similar-channels?url=${encodeURIComponent(pill.query)}`);
+                  }}
+                  className="rounded-full bg-white font-normal text-slate-700"
+                >
+                  <span className="text-xs">{pill.flag}</span>
+                  {pill.label}
+                </Button>
               ))}
             </div>
-          </section>
-        )}
+          </CardContent>
 
-        {/* 4. SEARCH RESULTS DISPLAY (When query is searched) */}
-        {hasSearched && (
-          <section className="mb-10 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <span>Résultats de recherche pour "{query}"</span>
-                <span className="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200/60">
-                  {searchResults.length} chaîne(s)
-                </span>
-              </h2>
-              <button
-                onClick={() => {
-                  setHasSearched(false);
-                  setSearchResults([]);
-                }}
-                className="text-xs text-slate-400 hover:text-slate-700"
-              >
-                Fermer
-              </button>
-            </div>
-
-            {isSearchingChannels ? (
-              <div className="py-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
-                <span>Recherche des chaînes sur YouTube...</span>
+          {/* Recently searched channels */}
+          {recentChannels.length > 0 && (
+            <CardFooter className="flex-col items-stretch gap-3 rounded-b-2xl border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
+              <div className="flex items-center justify-between">
+                <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <History className="size-3.5 text-slate-400" />
+                  Récemment consultées
+                </p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => {
+                    setRecentChannels([]);
+                    localStorage.removeItem(RECENT_SEARCHES_KEY);
+                  }}
+                  className="text-muted-foreground hover:text-rose-600"
+                >
+                  Effacer
+                </Button>
               </div>
-            ) : searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {searchResults.map((ch) => (
+              <div className="flex flex-wrap gap-2">
+                {recentChannels.map((item) => (
                   <div
-                    key={ch.id}
-                    onClick={() => handleSelectChannel(ch)}
-                    className="flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs hover:border-slate-300 hover:shadow-sm cursor-pointer transition-all"
+                    key={item.id}
+                    className="group/recent flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-1.5 shadow-xs transition-colors hover:border-slate-300"
                   >
-                    <div className="flex items-start gap-3">
-                      <img
-                        src={ch.thumbnail || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
-                        alt={ch.title}
-                        className="w-12 h-12 rounded-full object-cover border border-slate-100 shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-slate-900 text-xs truncate hover:text-emerald-700">
-                          {ch.title}
-                        </h3>
-                        <p className="text-[11px] text-slate-500 font-medium">
-                          {ch.customUrl ? (ch.customUrl.startsWith("@") ? ch.customUrl : `@${ch.customUrl}`) : ch.id}
-                        </p>
-                        <p className="text-[11px] text-slate-500 line-clamp-1 mt-1">
-                          {ch.description || "Aucune description"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-1 pt-3 mt-3 border-t border-slate-100 text-center text-[10.5px]">
-                      <div>
-                        <span className="text-slate-400 block">Abonnés</span>
-                        <strong className="text-slate-800">{formatCompactNumber(ch.subscriberCount)}</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 block">Vues</span>
-                        <strong className="text-slate-800">{formatCompactNumber(ch.viewCount)}</strong>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 block">Vidéos</span>
-                        <strong className="text-slate-800">{ch.videoCount || 0}</strong>
-                      </div>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/channel/${item.id}`)}
+                      className="flex items-center gap-2"
+                    >
+                      <Avatar size="sm">
+                        <AvatarImage src={item.avatar} alt={item.title} />
+                        <AvatarFallback className="text-[10px]">{item.title.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="max-w-[140px] truncate text-xs font-medium text-slate-700">
+                        {item.title}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => removeRecent(e, item.id)}
+                      className="rounded-full p-0.5 text-slate-300 transition-colors hover:bg-slate-100 hover:text-rose-500"
+                      aria-label={`Retirer ${item.title}`}
+                    >
+                      <X className="size-3" />
+                    </button>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="py-8 text-center text-xs text-slate-500">
-                Aucune chaîne trouvée pour "{query}". Essayez un nom exact ou un @handle.
-              </div>
-            )}
-          </section>
+            </CardFooter>
+          )}
+        </Card>
+
+        {/* 3. SEARCH RESULTS */}
+        {hasSearched && (
+          <Card className="mb-6 rounded-2xl shadow-xs ring-slate-200/80">
+            <CardHeader className="px-5 sm:px-6">
+              <CardTitle className="flex items-center gap-2 text-[15px] font-semibold">
+                Résultats pour « {query} »
+                <Badge variant="secondary" className="bg-emerald-50 text-emerald-700">
+                  {searchResults.length} chaîne{searchResults.length > 1 ? "s" : ""}
+                </Badge>
+              </CardTitle>
+              <CardDescription className="text-xs">Clique sur une chaîne pour ouvrir son analyse complète.</CardDescription>
+              <CardAction>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Fermer les résultats"
+                  onClick={() => {
+                    setHasSearched(false);
+                    setSearchResults([]);
+                  }}
+                >
+                  <X />
+                </Button>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="px-5 sm:px-6">
+              {isSearchingChannels ? (
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-[120px] rounded-xl" />
+                  ))}
+                </div>
+              ) : searchResults.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {searchResults.map((ch) => (
+                    <button
+                      type="button"
+                      key={ch.id}
+                      onClick={() => handleSelectChannel(ch)}
+                      className="flex flex-col rounded-xl border border-slate-200/80 bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-sm"
+                    >
+                      <div className="flex items-start gap-3">
+                        <Avatar size="lg">
+                          <AvatarImage src={ch.thumbnail} alt={ch.title} />
+                          <AvatarFallback>{ch.title?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-sm font-semibold text-slate-900">{ch.title}</h3>
+                          <p className="text-xs text-muted-foreground">{formatHandle(ch.customUrl, ch.id)}</p>
+                          <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
+                            {ch.description || "Aucune description"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-1 border-t border-slate-100 pt-3 text-center">
+                        {[
+                          { label: "Abonnés", value: formatCompactNumber(ch.subscriberCount) },
+                          { label: "Vues", value: formatCompactNumber(ch.viewCount) },
+                          { label: "Vidéos", value: ch.videoCount || 0 },
+                        ].map((s) => (
+                          <div key={s.label}>
+                            <p className="text-[11px] text-muted-foreground">{s.label}</p>
+                            <p className="text-sm font-semibold tabular-nums text-slate-900">{s.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 py-8 text-center">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                    <Search className="size-4" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-900">Aucune chaîne trouvée</p>
+                  <p className="text-xs text-muted-foreground">Essaie un nom exact ou un @handle.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         )}
 
-        {/* 5. CHANNEL CONNECTION / ONBOARDING PROMPT SECTION */}
-        <section className="mb-10">
+        {/* 4. CHANNEL CONNECTION */}
+        <section className="mb-6">
           {connectedChannel ? (
-            /* Channel connected state */
-            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-r from-white via-slate-50/50 to-white p-5 shadow-xs">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Card className="rounded-2xl py-4 shadow-xs ring-slate-200/80">
+              <CardContent className="flex flex-col gap-4 px-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <div className="flex items-center gap-3.5">
-                  {connectedChannel.avatar ? (
-                    <img
-                      src={connectedChannel.avatar}
-                      alt={connectedChannel.name}
-                      className="h-12 w-12 rounded-full object-cover ring-2 ring-emerald-500/20"
-                    />
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-base font-bold text-white shadow-sm">
+                  <Avatar className="size-11 ring-2 ring-emerald-500/20">
+                    <AvatarImage src={connectedChannel.avatar} alt={connectedChannel.name} />
+                    <AvatarFallback className="bg-emerald-600 font-semibold text-white">
                       {connectedChannel.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-[15px] font-bold text-slate-900">{connectedChannel.name}</h2>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200/60">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Chaîne connectée
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-[15px] font-semibold text-slate-900">{connectedChannel.name}</h2>
+                      <Badge variant="secondary" className="bg-emerald-50 text-emerald-700">
+                        <CheckCircle2 />
+                        Connectée
+                      </Badge>
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {connectedChannel.handle || `@${connectedChannel.name.toLowerCase()}`}
-                      {connectedChannel.subscribers ? ` · ${connectedChannel.subscribers.toLocaleString()} abonnés` : ""}
+                      {connectedChannel.subscribers
+                        ? ` · ${formatCompactNumber(connectedChannel.subscribers)} abonnés`
+                        : ""}
+                      {connectedChannel.videoCount ? ` · ${connectedChannel.videoCount} vidéos` : ""}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="lg"
                     onClick={() => handleConnectChannel()}
                     disabled={isConnecting}
-                    className="h-9 gap-1.5 rounded-xl border-slate-200 bg-white text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900"
+                    className="rounded-xl bg-white"
                   >
-                    <RefreshCw className={`h-3.5 w-3.5 ${isConnecting ? "animate-spin text-emerald-600" : ""}`} />
+                    <RefreshCw className={cn(isConnecting && "animate-spin text-emerald-600")} />
                     Actualiser ma niche
                   </Button>
                   <Link
                     href="/onboarding"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors"
+                    className={cn(buttonVariants({ variant: "ghost", size: "lg" }), "rounded-xl text-slate-600")}
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-                    Refaire l'Onboarding
+                    <Sparkles className="text-emerald-600" />
+                    Refaire l’onboarding
                   </Link>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ) : (
-            /* Channel not connected state */
-            <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs">
-              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11.5px] font-semibold text-emerald-700 border border-emerald-200/60">
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                    Connectez votre chaîne
-                  </div>
-                  <h2 className="text-lg font-bold text-slate-900">
-                    Activez la détection de niche & le tracking de vos concurrents
+            <Card className="rounded-2xl border-0 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 py-6 text-white shadow-md ring-0">
+              <CardContent className="grid gap-6 px-6 md:grid-cols-[1.1fr_1fr] md:items-center">
+                <div className="space-y-3">
+                  <Badge className="bg-emerald-500/15 text-emerald-300">
+                    <Sparkles />
+                    Démarrer en 30 secondes
+                  </Badge>
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    Connecte ta chaîne pour activer ton radar de niche
                   </h2>
-                  <p className="text-xs text-slate-500">
-                    Liez votre chaîne YouTube pour scraper automatiquement vos concurrents directs et recevoir les vidéos atypiques de votre secteur.
+                  <p className="text-sm text-slate-300">
+                    On détecte tes concurrents directs et on te remonte chaque jour leurs vidéos qui surperforment.
                   </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <Link
+                      href="/onboarding"
+                      className={cn(
+                        buttonVariants({ size: "lg" }),
+                        "rounded-xl bg-emerald-500 px-4 text-white hover:bg-emerald-400"
+                      )}
+                    >
+                      <Sparkles />
+                      Lancer l’onboarding
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="lg"
+                      onClick={() => setShowChannelModal(!showChannelModal)}
+                      className="rounded-xl text-slate-200 hover:bg-white/10 hover:text-white"
+                    >
+                      <Link2 />
+                      Liaison rapide
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
-                  <Link
-                    href="/onboarding"
-                    className="h-10 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-5 text-xs font-bold text-white shadow-sm hover:from-emerald-700 hover:to-green-700 transition-all"
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    Lancer l'Onboarding Complet (30s)
-                  </Link>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowChannelModal(!showChannelModal)}
-                    className="h-10 rounded-xl border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Liaison rapide
-                  </Button>
-                </div>
-              </div>
-            </div>
+                <ol className="grid gap-2.5">
+                  {[
+                    { title: "Connecte ta chaîne", text: "Colle ton @handle ou l'URL de ta chaîne." },
+                    { title: "On scanne ta niche", text: "Détection automatique de tes concurrents." },
+                    { title: "Reçois tes outliers", text: "Les vidéos x2 à x10 au-dessus de la moyenne." },
+                  ].map((step, i) => (
+                    <li
+                      key={step.title}
+                      className="flex items-start gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/10"
+                    >
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-xs font-semibold text-emerald-300">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium">{step.title}</p>
+                        <p className="text-xs text-slate-400">{step.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
           )}
 
-          {/* Quick change input toggle */}
+          {/* Quick connect form */}
           {showChannelModal && (
-            <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-150">
-              <form onSubmit={handleConnectChannel} className="flex items-center gap-3">
-                <input
-                  type="text"
-                  placeholder="Entrez un autre @handle ou URL..."
-                  value={channelInput}
-                  onChange={(e) => setChannelInput(e.target.value)}
-                  className="h-9 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs text-slate-900 focus:bg-white focus:outline-none"
-                />
-                <Button type="submit" size="sm" className="h-9 rounded-lg bg-slate-900 text-xs text-white">
-                  Valider
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowChannelModal(false)}
-                  className="h-9 text-xs"
-                >
-                  Annuler
-                </Button>
-              </form>
-            </div>
+            <Card className="mt-3 rounded-2xl py-4 shadow-sm ring-slate-200/80 animate-in fade-in slide-in-from-top-2 duration-150">
+              <CardContent className="px-5">
+                <form onSubmit={handleConnectChannel} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <Input
+                    type="text"
+                    placeholder="@handle ou URL de ta chaîne..."
+                    value={channelInput}
+                    onChange={(e) => setChannelInput(e.target.value)}
+                    className="h-9 flex-1 bg-slate-50 focus-visible:bg-white"
+                  />
+                  <div className="flex gap-2">
+                    <Button type="submit" size="lg">
+                      Connecter
+                    </Button>
+                    <Button type="button" variant="ghost" size="lg" onClick={() => setShowChannelModal(false)}>
+                      Annuler
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           )}
 
-          {/* ANIMATED PROGRESS BAR BANNER */}
+          {/* Sync progress */}
           {isConnecting && (
-            <div className="mt-4 overflow-hidden rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5 shadow-xs transition-all animate-in fade-in slide-in-from-top-3 duration-200">
-              <div className="mb-2.5 flex items-center justify-between text-xs font-semibold text-emerald-900">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                  <span>{connectStepText}</span>
+            <Card className="mt-3 rounded-2xl bg-emerald-50/70 py-4 shadow-xs ring-emerald-200/70 animate-in fade-in slide-in-from-top-3 duration-200">
+              <CardContent className="space-y-2.5 px-5">
+                <div className="flex items-center justify-between gap-3 text-sm font-medium text-emerald-900">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex size-2">
+                      <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+                    </span>
+                    {connectStepText}
+                  </div>
+                  <span className="font-semibold tabular-nums text-emerald-700">{connectProgress}%</span>
                 </div>
-                <span className="tabular-nums font-bold text-emerald-700">{connectProgress}%</span>
-              </div>
-              <Progress value={connectProgress} className="h-2 bg-emerald-100 text-emerald-600" />
-            </div>
+                <Progress value={connectProgress} className="[&_[data-slot=progress-indicator]]:bg-emerald-600 [&_[data-slot=progress-track]]:bg-emerald-100" />
+              </CardContent>
+            </Card>
           )}
         </section>
 
-        {/* 6. CAROUSEL / ROW OF ROUNDED CARDS */}
-        <section className="mb-10">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {/* CARD 1: Status & Competitive Tracking */}
-            <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
-              <div className="space-y-2">
-                <span className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-slate-600">
-                  Veille Concurrentielle
-                </span>
-                <p className="text-[13px] font-medium leading-snug text-slate-800">
-                  Surveillez vos concurrents et détectez leurs vidéos virales le jour même.
-                </p>
-              </div>
-              <div className="pt-4">
+        {/* 5. KPI OVERVIEW */}
+        <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            icon={Users}
+            label="Chaînes suivies"
+            value={channels.length}
+            hint="Gérer ma liste de suivi"
+            tint="bg-blue-50 text-blue-600"
+            href="/tracking"
+            loading={loading}
+          />
+          <StatCard
+            icon={Flame}
+            label="Outliers détectés"
+            value={performers.length}
+            hint="Vidéos au-dessus de leur moyenne"
+            tint="bg-emerald-50 text-emerald-600"
+            href="/niche-finder"
+            loading={loading}
+          />
+          <StatCard
+            icon={TrendingUp}
+            label="Meilleur score"
+            value={`${bestMultiplier.toFixed(1)}x`}
+            hint="Plus forte surperformance du moment"
+            tint="bg-amber-50 text-amber-600"
+            href="/radar"
+            loading={loading}
+          />
+          <StatCard
+            icon={Bell}
+            label="Alertes non lues"
+            value={unreadAlerts}
+            hint="Nouveaux pics chez tes concurrents"
+            tint="bg-rose-50 text-rose-600"
+            href="/tracking"
+            loading={loading}
+          />
+        </section>
+
+        {/* 6. CHART + CREATOR TOOLS */}
+        <section className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <ChartAreaInteractive />
+          </div>
+
+          <Card className="rounded-2xl shadow-xs ring-slate-200/80">
+            <CardHeader className="px-5">
+              <CardTitle className="text-[15px] font-semibold">Outils créateurs</CardTitle>
+              <CardDescription className="text-xs">Passe de l’idée à la vidéo en quelques clics.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-1 px-3">
+              {CREATOR_TOOLS.map((tool) => (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="group/tool flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-slate-50"
+                >
+                  <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", tool.tint)}>
+                    <tool.icon className="size-[18px]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-slate-900">{tool.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">{tool.description}</p>
+                  </div>
+                  <ChevronRight className="size-4 shrink-0 text-slate-300 transition-transform group-hover/tool:translate-x-0.5 group-hover/tool:text-slate-500" />
+                </Link>
+              ))}
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* 7. COMPETITORS + FOLDERS */}
+        <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Card className="rounded-2xl shadow-xs ring-slate-200/80">
+            <CardHeader className="px-5">
+              <CardTitle className="flex items-center gap-2 text-[15px] font-semibold">
+                <Target className="size-4 text-emerald-600" />
+                Concurrents à surveiller
+              </CardTitle>
+              <CardDescription className="text-xs">Les chaînes qui grandissent le plus dans ta niche.</CardDescription>
+              <CardAction>
+                <Link
+                  href="/dashboard/similar-channels"
+                  className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-slate-600")}
+                >
+                  Tout voir
+                  <ArrowRight />
+                </Link>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-1 px-3">
+              {DEFAULT_NICHE_COMPETITORS.map((comp) => (
+                <div
+                  key={comp.name}
+                  className="flex items-center justify-between gap-3 rounded-xl p-2 transition-colors hover:bg-slate-50"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={comp.avatar} alt={comp.name} />
+                      <AvatarFallback>{comp.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-900">{comp.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {comp.handle} · {comp.subs} abonnés
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="bg-emerald-50 tabular-nums text-emerald-700">
+                    <TrendingUp />
+                    {comp.growth}
+                  </Badge>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-2xl shadow-xs ring-slate-200/80">
+            <CardHeader className="px-5">
+              <CardTitle className="flex items-center gap-2 text-[15px] font-semibold">
+                <Folder className="size-4 text-blue-600" />
+                Mes dossiers
+              </CardTitle>
+              <CardDescription className="text-xs">Tes collections de chaînes et d’idées sauvegardées.</CardDescription>
+              <CardAction>
                 <Link
                   href="/tracking"
-                  className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700"
+                  className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-slate-600")}
                 >
-                  Explorer la niche
+                  Gérer
+                  <ArrowRight />
                 </Link>
-              </div>
-            </div>
-
-            {/* CARD 2: Recent Activity / Folders */}
-            <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
-              <div>
-                <div className="mb-2.5 flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-800">Recent Activity</span>
-                </div>
-                <div className="space-y-2">
-                  {DEFAULT_FOLDERS.slice(0, 3).map((f) => (
-                    <div key={f.name} className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                        <span className="truncate font-medium text-slate-700">{f.name}</span>
-                      </div>
-                      <span className="shrink-0 text-[10.5px] text-slate-400">{f.timeAgo}</span>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-1 px-3">
+              {(folders.length > 0
+                ? folders.slice(0, 4).map((f) => ({
+                    key: f.id,
+                    name: f.name,
+                    color: f.color || "blue",
+                    meta: f.createdAt
+                      ? `Créé le ${new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(f.createdAt))}`
+                      : "",
+                  }))
+                : DEFAULT_FOLDERS.map((f) => ({
+                    key: f.name,
+                    name: f.name,
+                    color: f.color,
+                    meta: `${f.itemsCount} éléments · ${f.timeAgo}`,
+                  }))
+              ).map((f) => (
+                <Link
+                  key={f.key}
+                  href="/tracking"
+                  className="group/folder flex items-center justify-between gap-3 rounded-xl p-2 transition-colors hover:bg-slate-50"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                      <Folder className="size-4" />
+                      <span
+                        className={cn(
+                          "absolute -right-0.5 -top-0.5 size-2.5 rounded-full ring-2 ring-white",
+                          FOLDER_DOT[f.color] || "bg-slate-400"
+                        )}
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] font-semibold text-slate-500">
-                <span>DOSSIERS</span>
-                <Link href="/tracking" className="text-slate-800 hover:text-blue-600">
-                  Voir tout →
-                </Link>
-              </div>
-            </div>
-
-            {/* CARD 3: LOOK UP / Niche Competitors */}
-            <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
-              <div>
-                <div className="mb-2.5 flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-800">Top Concurrents</span>
-                </div>
-                <div className="space-y-2">
-                  {DEFAULT_NICHE_COMPETITORS.slice(0, 4).map((comp) => (
-                    <div key={comp.name} className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <img src={comp.avatar} alt="" className="h-4 w-4 rounded-full object-cover" />
-                        <span className="truncate font-medium text-slate-700">{comp.name}</span>
-                      </div>
-                      <span className="shrink-0 text-[10.5px] font-semibold text-emerald-600">{comp.subs}</span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-900">{f.name}</p>
+                      {f.meta && <p className="text-xs text-muted-foreground">{f.meta}</p>}
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] font-semibold text-slate-500">
-                <span>LOOK UP</span>
-                <Link href="/dashboard/similar-channels" className="text-slate-800 hover:text-blue-600">
-                  Voir tout →
+                  </div>
+                  <ChevronRight className="size-4 shrink-0 text-slate-300 transition-transform group-hover/folder:translate-x-0.5 group-hover/folder:text-slate-500" />
                 </Link>
-              </div>
-            </div>
-
-            {/* CARD 4: Outlier Video Preview 1 */}
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-all hover:shadow-md">
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                <img
-                  src={DEFAULT_OUTLIER_VIDEOS[0].video.thumbnail}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute left-2 top-2 rounded-md bg-emerald-600 px-1.5 py-0.5 text-[10px] font-extrabold text-white shadow-sm">
-                  ⚡ 6.8x
-                </div>
-                <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1 text-[10px] font-medium text-white">
-                  {DEFAULT_OUTLIER_VIDEOS[0].video.durationFormatted}
-                </div>
-              </div>
-              <div className="p-3">
-                <p className="line-clamp-2 text-xs font-semibold text-slate-900">
-                  {DEFAULT_OUTLIER_VIDEOS[0].video.title}
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  {DEFAULT_OUTLIER_VIDEOS[0].channel.name} · 342K vues
-                </p>
-              </div>
-            </div>
-
-            {/* CARD 5: AI Creator Tools Grid */}
-            <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
-              <div>
-                <span className="text-xs font-bold text-slate-800">Outils Créateurs</span>
-                <div className="mt-2.5 grid grid-cols-3 gap-2">
-                  <Link
-                    href="/tubelab"
-                    title="TubeLab Studio"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <Tv className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="/viral-chat"
-                    title="Viral AI Strategist"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <Wand2 className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="/title-lab"
-                    title="Title Lab"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <Zap className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="/radar"
-                    title="Radar Global"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <Radio className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="/channel-finder"
-                    title="Channel Finder"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <Users className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href="/settings"
-                    title="MCP / Paramètres"
-                    className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
-                  >
-                    <SlidersHorizontal className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
-              <p className="border-t border-slate-100 pt-3 text-[10.5px] text-slate-400">
-                Outlr, au cœur de votre studio IA.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* 7. INTERACTIVE AREA CHART */}
-        <section className="mb-12">
-          <ChartAreaInteractive />
+              ))}
+            </CardContent>
+          </Card>
         </section>
 
         {/* 8. OUTLIER VIDEOS GRID */}
         <section>
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="mb-1 flex items-center gap-1.5 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-emerald-600">
-                <Flame className="h-4 w-4" /> Vidéos Outliers détectées dans ta niche
-              </p>
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
-                Contenus qui surperforment actuellement
-              </h2>
-              <p className="text-xs text-slate-500">
-                Vidéos générant entre 2x et 10x plus de vues que la moyenne de leur créateur.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Link
-                href="/channel-finder"
-                className="flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-              >
-                Channel Finder <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-              <Link
-                href="/tracking"
-                className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800"
-              >
-                Gérer le tracking
-              </Link>
-            </div>
-          </div>
+          <SectionHeading
+            icon={Flame}
+            eyebrow="Outliers de ta niche"
+            title="Les vidéos qui surperforment en ce moment"
+            description="Chaque badge indique combien de fois la vidéo dépasse la moyenne de son créateur."
+          >
+            <Tabs value={outlierFilter} onValueChange={(v) => setOutlierFilter(v as OutlierFilter)}>
+              <TabsList className="h-9 bg-white shadow-xs ring-1 ring-slate-200/80">
+                <TabsTrigger value="all" className="px-3 text-xs">
+                  Toutes
+                </TabsTrigger>
+                <TabsTrigger value="top" className="px-3 text-xs">
+                  x5 et +
+                </TabsTrigger>
+                <TabsTrigger value="week" className="px-3 text-xs">
+                  Cette semaine
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Link href="/tracking" className={cn(buttonVariants({ size: "lg" }), "rounded-xl px-3.5")}>
+              Gérer le tracking
+              <ArrowRight />
+            </Link>
+          </SectionHeading>
 
           {loading ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white">
-                  <div className="aspect-video w-full animate-pulse bg-slate-100" />
+                  <Skeleton className="aspect-video w-full rounded-none" />
                   <div className="space-y-2.5 p-4">
-                    <div className="h-4 w-full animate-pulse rounded bg-slate-200/70" />
-                    <div className="h-4 w-2/3 animate-pulse rounded bg-slate-200/50" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
                   </div>
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {performers.map((p) => (
+          ) : filteredPerformers.length > 0 ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredPerformers.map((p) => (
                 <VideoCard
                   key={p.video.id}
                   id={p.video.id}
@@ -1099,6 +1325,19 @@ export function HomeWelcome() {
                 />
               ))}
             </div>
+          ) : (
+            <Card className="rounded-2xl border-dashed py-12 shadow-none ring-slate-200">
+              <CardContent className="flex flex-col items-center gap-2 text-center">
+                <div className="flex size-11 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <Flame className="size-5" />
+                </div>
+                <p className="text-sm font-medium text-slate-900">Aucune vidéo pour ce filtre</p>
+                <p className="text-xs text-muted-foreground">Essaie « Toutes » ou ajoute des chaînes à suivre.</p>
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => setOutlierFilter("all")}>
+                  Voir toutes les vidéos
+                </Button>
+              </CardContent>
+            </Card>
           )}
         </section>
       </div>

@@ -123,15 +123,15 @@ const chartData = [
 ]
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  views: {
+    label: "Vues",
   },
   desktop: {
-    label: "Desktop",
+    label: "Ta chaîne",
     color: "var(--chart-1)",
   },
   mobile: {
-    label: "Mobile",
+    label: "Concurrents niche",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig
@@ -160,10 +160,10 @@ export function ChartAreaInteractive({
   })
 
   return (
-    <Card className="border border-slate-200/80 bg-white pt-0 shadow-sm transition-all hover:shadow-md">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b border-slate-100 py-5 sm:flex-row">
+    <Card className="h-full rounded-2xl pt-0 shadow-xs ring-slate-200/80">
+      <CardHeader className="flex items-center gap-2 space-y-0 border-b border-slate-100 px-5 py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle className="text-base font-semibold text-slate-900">{title}</CardTitle>
+          <CardTitle className="text-[15px] font-semibold text-slate-900">{title}</CardTitle>
           <CardDescription className="text-xs text-slate-500">
             {descriptionText}
           </CardDescription>
@@ -188,10 +188,10 @@ export function ChartAreaInteractive({
           </SelectContent>
         </Select>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="flex-1 px-2 pt-2 sm:px-5 sm:pt-4">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[260px] w-full"
+          className="aspect-auto h-[300px] w-full"
         >
           <AreaChart data={filteredData}>
             <defs>
