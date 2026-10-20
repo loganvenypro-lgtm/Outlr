@@ -25,6 +25,7 @@ import {
 } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
 import { getDicebearAvatar } from "@/lib/avatar"
+import { USER_UPDATED_EVENT, type PublicUser } from "@/lib/user-events"
 import {
   Sidebar,
   SidebarContent,
@@ -112,6 +113,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
       })
       .catch(() => {})
+
+    const handleUserUpdated = (event: Event) => {
+      const { name, email, avatar } = (event as CustomEvent<PublicUser>).detail
+      setCurrentUser({ name, email, avatar })
+    }
+    window.addEventListener(USER_UPDATED_EVENT, handleUserUpdated)
+    return () => window.removeEventListener(USER_UPDATED_EVENT, handleUserUpdated)
   }, [])
 
   const isActive = (url: string) => (url === "/" ? pathname === "/" : pathname === url)

@@ -22,3 +22,32 @@ export function resolveUserAvatar(user: { avatar?: string | null; email?: string
   }
   return getDicebearAvatar(user.email || user.name || "outlr");
 }
+
+// Styles offered in Settings > Profil
+export const AVATAR_STYLES = [
+  { id: "notionists", label: "Notion" },
+  { id: "avataaars", label: "Cartoon" },
+  { id: "lorelei", label: "Lorelei" },
+  { id: "micah", label: "Micah" },
+  { id: "adventurer", label: "Aventurier" },
+  { id: "personas", label: "Personas" },
+  { id: "fun-emoji", label: "Emoji" },
+  { id: "bottts", label: "Robot" },
+] as const;
+
+// Only accept DiceBear URLs we generate ourselves when a user saves an avatar.
+export function isAllowedAvatarUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    const [, version, style, format] = parsed.pathname.split("/");
+    return (
+      parsed.protocol === "https:" &&
+      parsed.hostname === "api.dicebear.com" &&
+      version === "9.x" &&
+      AVATAR_STYLES.some((s) => s.id === style) &&
+      format === "svg"
+    );
+  } catch {
+    return false;
+  }
+}
