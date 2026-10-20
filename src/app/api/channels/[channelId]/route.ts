@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { getChannelDetails, getRecentVideos } from "@/lib/youtube";
+import { estimateAdRevenue } from "@/lib/revenueEstimator";
 
 export const dynamic = "force-dynamic";
 
@@ -186,7 +187,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         SELECT
           v.youtube_video_id, v.title, v.thumbnail_url, v.published_at, v.view_count, v.like_count,
           v.comment_count, v.duration_formatted, v.is_short, v.outlier_multiplier, v.views_per_hour,
-          v.relevance_score, v.category_id,
+          v.relevance_score, v.category_id, v.language,
           (SELECT count(*) FROM video_variants vv WHERE vv.youtube_video_id = v.youtube_video_id AND vv.kind = 'title')::int AS title_variants,
           (SELECT count(*) FROM video_variants vv WHERE vv.youtube_video_id = v.youtube_video_id AND vv.kind = 'thumbnail')::int AS thumb_variants
         FROM videos v
@@ -233,7 +234,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           (array_agg(total_views ORDER BY captured_at DESC))[1]
             - (array_agg(total_views ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '20 hours'))[1] AS views_24h,
           (array_agg(subscriber_count ORDER BY captured_at DESC))[1]
-            - (array_agg(subscriber_count ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '20 hours'))[1] AS subs_24h
+            - (array_agg(subscriber_count ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '20 hours'))[1] AS subs_24h,
+          CASE WHEN max(captured_at) - min(captured_at) >= interval '6 hours' THEN
+            ((array_agg(total_views ORDER BY captured_at DESC))[1] - (array_agg(total_views ORDER BY captured_at ASC))[1])::float8
+              / (EXTRACT(EPOCH FROM max(captured_at) - min(captured_at)) / 86400)
+          END AS views_per_day
         FROM channel_stat_snapshots
         WHERE youtube_channel_id = ${id} AND captured_at > now() - interval '4 days'`,
       sql`SELECT max(finished_at) AS at FROM scan_runs WHERE status = 'ok'`,
@@ -248,6 +253,27 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const hours = Array.from({ length: 48 }, (_, i) => {
       const t = startHour.getTime() - (47 - i) * 3_600_000;
       return { hour: new Date(t).toISOString(), views: byHour.get(t) ?? 0 };
+    });
+    const views48h = hours.reduce((sum, h) => sum + h.views, 0);
+
+    // Ad revenue: the channel's daily view gain (snapshots, else tracked videos) × blended RPM.
+    const recent = videos.filter((v) => new Date(v.published_at).getTime() > Date.now() - 90 * 86_400_000);
+    const recentViews = recent.reduce((sum, v) => sum + Number(v.view_count ?? 0), 0);
+    const shortsViews = recent.filter((v) => v.is_short).reduce((sum, v) => sum + Number(v.view_count ?? 0), 0);
+    const mostCommon = (values: unknown[]) => {
+      const counts = new Map<string, number>();
+      for (const value of values) if (value != null) counts.set(String(value), (counts.get(String(value)) ?? 0) + 1);
+      return [...counts].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    };
+    const category = mostCommon(recent.map((v) => v.category_id));
+    const revenue = estimateAdRevenue({
+      monetized: channel.monetized ?? null,
+      name: channel.name,
+      titles: recent.slice(0, 30).map((v) => v.title as string),
+      categoryId: category != null ? Number(category) : null,
+      language: mostCommon(recent.map((v) => (v.language as string | null)?.toLowerCase().split("-")[0] ?? null)),
+      dailyViews: deltas?.views_per_day != null ? Number(deltas.views_per_day) : views48h > 0 ? views48h / 2 : null,
+      shortsViewShare: recentViews > 0 ? shortsViews / recentViews : 0,
     });
 
     return NextResponse.json({
@@ -279,7 +305,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         engagement30d: num(kpis.engagement_30d),
         medianLong: num(kpis.median_long),
         medianShort: num(kpis.median_short),
-        views48h: hours.reduce((sum, h) => sum + h.views, 0),
+        views48h,
+      },
+      revenue: {
+        ...revenue,
+        checkedAt: channel.monetization_checked_at ? new Date(channel.monetization_checked_at).toISOString() : null,
       },
       hourly: hours,
       daily: daily.map((d) => ({

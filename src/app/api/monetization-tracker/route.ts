@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
+import { estimateAdRevenue } from "@/lib/revenueEstimator";
 
 export const dynamic = "force-dynamic";
 
@@ -40,20 +41,31 @@ export async function GET(request: NextRequest) {
       SELECT
         avg(view_count)::float8 AS avg_views,
         mode() WITHIN GROUP (ORDER BY category_id) AS category_id,
-        mode() WITHIN GROUP (ORDER BY split_part(lower(language), '-', 1)) AS language
+        mode() WITHIN GROUP (ORDER BY split_part(lower(language), '-', 1)) AS language,
+        array_agg(title) AS titles
       FROM (
-        SELECT view_count, category_id, language FROM videos
+        SELECT view_count, category_id, language, title FROM videos
         WHERE channel_id = c.id AND NOT is_short
         ORDER BY published_at DESC
         LIMIT 30
       ) recent
     ) r ON true
     LEFT JOIN LATERAL (
+      SELECT (sum(view_count) FILTER (WHERE is_short))::float8 / NULLIF(sum(view_count), 0)::float8 AS shorts_share
+      FROM videos
+      WHERE channel_id = c.id AND published_at > now() - interval '90 days'
+    ) fmt ON true
+    LEFT JOIN LATERAL (
       SELECT
         (array_agg(total_views ORDER BY captured_at DESC))[1]
-          - (array_agg(total_views ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '44 hours'))[1] AS views_48h
+          - (array_agg(total_views ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '44 hours'))[1] AS views_48h,
+        -- Daily rate over whatever history exists (≥ 6 h, up to 48 h): revenue works before day 2.
+        CASE WHEN max(captured_at) - min(captured_at) >= interval '6 hours' THEN
+          ((array_agg(total_views ORDER BY captured_at DESC))[1] - (array_agg(total_views ORDER BY captured_at ASC))[1])::float8
+            / (EXTRACT(EPOCH FROM max(captured_at) - min(captured_at)) / 86400)
+        END AS views_per_day
       FROM channel_stat_snapshots s
-      WHERE s.youtube_channel_id = c.youtube_channel_id AND s.captured_at > now() - interval '4 days'
+      WHERE s.youtube_channel_id = c.youtube_channel_id AND s.captured_at > now() - interval '50 hours'
     ) snap ON true
   `;
 
@@ -84,7 +96,7 @@ export async function GET(request: NextRequest) {
           c.id, c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.video_count,
           c.country, c.channel_created_at, c.discovered_at, c.monetized AS monetized_now,
           e.monetized, e.previous_checked_at, e.detected_at,
-          r.avg_views, r.category_id, r.language, snap.views_48h
+          r.avg_views, r.category_id, r.language, r.titles, fmt.shorts_share, snap.views_48h, snap.views_per_day
         FROM ${from}
         WHERE ${where}
         ORDER BY ${orderBy}
@@ -147,6 +159,15 @@ export async function GET(request: NextRequest) {
       avgViews: num(r.avg_views),
       views48h: num(r.views_48h),
       monetizedNow: r.monetized_now as boolean | null,
+      revenue: estimateAdRevenue({
+        monetized: r.monetized_now as boolean | null,
+        name: r.name as string,
+        titles: (r.titles as string[] | null) ?? [],
+        categoryId: num(r.category_id),
+        language: (r.language as string) ?? null,
+        dailyViews: num(r.views_per_day),
+        shortsViewShare: num(r.shorts_share) ?? 0,
+      }),
       change: {
         monetized: Boolean(r.monetized),
         from: iso(r.previous_checked_at),

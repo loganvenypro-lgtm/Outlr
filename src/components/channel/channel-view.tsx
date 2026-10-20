@@ -36,6 +36,8 @@ import { channelAge, DiscoveredBadge, subscribersPerDay } from "@/components/cha
 import { SimilarChannelsSheet } from "@/components/channel-trends/similar-channels-sheet";
 import { RealtimeBars, VideoPerformanceChart } from "./charts";
 import { VideoDialog } from "./video-dialog";
+import { RevenueCard } from "@/components/monetization/revenue";
+import type { AdRevenueEstimate } from "@/lib/revenueEstimator";
 
 interface ChannelVideo {
   id: string;
@@ -84,6 +86,7 @@ interface ChannelData {
     medianShort: number | null;
     views48h: number;
   };
+  revenue: AdRevenueEstimate & { checkedAt: string | null };
   hourly: { hour: string; views: number }[];
   videos: ChannelVideo[];
   updatedAt: string | null;
@@ -332,6 +335,8 @@ export function ChannelView({ channelId }: { channelId: string }) {
             footer={kpis.engagement30d != null ? `Engagement ${(kpis.engagement30d * 100).toFixed(1)} %` : "vidéos ≥ 3x la normale"}
           />
         </div>
+
+        <RevenueCard revenue={data.revenue} />
 
         {/* Charts */}
         <div className="grid gap-4 xl:grid-cols-[1fr_1.4fr]">

@@ -43,7 +43,9 @@ import {
 import { CATEGORY_LABELS, CATEGORY_OPTIONS, LANGUAGE_LABELS, SUBS_OPTIONS } from "@/components/outliers/filter-options";
 import { DiscoveredBadge, ago } from "@/components/channel-trends/channel-card";
 import { SimilarChannelsSheet } from "@/components/channel-trends/similar-channels-sheet";
+import type { AdRevenueEstimate } from "@/lib/revenueEstimator";
 import { cn, formatCompactNumber } from "@/lib/utils";
+import { RevenueLine } from "./revenue";
 
 type Key = "q" | "change" | "period" | "category" | "language" | "subs" | "sort";
 type Filters = Record<Key, string>;
@@ -103,6 +105,7 @@ interface TrackerChannel {
   avgViews: number | null;
   views48h: number | null;
   monetizedNow: boolean | null;
+  revenue: AdRevenueEstimate;
   change: { monetized: boolean; from: string | null; to: string };
   videos: {
     id: string;
@@ -490,6 +493,8 @@ function TrackerCard({ channel, onSimilar }: { channel: TrackerChannel; onSimila
           <Stat icon={<Video className="size-3.5" />} value={channel.videoCount != null ? formatCompactNumber(channel.videoCount) : "—"} label="Vidéos" />
           <Stat icon={<Clock className="size-3.5" />} value={channel.createdAt ? age(channel.createdAt) : "—"} label="Âge de la chaîne" />
         </div>
+
+        <RevenueLine revenue={channel.revenue} />
 
         <div className="mt-auto grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Button variant="outline" onClick={track} disabled={tracking !== "idle"}>

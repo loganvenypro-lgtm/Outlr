@@ -279,3 +279,100 @@ export function estimateChannelRevenue(channel: {
     ],
   };
 }
+
+// ---------------------------------------------------------------------------
+// Ad revenue from scanner data — only for channels whose ads were actually seen
+// ---------------------------------------------------------------------------
+
+/** YouTube category → niche, used when the titles don't give the niche away. */
+const CATEGORY_NICHE: Record<number, string> = {
+  1: "entertainment",
+  2: "autos",
+  10: "entertainment",
+  17: "sports",
+  20: "gaming",
+  22: "entertainment",
+  23: "comedy",
+  24: "entertainment",
+  26: "education",
+  27: "education",
+  28: "tech",
+};
+
+/**
+ * RPM of the audience's market relative to the benchmarks above (US-weighted).
+ * The language is the best proxy we have for where the viewers are.
+ */
+const LANGUAGE_RPM_FACTOR: Record<string, number> = {
+  en: 1,
+  de: 0.85,
+  nl: 0.75,
+  ja: 0.7,
+  fr: 0.6,
+  ko: 0.6,
+  it: 0.5,
+  pl: 0.35,
+  es: 0.35,
+  ar: 0.3,
+  pt: 0.3,
+  tr: 0.2,
+  ru: 0.15,
+  id: 0.15,
+  hi: 0.12,
+};
+const DEFAULT_LANGUAGE_FACTOR = 0.5;
+
+/** Shorts are paid from a shared pool: roughly $0.03–0.10 per 1,000 views, whatever the niche. */
+const SHORTS_RPM = { min: 0.03, avg: 0.06, max: 0.1 };
+
+type Range = { min: number; avg: number; max: number };
+
+export interface AdRevenueEstimate {
+  /** "unknown" until the scan worker has read the channel's ad status. */
+  status: "monetized" | "not_monetized" | "unknown";
+  nicheKey: string;
+  nicheLabel: string;
+  /** Blended RPM in USD per 1,000 views, after market and Shorts adjustments. */
+  rpm: Range;
+  dailyViews: number | null;
+  daily: Range | null;
+  monthly: Range | null;
+}
+
+export function estimateAdRevenue(input: {
+  monetized: boolean | null;
+  name: string;
+  titles: string[];
+  categoryId: number | null;
+  language: string | null;
+  /** Views the whole channel gains per day (snapshots), or null if not known yet. */
+  dailyViews: number | null;
+  /** Share of recent views that come from Shorts, 0–1. */
+  shortsViewShare: number;
+}): AdRevenueEstimate {
+  let nicheKey = detectChannelNicheKey(input.name, "", input.titles);
+  if (nicheKey === "general" && input.categoryId != null) nicheKey = CATEGORY_NICHE[input.categoryId] ?? "general";
+  const benchmark = NICHE_RPM_BENCHMARKS[nicheKey] ?? NICHE_RPM_BENCHMARKS.general;
+
+  const market = LANGUAGE_RPM_FACTOR[input.language?.split("-")[0] ?? ""] ?? DEFAULT_LANGUAGE_FACTOR;
+  const shorts = Math.min(1, Math.max(0, input.shortsViewShare));
+  const blend = (long: number, short: number) => Math.round(((1 - shorts) * long * market + shorts * short) * 100) / 100;
+  const rpm = {
+    min: blend(benchmark.minRpm, SHORTS_RPM.min),
+    avg: blend(benchmark.avgRpm, SHORTS_RPM.avg),
+    max: blend(benchmark.maxRpm, SHORTS_RPM.max),
+  };
+
+  const status = input.monetized === true ? "monetized" : input.monetized === false ? "not_monetized" : "unknown";
+  const dailyViews = input.dailyViews != null ? Math.max(0, input.dailyViews) : null;
+  const earn = (days: number): Range | null =>
+    status === "monetized" && dailyViews != null
+      ? {
+          min: Math.round((dailyViews * days * rpm.min) / 1000),
+          avg: Math.round((dailyViews * days * rpm.avg) / 1000),
+          max: Math.round((dailyViews * days * rpm.max) / 1000),
+        }
+      : null;
+
+  return { status, nicheKey, nicheLabel: benchmark.niche, rpm, dailyViews, daily: earn(1), monthly: earn(30) };
+}

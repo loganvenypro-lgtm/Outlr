@@ -411,7 +411,8 @@ async function videoHasAds(videoId) {
   }
   if (!res.ok) return null;
   const html = await res.text();
-  if (!html.includes('"videoDetails"')) return null;
+  // Geo-blocked or age-gated videos never show ads from here: that says nothing about the channel.
+  if (!html.includes('"videoDetails"') || !html.includes('"playabilityStatus":{"status":"OK"')) return null;
   return /"key":"yt_ad","value":"1"/.test(html) || html.includes('"adPlacements"') || html.includes('"playerAds"');
 }
 
