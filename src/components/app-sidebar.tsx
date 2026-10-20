@@ -53,6 +53,7 @@ const data = {
         { title: "Channel Trends", url: "/channel-trends" },
         { title: "Monetization Tracker", url: "/sponsors" },
         { title: "Viral Videos", url: "/niche-finder" },
+        { title: "Channel Finder", url: "/channel-finder" },
         { title: "Find Channel", url: "/dashboard/similar-channels" },
         { title: "YouTube Scraper", url: "/discovery" },
       ],

@@ -48,7 +48,11 @@ export function LoginForm({
         return;
       }
 
-      router.push("/");
+      if (isSignUp) {
+        router.push("/onboarding");
+      } else {
+        router.push("/");
+      }
       router.refresh();
     } catch (err: any) {
       setError(err.message || "Erreur de connexion.");

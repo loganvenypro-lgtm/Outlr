@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -23,11 +23,27 @@ import {
   Zap,
   Wand2,
   SlidersHorizontal,
+  History,
+  X,
+  ChevronRight,
+  Loader2,
+  Users,
+  Compass,
 } from "lucide-react";
 import { VideoCard } from "./VideoCard";
 import { ChartAreaInteractive } from "./ChartAreaInteractive";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { formatCompactNumber } from "@/lib/utils";
+
+const RECENT_SEARCHES_KEY = "newiq_recent_channels";
+
+interface StoredChannel {
+  id: string;
+  title: string;
+  avatar: string;
+  customUrl?: string;
+}
 
 interface TrackedChannel {
   channelId: string;
@@ -90,7 +106,7 @@ const DEFAULT_NICHE_COMPETITORS = [
   },
 ];
 
-// Initial folders / saved tracking activity matching screenshot
+// Initial folders / saved tracking activity
 const DEFAULT_FOLDERS = [
   { name: "Tech & AI Outliers", itemsCount: 14, timeAgo: "hier", color: "blue" },
   { name: "Micro-SaaS & Growth", itemsCount: 8, timeAgo: "il y a 3j", color: "emerald" },
@@ -98,7 +114,7 @@ const DEFAULT_FOLDERS = [
   { name: "Concurrents Directs", itemsCount: 5, timeAgo: "il y a 33j", color: "amber" },
 ];
 
-// Curated outlier videos if API is loading or initial setup
+// Curated outlier videos
 const DEFAULT_OUTLIER_VIDEOS: Performer[] = [
   {
     video: {
@@ -187,13 +203,34 @@ export function HomeWelcome() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectProgress, setConnectProgress] = useState(0);
   const [connectStepText, setConnectStepText] = useState("");
-  const [connectSuccess, setConnectSuccess] = useState(false);
   const [connectedChannel, setConnectedChannel] = useState<TrackedChannel | null>(null);
   const [showChannelModal, setShowChannelModal] = useState(false);
 
-  // Load user info & existing tracking
+  // Recent searches state (Channel Finder feature)
+  const [recentChannels, setRecentChannels] = useState<StoredChannel[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isSearchingChannels, setIsSearchingChannels] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Load user info, existing tracking, and recent searches from localStorage
   useEffect(() => {
     let cancelled = false;
+
+    // Load recent channels from localStorage
+    try {
+      const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+      if (stored) {
+        setRecentChannels(JSON.parse(stored));
+      }
+    } catch {
+      // LocalStorage errors ignored
+    }
 
     // 1. Get user name
     fetch("/api/auth/me")
@@ -240,14 +277,109 @@ export function HomeWelcome() {
     };
   }, []);
 
-  // Handle Search
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-    router.push(`/dashboard/similar-channels?url=${encodeURIComponent(query.trim())}`);
+  // Handle outside click to close suggestions dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Debounced Live Suggestions as the user types
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      setSuggestions([]);
+      setIsSuggesting(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSuggesting(true);
+      try {
+        const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(trimmed)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSuggestions(data.channels || []);
+          setShowDropdown(true);
+        }
+      } catch {
+        // Silently catch
+      } finally {
+        setIsSuggesting(false);
+      }
+    }, 280);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Save Channel to Recent Searches
+  const saveRecentChannel = (channel: StoredChannel) => {
+    try {
+      const updated = [
+        channel,
+        ...recentChannels.filter((c) => c.id !== channel.id),
+      ].slice(0, 8);
+      setRecentChannels(updated);
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+    } catch {
+      // Ignore
+    }
   };
 
-  // Add / Connect Channel with animated progress bar & competitor discovery
+  // Remove Channel from Recent Searches
+  const removeRecent = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const updated = recentChannels.filter((c) => c.id !== id);
+    setRecentChannels(updated);
+    try {
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+    } catch {
+      // Ignore
+    }
+  };
+
+  // Handle Channel Selection from Autocomplete
+  const handleSelectChannel = (item: any) => {
+    setShowDropdown(false);
+    saveRecentChannel({
+      id: item.id,
+      title: item.title,
+      avatar: item.thumbnail,
+      customUrl: item.customUrl,
+    });
+    router.push(`/channel/${item.id}`);
+  };
+
+  // Handle Search Submission
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetQuery = query.trim();
+    if (!targetQuery) return;
+
+    setShowDropdown(false);
+    setIsSearchingChannels(true);
+    setHasSearched(true);
+
+    try {
+      const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(targetQuery)}`);
+      const data = await res.json();
+      if (res.ok && data.channels) {
+        setSearchResults(data.channels);
+      } else {
+        setSearchResults([]);
+      }
+    } catch {
+      setSearchResults([]);
+    } finally {
+      setIsSearchingChannels(false);
+    }
+  };
+
+  // Add / Connect Channel with animated progress bar
   const handleConnectChannel = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const targetQuery = channelInput.trim() || "@logan";
@@ -258,12 +390,10 @@ export function HomeWelcome() {
     setConnectStepText("Connexion et vérification de la chaîne YouTube...");
 
     try {
-      // Step 1: Progress step
       await new Promise((r) => setTimeout(r, 600));
       setConnectProgress(35);
       setConnectStepText("Extraction des métriques clés et de l'empreinte sémantique...");
 
-      // Actual backend call to track channel
       const res = await fetch("/api/youtube/tracking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -287,7 +417,6 @@ export function HomeWelcome() {
         setConnectedChannel(data.tracked);
         setChannels((prev) => [data.tracked, ...prev.filter((c) => c.channelId !== data.tracked.channelId)]);
       } else {
-        // Fallback created channel
         const simulated: TrackedChannel = {
           channelId: `ch-${Date.now()}`,
           name: targetQuery.replace(/^@/, ""),
@@ -302,14 +431,11 @@ export function HomeWelcome() {
 
       setConnectProgress(100);
       setConnectStepText("Synchronisation terminée ! Votre radar de niche est prêt.");
-      setConnectSuccess(true);
       setShowChannelModal(false);
 
-      // Refresh tracking data after 800ms
       setTimeout(() => {
         setIsConnecting(false);
-        setConnectSuccess(false);
-      }, 1800);
+      }, 1500);
     } catch (err) {
       console.error(err);
       setConnectProgress(100);
@@ -322,27 +448,44 @@ export function HomeWelcome() {
 
   return (
     <div className="min-h-screen w-full bg-white text-slate-900 pb-24">
-      {/* 1. TOP UTILITY BAR (matching screenshot top-right) */}
-      <div className="mx-auto flex w-full max-w-[1320px] items-center justify-end gap-3 px-6 pt-5">
+      {/* 1. TOP UTILITY BAR */}
+      <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between px-6 pt-5">
         <Link
-          href="/referral"
-          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          href="/onboarding"
+          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/70 hover:bg-emerald-100/70 transition-all shadow-xs"
         >
-          <Gift className="h-3.5 w-3.5 text-emerald-600" />
-          <span>Inviter un ami</span>
+          <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+          <span>Lancer l'Onboarding</span>
         </Link>
-        <button
-          type="button"
-          aria-label="Conseils et astuces"
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-600 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-        >
-          <Lightbulb className="h-4 w-4" />
-        </button>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/channel-finder"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          >
+            <Compass className="h-3.5 w-3.5 text-blue-600" />
+            <span>Channel Finder Dédié</span>
+          </Link>
+          <Link
+            href="/referral"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          >
+            <Gift className="h-3.5 w-3.5 text-emerald-600" />
+            <span>Inviter un ami</span>
+          </Link>
+          <button
+            type="button"
+            aria-label="Conseils et astuces"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/90 bg-white text-slate-600 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          >
+            <Lightbulb className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10">
-        {/* 2. HERO HEADER (matching screenshot) */}
-        <section className="pb-8 pt-8 text-center md:pt-12">
+        {/* 2. HERO HEADER WITH CHANNEL FINDER & AUTOCOMPLETE */}
+        <section className="pb-6 pt-8 text-center md:pt-12">
           {/* Logo badge */}
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#15803d] to-[#22c55e] p-2.5 shadow-lg shadow-green-500/15">
             <img
@@ -350,7 +493,6 @@ export function HomeWelcome() {
               alt="Outlr Logo"
               className="h-9 w-9 object-contain"
               onError={(e) => {
-                // If local image fails, fall back to clean minimal SVG letter
                 (e.target as HTMLElement).style.display = "none";
               }}
             />
@@ -360,28 +502,90 @@ export function HomeWelcome() {
             Welcome back{userName ? `, ${userName}` : ""}.
           </h1>
 
-          {/* Search bar pill */}
-          <form onSubmit={handleSearch} className="mx-auto mt-7 max-w-2xl" role="search">
-            <div className="flex w-full items-center rounded-full border border-slate-200 bg-slate-100/90 py-3 pl-5 pr-3 shadow-xs transition-all focus-within:border-slate-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5">
-              <Search className="mr-3 h-[18px] w-[18px] shrink-0 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Rechercher une chaîne, une niche, un mot-clé ou coller une URL..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label="Rechercher une chaîne"
-                className="w-full bg-transparent text-[14.5px] text-slate-900 placeholder-slate-400 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-slate-800"
+          {/* Search bar with live autocomplete dropdown */}
+          <div className="mx-auto mt-7 max-w-2xl relative" ref={dropdownRef}>
+            <form onSubmit={handleSearch} role="search">
+              <div
+                className={`flex w-full items-center bg-slate-100/90 py-2.5 pl-5 pr-2.5 shadow-xs transition-all border ${
+                  showDropdown && (suggestions.length > 0 || isSuggesting)
+                    ? "border-emerald-500 rounded-t-2xl rounded-b-none bg-white ring-4 ring-emerald-500/10"
+                    : "border-slate-200 rounded-full focus-within:border-slate-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5"
+                }`}
               >
-                Rechercher
-              </button>
-            </div>
-          </form>
+                <Search className="mr-3 h-[18px] w-[18px] shrink-0 text-slate-400" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="Rechercher une chaîne, un @handle, un mot-clé ou coller une URL..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => {
+                    if (suggestions.length > 0) setShowDropdown(true);
+                  }}
+                  aria-label="Rechercher une chaîne"
+                  className="w-full bg-transparent text-[14.5px] text-slate-900 placeholder-slate-400 focus:outline-none"
+                />
 
-          {/* Quick pills row (matching screenshot) */}
+                {isSuggesting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-emerald-600 shrink-0" />
+                )}
+
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      setSuggestions([]);
+                      setShowDropdown(false);
+                      setHasSearched(false);
+                      setSearchResults([]);
+                    }}
+                    className="mr-2 p-1 text-slate-400 hover:text-slate-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+
+                <button
+                  type="submit"
+                  className="flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-slate-800 shrink-0"
+                >
+                  Rechercher
+                </button>
+              </div>
+            </form>
+
+            {/* Autocomplete Dropdown */}
+            {showDropdown && (suggestions.length > 0 || isSuggesting) && (
+              <div className="absolute left-0 right-0 top-full bg-white border border-t-0 border-emerald-500 rounded-b-2xl shadow-xl overflow-hidden z-50 divide-y divide-slate-100 max-h-80 overflow-y-auto text-left">
+                {suggestions.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleSelectChannel(item)}
+                    className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={item.thumbnail || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
+                        alt={item.title}
+                        className="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-900 text-xs truncate">{item.title}</p>
+                        <p className="text-[11px] text-slate-500">
+                          {item.customUrl ? (item.customUrl.startsWith("@") ? item.customUrl : `@${item.customUrl}`) : item.id}
+                          {item.subscriberCount !== undefined && ` · ${formatCompactNumber(item.subscriberCount)} abonnés`}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Quick pills row */}
           <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2">
             {[
               { label: "PurePath™", flag: "🇺🇸", query: "PurePath" },
@@ -409,7 +613,139 @@ export function HomeWelcome() {
           </div>
         </section>
 
-        {/* 3. CHANNEL CONNECTION / STATUS SECTION */}
+        {/* 3. RECENTLY SEARCHED CHANNELS (CHANNEL FINDER HISTORY) */}
+        {recentChannels.length > 0 && (
+          <section className="mb-8 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                <History className="h-4 w-4 text-emerald-600" />
+                <span>Chaînes récemment cherchées</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setRecentChannels([]);
+                  localStorage.removeItem(RECENT_SEARCHES_KEY);
+                }}
+                className="text-[11px] font-medium text-slate-400 hover:text-rose-500 transition-colors"
+              >
+                Effacer l'historique
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5">
+              {recentChannels.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => router.push(`/channel/${item.id}`)}
+                  className="group relative flex flex-col items-center rounded-xl border border-slate-200/80 bg-white p-2.5 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs cursor-pointer transition-all text-center"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => removeRecent(e, item.id)}
+                    className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-0.5 text-slate-400 hover:text-rose-500 transition-opacity"
+                    title="Supprimer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                  <img
+                    src={item.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
+                    alt={item.title}
+                    className="w-10 h-10 rounded-full object-cover border border-slate-100 mb-1.5 group-hover:scale-105 transition-transform"
+                  />
+                  <span className="text-[11px] font-semibold text-slate-800 truncate w-full">
+                    {item.title}
+                  </span>
+                  {item.customUrl && (
+                    <span className="text-[9.5px] text-slate-400 truncate w-full">
+                      {item.customUrl}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 4. SEARCH RESULTS DISPLAY (When query is searched) */}
+        {hasSearched && (
+          <section className="mb-10 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <span>Résultats de recherche pour "{query}"</span>
+                <span className="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                  {searchResults.length} chaîne(s)
+                </span>
+              </h2>
+              <button
+                onClick={() => {
+                  setHasSearched(false);
+                  setSearchResults([]);
+                }}
+                className="text-xs text-slate-400 hover:text-slate-700"
+              >
+                Fermer
+              </button>
+            </div>
+
+            {isSearchingChannels ? (
+              <div className="py-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                <span>Recherche des chaînes sur YouTube...</span>
+              </div>
+            ) : searchResults.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {searchResults.map((ch) => (
+                  <div
+                    key={ch.id}
+                    onClick={() => handleSelectChannel(ch)}
+                    className="flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs hover:border-slate-300 hover:shadow-sm cursor-pointer transition-all"
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={ch.thumbnail || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop"}
+                        alt={ch.title}
+                        className="w-12 h-12 rounded-full object-cover border border-slate-100 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-slate-900 text-xs truncate hover:text-emerald-700">
+                          {ch.title}
+                        </h3>
+                        <p className="text-[11px] text-slate-500 font-medium">
+                          {ch.customUrl ? (ch.customUrl.startsWith("@") ? ch.customUrl : `@${ch.customUrl}`) : ch.id}
+                        </p>
+                        <p className="text-[11px] text-slate-500 line-clamp-1 mt-1">
+                          {ch.description || "Aucune description"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1 pt-3 mt-3 border-t border-slate-100 text-center text-[10.5px]">
+                      <div>
+                        <span className="text-slate-400 block">Abonnés</span>
+                        <strong className="text-slate-800">{formatCompactNumber(ch.subscriberCount)}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Vues</span>
+                        <strong className="text-slate-800">{formatCompactNumber(ch.viewCount)}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Vidéos</span>
+                        <strong className="text-slate-800">{ch.videoCount || 0}</strong>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center text-xs text-slate-500">
+                Aucune chaîne trouvée pour "{query}". Essayez un nom exact ou un @handle.
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 5. CHANNEL CONNECTION / ONBOARDING PROMPT SECTION */}
         <section className="mb-10">
           {connectedChannel ? (
             /* Channel connected state */
@@ -452,14 +788,13 @@ export function HomeWelcome() {
                     <RefreshCw className={`h-3.5 w-3.5 ${isConnecting ? "animate-spin text-emerald-600" : ""}`} />
                     Actualiser ma niche
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowChannelModal(!showChannelModal)}
-                    className="h-9 rounded-xl border-slate-200 bg-white text-xs font-semibold text-slate-600 shadow-xs hover:bg-slate-50 hover:text-slate-900"
+                  <Link
+                    href="/onboarding"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition-colors"
                   >
-                    Changer de chaîne
-                  </Button>
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                    Refaire l'Onboarding
+                  </Link>
                 </div>
               </div>
             </div>
@@ -476,30 +811,26 @@ export function HomeWelcome() {
                     Activez la détection de niche & le tracking de vos concurrents
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Liez votre chaîne YouTube en 1 clic pour scraper automatiquement vos concurrents directs et recevoir les vidéos atypiques de votre secteur.
+                    Liez votre chaîne YouTube pour scraper automatiquement vos concurrents directs et recevoir les vidéos atypiques de votre secteur.
                   </p>
                 </div>
 
-                <form
-                  onSubmit={handleConnectChannel}
-                  className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center"
-                >
-                  <input
-                    type="text"
-                    placeholder="@handle ou URL YouTube..."
-                    value={channelInput}
-                    onChange={(e) => setChannelInput(e.target.value)}
-                    className="h-10 w-full min-w-[240px] rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none"
-                  />
-                  <Button
-                    type="submit"
-                    disabled={isConnecting}
-                    className="h-10 shrink-0 gap-1.5 rounded-xl bg-slate-900 px-4 text-xs font-semibold text-white shadow-xs hover:bg-slate-800"
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                  <Link
+                    href="/onboarding"
+                    className="h-10 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-5 text-xs font-bold text-white shadow-sm hover:from-emerald-700 hover:to-green-700 transition-all"
                   >
-                    <Plus className="h-3.5 w-3.5" />
-                    Connecter ma chaîne
+                    <Sparkles className="h-4 w-4" />
+                    Lancer l'Onboarding Complet (30s)
+                  </Link>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowChannelModal(!showChannelModal)}
+                    className="h-10 rounded-xl border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Liaison rapide
                   </Button>
-                </form>
+                </div>
               </div>
             </div>
           )}
@@ -531,7 +862,7 @@ export function HomeWelcome() {
             </div>
           )}
 
-          {/* ANIMATED PROGRESS BAR BANNER (user requested: 'y a une grosse bar avec une animation ou le backend recuper des chaines et vidéos similaire a ca niche') */}
+          {/* ANIMATED PROGRESS BAR BANNER */}
           {isConnecting && (
             <div className="mt-4 overflow-hidden rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5 shadow-xs transition-all animate-in fade-in slide-in-from-top-3 duration-200">
               <div className="mb-2.5 flex items-center justify-between text-xs font-semibold text-emerald-900">
@@ -542,14 +873,11 @@ export function HomeWelcome() {
                 <span className="tabular-nums font-bold text-emerald-700">{connectProgress}%</span>
               </div>
               <Progress value={connectProgress} className="h-2 bg-emerald-100 text-emerald-600" />
-              <p className="mt-2 text-[11px] text-emerald-700/80">
-                Outlr analyse les graphes d'audience, les abonnés et les tendances en temps réel pour bâtir votre matrice de niche.
-              </p>
             </div>
           )}
         </section>
 
-        {/* 4. CAROUSEL / ROW OF ROUNDED CARDS (matching screenshot media_1792460161861_aa6d4b0d.png) */}
+        {/* 6. CAROUSEL / ROW OF ROUNDED CARDS */}
         <section className="mb-10">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {/* CARD 1: Status & Competitive Tracking */}
@@ -572,7 +900,7 @@ export function HomeWelcome() {
               </div>
             </div>
 
-            {/* CARD 2: Recent Activity / Folders (matching screenshot FOLDERS) */}
+            {/* CARD 2: Recent Activity / Folders */}
             <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
               <div>
                 <div className="mb-2.5 flex items-center justify-between text-xs">
@@ -598,7 +926,7 @@ export function HomeWelcome() {
               </div>
             </div>
 
-            {/* CARD 3: LOOK UP / Niche Competitors (matching screenshot LOOK UP) */}
+            {/* CARD 3: LOOK UP / Niche Competitors */}
             <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
               <div>
                 <div className="mb-2.5 flex items-center justify-between text-xs">
@@ -624,7 +952,7 @@ export function HomeWelcome() {
               </div>
             </div>
 
-            {/* CARD 4: Outlier Video Preview 1 (matching screenshot video reel card) */}
+            {/* CARD 4: Outlier Video Preview 1 */}
             <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-all hover:shadow-md">
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
                 <img
@@ -649,7 +977,7 @@ export function HomeWelcome() {
               </div>
             </div>
 
-            {/* CARD 5: AI Creator Tools Grid (matching screenshot app shortcuts) */}
+            {/* CARD 5: AI Creator Tools Grid */}
             <div className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs transition-all hover:shadow-sm">
               <div>
                 <span className="text-xs font-bold text-slate-800">Outils Créateurs</span>
@@ -683,11 +1011,11 @@ export function HomeWelcome() {
                     <Radio className="h-5 w-5" />
                   </Link>
                   <Link
-                    href="/thumbnail-intelligence"
-                    title="Thumbnail Intelligence"
+                    href="/channel-finder"
+                    title="Channel Finder"
                     className="flex h-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-900 hover:text-white"
                   >
-                    <Eye className="h-5 w-5" />
+                    <Users className="h-5 w-5" />
                   </Link>
                   <Link
                     href="/settings"
@@ -705,12 +1033,12 @@ export function HomeWelcome() {
           </div>
         </section>
 
-        {/* 5. INTERACTIVE AREA CHART (shadcn Recharts component requested by user) */}
+        {/* 7. INTERACTIVE AREA CHART */}
         <section className="mb-12">
           <ChartAreaInteractive />
         </section>
 
-        {/* 6. OUTLIER VIDEOS GRID (user requested: 'lui il propose chaque des vidéos Comme sur l'image sauf avec des card de vidéo') */}
+        {/* 8. OUTLIER VIDEOS GRID */}
         <section>
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
@@ -727,10 +1055,10 @@ export function HomeWelcome() {
 
             <div className="flex items-center gap-2">
               <Link
-                href="/radar"
+                href="/channel-finder"
                 className="flex items-center gap-1.5 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
               >
-                Radar Global <ArrowRight className="h-3.5 w-3.5" />
+                Channel Finder <ArrowRight className="h-3.5 w-3.5" />
               </Link>
               <Link
                 href="/tracking"

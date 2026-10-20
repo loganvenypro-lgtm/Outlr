@@ -215,10 +215,10 @@ export function ChannelSearchDashboard() {
         {/* Search Bar Input Container with Floating Live Suggestions */}
         <div className="max-w-3xl mx-auto pt-4 relative" ref={dropdownRef}>
           <form onSubmit={handleSubmit}>
-            <div className={`relative flex items-center bg-white border-2 transition-all p-2 shadow-2xl shadow-blue-950/20 ${
+            <div className={`relative flex items-center bg-white border-2 transition-all p-2 shadow-sm ${
               showDropdown && (suggestions.length > 0 || isSuggesting)
-                ? "border-blue-500 rounded-t-2xl rounded-b-none border-b-[#1c2944]"
-                : "border-slate-200 focus-within:border-blue-500 rounded-2xl"
+                ? "border-emerald-500 rounded-t-2xl rounded-b-none border-b-slate-200"
+                : "border-slate-200 focus-within:border-emerald-500 rounded-2xl"
             }`}>
               <Search className="w-6 h-6 text-slate-500 ml-3.5 mr-2 shrink-0" />
               <input
@@ -277,9 +277,9 @@ export function ChannelSearchDashboard() {
             </div>
           </form>
 
-          {/* Autocomplete Suggestions Dropdown (Styled exactly like ViewStats) */}
+          {/* Autocomplete Suggestions Dropdown */}
           {showDropdown && (suggestions.length > 0 || isSuggesting) && (
-            <div className="absolute left-0 right-0 top-full bg-white border-2 border-t-0 border-blue-500 rounded-b-2xl shadow-2xl shadow-black/80 overflow-hidden z-50 divide-y divide-slate-200 max-h-96 overflow-y-auto">
+            <div className="absolute left-0 right-0 top-full bg-white border-2 border-t-0 border-emerald-500 rounded-b-2xl shadow-xl overflow-hidden z-50 divide-y divide-slate-100 max-h-96 overflow-y-auto">
               {suggestions.map((item, idx) => {
                 const isSelected = idx === selectedIndex;
                 return (
@@ -288,7 +288,7 @@ export function ChannelSearchDashboard() {
                     onClick={() => handleSelectChannel(item)}
                     onMouseEnter={() => setSelectedIndex(idx)}
                     className={`flex items-center justify-between p-3.5 cursor-pointer transition-colors ${
-                      isSelected ? "bg-[#1d2a4a]" : "hover:bg-[#18233c]"
+                      isSelected ? "bg-slate-100" : "hover:bg-slate-50"
                     }`}
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
@@ -392,13 +392,13 @@ export function ChannelSearchDashboard() {
               <div
                 key={item.id}
                 onClick={() => router.push(`/channel/${item.id}`)}
-                className="group relative flex flex-col items-center p-3 rounded-xl bg-[#141d33] border border-slate-200 hover:border-blue-500/50 hover:bg-slate-50 cursor-pointer transition-all"
+                className="group relative flex flex-col items-center p-3 rounded-xl bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 shadow-xs cursor-pointer transition-all"
               >
                 <button
                   type="button"
                   onClick={(e) => removeRecent(e, item.id)}
-                  className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-rose-400 transition-opacity"
-                  title="Remove from history"
+                  className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-500 transition-opacity"
+                  title="Supprimer de l'historique"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

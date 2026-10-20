@@ -22,7 +22,8 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
   }
 
   // Full-screen pages without sidebar
-  const isAuthOrLanding = pathname === "/login" || pathname === "/welcome";
+  const isAuthOrLanding =
+    pathname === "/login" || pathname === "/welcome" || pathname === "/onboarding";
 
   if (isAuthOrLanding) {
     return (
