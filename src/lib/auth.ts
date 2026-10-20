@@ -1,8 +1,16 @@
 import crypto from "crypto";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "6a7f6bd9ee4ee8dbd91639878fc94564abc737dc9a0503821fe9954fcceeec3b";
+/**
+ * Read the session signing secret lazily so a missing value fails loudly
+ * instead of silently falling back to a guessable key.
+ */
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error("JWT_SECRET is missing or too short (min 32 chars, see .env.local)");
+  }
+  return secret;
+}
 
 /**
  * Hash password with PBKDF2 (NIST recommended, 100 000 iterations, 64-byte key)
@@ -48,7 +56,7 @@ export function createSessionToken(payload: {
     "base64url"
   );
   const signature = crypto
-    .createHmac("sha256", JWT_SECRET)
+    .createHmac("sha256", getJwtSecret())
     .update(`${header}.${body}`)
     .digest("base64url");
   return `${header}.${body}.${signature}`;
@@ -69,7 +77,7 @@ export function verifySessionToken(token: string): {
     const [header, body, signature] = parts;
 
     const expectedSig = crypto
-      .createHmac("sha256", JWT_SECRET)
+      .createHmac("sha256", getJwtSecret())
       .update(`${header}.${body}`)
       .digest("base64url");
 

@@ -4,6 +4,11 @@
  * calculate real-time outlier multipliers, and alert Discord.
  */
 
+try { process.loadEnvFile(".env.local"); } catch {}
+
+const CRON_SECRET = process.env.CRON_SECRET;
+if (!CRON_SECRET) throw new Error("CRON_SECRET manquant (voir .env.local)");
+
 const INTERVAL_MINUTES = 10;
 const PORT = process.env.PORT || 3001;
 const API_URL = `http://localhost:${PORT}/api/pipeline/sync-outliers?limit=60&maxDays=7&minMultiplier=2.0`;
@@ -13,7 +18,7 @@ async function runScan() {
   console.log(`\n[${timestamp}] 🚀 [CRON] Début du scan YouTube en direct...`);
 
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, { headers: { "x-cron-secret": CRON_SECRET } });
     if (!res.ok) {
       console.error(`[${timestamp}] ❌ Erreur HTTP ${res.status}:`, await res.text());
       return;

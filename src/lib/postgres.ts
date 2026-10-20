@@ -1,8 +1,9 @@
 import postgres from "postgres";
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  "postgresql://postgres:marleybouba@localhost:5432/newiq";
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set (see .env.local)");
+}
 
 // Singleton pool connection for Next.js and high-concurrency Node.js runtime
 declare global {
