@@ -32,6 +32,8 @@ import {
   fetchJson,
 } from "@/components/explorer/explorer-ui";
 import { cn, formatCompactNumber } from "@/lib/utils";
+import { channelAge, subscribersPerDay } from "@/components/channel-trends/channel-card";
+import { SimilarChannelsSheet } from "@/components/channel-trends/similar-channels-sheet";
 import { RealtimeBars, VideoPerformanceChart } from "./charts";
 import { VideoDialog } from "./video-dialog";
 
@@ -64,6 +66,9 @@ interface ChannelData {
     videoCount: number | null;
     trendScore: number | null;
     recentRatio: number | null;
+    createdAt: string | null;
+    outlierRate: number | null;
+    opportunityScore: number | null;
     tracked: boolean;
   };
   kpis: {
@@ -111,6 +116,7 @@ export function ChannelView({ channelId }: { channelId: string }) {
   const [visible, setVisible] = useState(PAGE);
   const [openVideo, setOpenVideo] = useState<string | null>(null);
   const [tracking, setTracking] = useState<"idle" | "saving" | "saved">("idle");
+  const [showSimilar, setShowSimilar] = useState(false);
 
   // Data comes from the scanner's database, so polling it is free: refresh every 2 minutes.
   useEffect(() => {
@@ -176,6 +182,7 @@ export function ChannelView({ channelId }: { channelId: string }) {
 
   const { channel, kpis } = data;
   const tracked = channel.tracked || tracking === "saved";
+  const perDay = subscribersPerDay(channel.subscribers, channel.createdAt);
 
   const track = async () => {
     setTracking("saving");
@@ -227,6 +234,8 @@ export function ChannelView({ channelId }: { channelId: string }) {
               {channel.subscribers != null && <span>· {formatCompactNumber(channel.subscribers)} abonnés</span>}
               {channel.videoCount != null && <span>· {formatCompactNumber(channel.videoCount)} vidéos</span>}
               {channel.country && <span>· {channel.country}</span>}
+              {channel.createdAt && <span>· {channelAge(channel.createdAt)}</span>}
+              {perDay != null && <span>· +{formatCompactNumber(perDay)} abonnés/jour</span>}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {channel.trendScore != null && (
@@ -234,6 +243,12 @@ export function ChannelView({ channelId }: { channelId: string }) {
                   <TrendingUp className="size-3" />
                   Tendance {Math.round(channel.trendScore)}/100
                 </Badge>
+              )}
+              {channel.opportunityScore != null && (
+                <Badge variant="secondary">Opportunité {Math.round(channel.opportunityScore)}/100</Badge>
+              )}
+              {channel.outlierRate != null && (
+                <Badge variant="secondary">{Math.round(channel.outlierRate * 100)} % de hits</Badge>
               )}
               {channel.recentRatio != null && channel.recentRatio >= 1.5 && (
                 <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700">
@@ -248,7 +263,11 @@ export function ChannelView({ channelId }: { channelId: string }) {
               )}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => setShowSimilar(true)}>
+              <Users className="size-4" />
+              Chaînes similaires
+            </Button>
             <Button variant={tracked ? "secondary" : "default"} onClick={track} disabled={tracked || tracking === "saving"}>
               {tracking === "saving" ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -398,6 +417,10 @@ export function ChannelView({ channelId }: { channelId: string }) {
       </div>
 
       <VideoDialog videoId={openVideo} onOpenChange={(open) => !open && setOpenVideo(null)} />
+      <SimilarChannelsSheet
+        channel={showSimilar ? { id: channel.id, name: channel.name } : null}
+        onOpenChange={(open) => setShowSimilar(open)}
+      />
     </div>
   );
 }

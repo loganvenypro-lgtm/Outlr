@@ -25,6 +25,8 @@ export async function GET(request: NextRequest) {
   const minSubs = toNumber(params.get("minSubs"));
   const maxSubs = toNumber(params.get("maxSubs"));
   const withOutliers = params.get("withOutliers") === "true";
+  const maxAgeDays = toNumber(params.get("maxAgeDays"));
+  const minOutlierRate = toNumber(params.get("minOutlierRate"));
   const sort = params.get("sort") ?? "trend";
   const page = Math.max(0, Math.floor(toNumber(params.get("page")) ?? 0));
 
@@ -36,11 +38,22 @@ export async function GET(request: NextRequest) {
     ${minSubs !== null ? sql`AND c.subscriber_count >= ${minSubs}` : sql``}
     ${maxSubs !== null ? sql`AND c.subscriber_count <= ${maxSubs}` : sql``}
     ${withOutliers ? sql`AND r.outliers_30d > 0` : sql``}
+    ${maxAgeDays !== null ? sql`AND c.channel_created_at > now() - make_interval(days => ${maxAgeDays})` : sql``}
+    ${minOutlierRate !== null ? sql`AND c.outlier_rate >= ${minOutlierRate}` : sql``}
     ${query ? sql`AND (c.name ILIKE ${"%" + query + "%"} OR c.handle ILIKE ${"%" + query + "%"})` : sql``}
   `;
 
+  const subsPerDay = sql`c.subscriber_count::float8 / GREATEST(EXTRACT(EPOCH FROM now() - c.channel_created_at) / 86400, 1)`;
   const orderBy =
-    sort === "trend"
+    sort === "opportunity"
+      ? sql`c.opportunity_score DESC NULLS LAST`
+      : sort === "subsPerDay"
+        ? sql`${subsPerDay} DESC NULLS LAST`
+        : sort === "outlierRate"
+          ? sql`c.outlier_rate DESC NULLS LAST, c.opportunity_score DESC NULLS LAST`
+          : sort === "newest"
+            ? sql`c.channel_created_at DESC NULLS LAST`
+            : sort === "trend"
       ? sql`c.trend_score DESC NULLS LAST, r.views_7d DESC NULLS LAST`
       : sort === "views7d"
       ? sql`r.views_7d DESC NULLS LAST`
@@ -89,7 +102,7 @@ export async function GET(request: NextRequest) {
       sql`
         SELECT
           c.id, c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.country,
-          c.trend_score, c.recent_ratio,
+          c.trend_score, c.recent_ratio, c.channel_created_at, c.outlier_rate, c.opportunity_score,
           r.views_7d, r.uploads_7d, r.outliers_30d, r.best_multiplier, r.short_share, r.category_id, r.language,
           snap.views_24h, snap.views_prev_24h, snap.subs_24h
         FROM ${from}
@@ -145,6 +158,9 @@ export async function GET(request: NextRequest) {
       isShortsChannel: Number(r.short_share) >= 0.5,
       trendScore: num(r.trend_score),
       recentRatio: num(r.recent_ratio),
+      createdAt: r.channel_created_at ? new Date(r.channel_created_at).toISOString() : null,
+      outlierRate: num(r.outlier_rate),
+      opportunityScore: num(r.opportunity_score),
       views24h: num(r.views_24h),
       viewsPrev24h: num(r.views_prev_24h),
       subs24h: num(r.subs_24h),

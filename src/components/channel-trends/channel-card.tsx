@@ -1,7 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, BookmarkCheck, ExternalLink, Flame, Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import {
+  BarChart3,
+  Bookmark,
+  BookmarkCheck,
+  ExternalLink,
+  Flame,
+  Loader2,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +34,9 @@ export interface TrendChannel {
   isShortsChannel: boolean;
   trendScore: number | null;
   recentRatio: number | null;
+  createdAt: string | null;
+  outlierRate: number | null;
+  opportunityScore: number | null;
   views24h: number | null;
   viewsPrev24h: number | null;
   subs24h: number | null;
@@ -52,7 +66,34 @@ function signed(n: number): string {
   return `${n >= 0 ? "+" : "−"}${formatCompactNumber(Math.abs(n))}`;
 }
 
-export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: number }) {
+/** "créée il y a 4 mois" */
+export function channelAge(iso: string): string {
+  const days = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000));
+  if (days < 30) return `créée il y a ${days} j`;
+  if (days < 365) return `créée il y a ${Math.round(days / 30)} mois`;
+  const years = Math.round(days / 365);
+  return `créée il y a ${years} an${years > 1 ? "s" : ""}`;
+}
+
+export function subscribersPerDay(subscribers: number | null, createdAt: string | null): number | null {
+  if (subscribers == null || !createdAt) return null;
+  const days = Math.max(1, (Date.now() - new Date(createdAt).getTime()) / 86_400_000);
+  return Math.round(subscribers / days);
+}
+
+export function ChannelCard({
+  channel,
+  rank,
+  variant = "trends",
+  onSimilar,
+}: {
+  channel: TrendChannel;
+  rank: number;
+  variant?: "trends" | "finder";
+  onSimilar: () => void;
+}) {
+  const perDay = subscribersPerDay(channel.subscribers, channel.createdAt);
+  const headlineScore = variant === "finder" ? channel.opportunityScore : channel.trendScore;
   const [tracking, setTracking] = useState<"idle" | "saving" | "saved">("idle");
   const language = channel.language ?? null;
   const hasDaily = channel.views24h != null;
@@ -93,17 +134,12 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
           <AvatarFallback>{channel.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <a
-            href={`https://www.youtube.com/channel/${channel.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 truncate font-medium hover:underline"
-          >
-            <span className="truncate">{channel.name}</span>
-            <ExternalLink className="size-3 shrink-0 text-muted-foreground" />
-          </a>
+          <Link href={`/channel/${channel.id}`} className="truncate font-medium hover:underline">
+            {channel.name}
+          </Link>
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             <span>{channel.subscribers != null ? `${formatCompactNumber(channel.subscribers)} abonnés` : "abonnés masqués"}</span>
+            {channel.createdAt && <span>· {channelAge(channel.createdAt)}</span>}
             {language && <span>· {LANGUAGE_LABELS[language] ?? language.toUpperCase()}</span>}
             {channel.country && <span>· {channel.country}</span>}
           </div>
@@ -114,28 +150,31 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
             )}
           </div>
         </div>
-        {channel.trendScore != null && (
+        {headlineScore != null && (
           <Tooltip>
             <TooltipTrigger
               render={
                 <div
                   className={cn(
                     "flex shrink-0 flex-col items-center rounded-lg px-2.5 py-1.5",
-                    channel.trendScore >= 75
+                    headlineScore >= 75
                       ? "bg-emerald-600 text-white"
-                      : channel.trendScore >= 50
+                      : headlineScore >= 50
                         ? "bg-emerald-500/10 text-emerald-700"
                         : "bg-muted text-foreground",
                   )}
                 >
-                  <span className="text-lg leading-none font-semibold tabular-nums">{Math.round(channel.trendScore)}</span>
-                  <span className="text-[10px] leading-tight opacity-80">tendance</span>
+                  <span className="text-lg leading-none font-semibold tabular-nums">{Math.round(headlineScore)}</span>
+                  <span className="text-[10px] leading-tight opacity-80">
+                    {variant === "finder" ? "opportunité" : "tendance"}
+                  </span>
                 </div>
               }
             />
             <TooltipContent className="max-w-64">
-              Score sur 100 : performance des vidéos récentes vs la normale de la chaîne, outliers récents, vues
-              de la semaine vs abonnés et croissance.
+              {variant === "finder"
+                ? "Score sur 100 : régularité des hits, vitesse de croissance, taille reproductible, dynamique actuelle et saturation de la niche."
+                : "Score sur 100 : performance des vidéos récentes vs la normale de la chaîne, outliers récents, vues de la semaine vs abonnés et croissance."}
             </TooltipContent>
           </Tooltip>
         )}
@@ -183,6 +222,24 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
         </ScrollArea>
       )}
 
+      <div className="grid grid-cols-3 gap-2 rounded-lg bg-muted/60 p-2.5 text-center">
+        <Insight
+          value={perDay != null ? `+${formatCompactNumber(perDay)}` : "—"}
+          label="abonnés / jour"
+          hint="Abonnés gagnés par jour en moyenne depuis la création de la chaîne"
+        />
+        <Insight
+          value={channel.outlierRate != null ? `${Math.round(channel.outlierRate * 100)} %` : "—"}
+          label="de hits"
+          hint="Part des vidéos (3 à 180 jours) qui font au moins 3x la normale de la chaîne"
+        />
+        <Insight
+          value={channel.opportunityScore != null ? String(Math.round(channel.opportunityScore)) : "—"}
+          label="opportunité"
+          hint="Score sur 100 : est-ce que tu peux te lancer sur ce créneau ?"
+        />
+      </div>
+
       <div className="flex items-end justify-between gap-4 border-t pt-4">
         <div className="flex flex-col gap-1">
           <span className="text-2xl font-semibold text-emerald-600 tabular-nums">
@@ -217,8 +274,16 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={track} disabled={tracking !== "idle"}>
+      <div className="grid grid-cols-2 gap-2 sm:flex">
+        <Button className="sm:flex-1" nativeButton={false} render={<Link href={`/channel/${channel.id}`} />}>
+          <BarChart3 className="size-4" />
+          Analyser
+        </Button>
+        <Button variant="outline" className="sm:flex-1" onClick={onSimilar}>
+          <Users className="size-4" />
+          Similaires
+        </Button>
+        <Button variant="outline" onClick={track} disabled={tracking !== "idle"}>
           {tracking === "saving" ? (
             <Loader2 className="size-4 animate-spin" />
           ) : tracking === "saved" ? (
@@ -238,6 +303,22 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
         </Button>
       </div>
     </Card>
+  );
+}
+
+function Insight({ value, label, hint }: { value: string; label: string; hint: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-semibold tabular-nums">{value}</span>
+            <span className="text-[10px] tracking-wide text-muted-foreground uppercase">{label}</span>
+          </div>
+        }
+      />
+      <TooltipContent className="max-w-56">{hint}</TooltipContent>
+    </Tooltip>
   );
 }
 

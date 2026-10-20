@@ -15,11 +15,11 @@ async function importChannel(channelId: string): Promise<boolean> {
   await sql`
     INSERT INTO channels (
       id, youtube_channel_id, name, handle, thumbnail_url, subscriber_count, total_views, video_count,
-      country, last_stats_at, discovered_via, discovered_at
+      country, channel_created_at, last_stats_at, discovered_via, discovered_at
     ) VALUES (
       ${`ch-${detail.id}`}, ${detail.id}, ${detail.title}, ${detail.customUrl ?? null}, ${detail.avatar},
       ${detail.hiddenSubscriberCount ? null : (detail.subscriberCount ?? 0)}, ${detail.viewCount}, ${detail.videoCount},
-      ${detail.country ?? null}, now(), 'manual', now()
+      ${detail.country ?? null}, ${detail.publishedAt ?? null}, now(), 'manual', now()
     )
     ON CONFLICT (youtube_channel_id) DO NOTHING`;
 
@@ -262,6 +262,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         videoCount: num(channel.video_count),
         trendScore: num(channel.trend_score),
         recentRatio: num(channel.recent_ratio),
+        createdAt: channel.channel_created_at ? new Date(channel.channel_created_at).toISOString() : null,
+        outlierRate: num(channel.outlier_rate),
+        opportunityScore: num(channel.opportunity_score),
         tracked: Boolean(channel.tracked),
         lastStatsAt: channel.last_stats_at ? new Date(channel.last_stats_at).toISOString() : null,
       },

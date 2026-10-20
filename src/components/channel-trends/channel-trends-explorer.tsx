@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Globe, LayoutGrid, Loader2, Search, TrendingUp, Users } from "lucide-react";
+import { CalendarClock, Compass, Globe, LayoutGrid, Loader2, Search, Target, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,40 +24,98 @@ import {
 } from "@/components/explorer/explorer-ui";
 import { CATEGORY_OPTIONS, FORMAT_OPTIONS, LANGUAGE_LABELS, SUBS_OPTIONS } from "@/components/outliers/filter-options";
 import { ChannelCard, type TrendChannel } from "./channel-card";
+import { SimilarChannelsSheet } from "./similar-channels-sheet";
 
-type Key = "q" | "format" | "category" | "language" | "subs" | "withOutliers" | "sort";
+type Key = "q" | "format" | "category" | "language" | "subs" | "age" | "hitRate" | "withOutliers" | "sort";
 type Filters = Record<Key, string>;
+type Variant = "trends" | "finder";
 
-const DEFAULTS: Filters = {
+const BASE_DEFAULTS: Omit<Filters, "sort"> = {
   q: "",
   format: "all",
   category: "all",
   language: "all",
   subs: "all",
+  age: "all",
+  hitRate: "all",
   withOutliers: "false",
-  sort: "trend",
 };
 
-const SORT_OPTIONS: Option[] = [
-  { value: "trend", label: "Score de tendance" },
-  { value: "momentum", label: "Vues (24 h)" },
-  { value: "views7d", label: "Vues des vidéos (7 j)" },
-  { value: "outliers", label: "Nombre d'outliers" },
-  { value: "multiplier", label: "Meilleur multiplicateur" },
-  { value: "subs24h", label: "Abonnés gagnés (24 h)" },
-  { value: "subscribers", label: "Abonnés" },
+const AGE_OPTIONS = [
+  { value: "all", label: "Tout âge de chaîne", days: null },
+  { value: "3m", label: "Créée il y a < 3 mois", days: 90 },
+  { value: "6m", label: "Créée il y a < 6 mois", days: 180 },
+  { value: "1y", label: "Créée il y a < 1 an", days: 365 },
+  { value: "2y", label: "Créée il y a < 2 ans", days: 730 },
 ];
 
-// Quick topics: each one is just a preset of filters.
-const TOPICS: { label: string; filters: Partial<Filters> }[] = [
-  { label: "Gaming", filters: { category: "20" } },
-  { label: "Éducation", filters: { category: "27" } },
-  { label: "Science & Tech", filters: { category: "28" } },
-  { label: "Divertissement", filters: { category: "24" } },
-  { label: "Humour", filters: { category: "23" } },
-  { label: "Sport", filters: { category: "17" } },
-  { label: "Chaînes émergentes", filters: { subs: "small", withOutliers: "true" } },
+const HIT_RATE_OPTIONS = [
+  { value: "all", label: "Tout taux de hits", rate: null },
+  { value: "10", label: "≥ 10 % de hits", rate: 0.1 },
+  { value: "20", label: "≥ 20 % de hits", rate: 0.2 },
+  { value: "30", label: "≥ 30 % de hits", rate: 0.3 },
 ];
+
+const VARIANTS: Record<
+  Variant,
+  {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    defaultSort: string;
+    sortOptions: Option[];
+    topics: { label: string; filters: Partial<Filters> }[];
+  }
+> = {
+  trends: {
+    title: "Channel Trends",
+    description: "Les chaînes qui prennent de l'élan en ce moment.",
+    icon: <TrendingUp className="size-4 text-muted-foreground" />,
+    defaultSort: "trend",
+    sortOptions: [
+      { value: "trend", label: "Score de tendance" },
+      { value: "momentum", label: "Vues (24 h)" },
+      { value: "views7d", label: "Vues des vidéos (7 j)" },
+      { value: "outliers", label: "Nombre d'outliers" },
+      { value: "multiplier", label: "Meilleur multiplicateur" },
+      { value: "subs24h", label: "Abonnés gagnés (24 h)" },
+      { value: "subscribers", label: "Abonnés" },
+    ],
+    topics: [
+      { label: "Gaming", filters: { category: "20" } },
+      { label: "Éducation", filters: { category: "27" } },
+      { label: "Science & Tech", filters: { category: "28" } },
+      { label: "Divertissement", filters: { category: "24" } },
+      { label: "Humour", filters: { category: "23" } },
+      { label: "Sport", filters: { category: "17" } },
+      { label: "Chaînes émergentes", filters: { subs: "small", withOutliers: "true" } },
+    ],
+  },
+  finder: {
+    title: "Channel Finder",
+    description:
+      "Trouve les chaînes à étudier : jeunes chaînes qui grandissent vite, hits réguliers, niches peu saturées.",
+    icon: <Compass className="size-4 text-muted-foreground" />,
+    defaultSort: "opportunity",
+    sortOptions: [
+      { value: "opportunity", label: "Score opportunité" },
+      { value: "subsPerDay", label: "Abonnés par jour" },
+      { value: "outlierRate", label: "Taux de hits" },
+      { value: "newest", label: "Chaînes les plus récentes" },
+      { value: "trend", label: "Score de tendance" },
+      { value: "subscribers", label: "Abonnés" },
+    ],
+    topics: [
+      { label: "Créées il y a < 6 mois", filters: { age: "6m" } },
+      { label: "Hits réguliers", filters: { hitRate: "20" } },
+      { label: "Petites chaînes qui percent", filters: { subs: "micro", hitRate: "10" } },
+      { label: "Shorts", filters: { format: "short" } },
+      { label: "Vidéos longues", filters: { format: "long" } },
+      { label: "Gaming", filters: { category: "20" } },
+      { label: "Éducation", filters: { category: "27" } },
+    ],
+  },
+};
 
 interface ApiResponse {
   items: TrendChannel[];
@@ -67,6 +126,8 @@ interface ApiResponse {
   updatedAt: string | null;
 }
 
+const CHANNEL_ID = /^UC[\w-]{22}$/;
+
 function toApiParams(filters: Filters, page: number) {
   const params = new URLSearchParams();
   if (filters.q) params.set("q", filters.q);
@@ -76,22 +137,28 @@ function toApiParams(filters: Filters, page: number) {
   const subs = SUBS_OPTIONS.find((o) => o.value === filters.subs);
   if (subs?.min != null) params.set("minSubs", String(subs.min));
   if (subs?.max != null) params.set("maxSubs", String(subs.max));
+  const age = AGE_OPTIONS.find((o) => o.value === filters.age);
+  if (age?.days != null) params.set("maxAgeDays", String(age.days));
+  const hitRate = HIT_RATE_OPTIONS.find((o) => o.value === filters.hitRate);
+  if (hitRate?.rate != null) params.set("minOutlierRate", String(hitRate.rate));
   if (filters.withOutliers === "true") params.set("withOutliers", "true");
   params.set("sort", filters.sort);
   params.set("page", String(page));
   return params;
 }
 
-export function ChannelTrendsExplorer() {
+export function ChannelTrendsExplorer({ variant = "trends" }: { variant?: Variant }) {
+  const config = VARIANTS[variant];
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const defaults: Filters = useMemo(() => ({ ...BASE_DEFAULTS, sort: config.defaultSort }), [config.defaultSort]);
   const filters = useMemo(() => {
-    const next = { ...DEFAULTS };
-    for (const key of Object.keys(DEFAULTS) as Key[]) next[key] = searchParams.get(key) || DEFAULTS[key];
+    const next = { ...defaults };
+    for (const key of Object.keys(defaults) as Key[]) next[key] = searchParams.get(key) || defaults[key];
     return next;
-  }, [searchParams]);
+  }, [searchParams, defaults]);
   const queryKey = toApiParams(filters, 0).toString();
 
   const [search, setSearch] = useState(filters.q);
@@ -99,21 +166,22 @@ export function ChannelTrendsExplorer() {
   const [error, setError] = useState<{ key: string; error: Error } | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
+  const [similarOf, setSimilarOf] = useState<{ id: string; name: string } | null>(null);
   const loading = result?.key !== queryKey && error?.key !== queryKey;
 
   const update = useCallback(
     (next: Filters) => {
       const params = new URLSearchParams();
-      for (const key of Object.keys(DEFAULTS) as Key[]) if (next[key] !== DEFAULTS[key]) params.set(key, next[key]);
+      for (const key of Object.keys(defaults) as Key[]) if (next[key] !== defaults[key]) params.set(key, next[key]);
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
-    [pathname, router],
+    [pathname, router, defaults],
   );
   const set = (key: Key, value: string) => update({ ...filters, [key]: value });
   const reset = () => {
     setSearch("");
-    update({ ...DEFAULTS, sort: filters.sort });
+    update({ ...defaults, sort: filters.sort });
   };
 
   useEffect(() => {
@@ -160,35 +228,45 @@ export function ChannelTrendsExplorer() {
   if (filters.category !== "all") chips.push({ key: "category", label: labelOf(CATEGORY_OPTIONS, filters.category) });
   if (filters.language !== "all") chips.push({ key: "language", label: labelOf(languageOptions, filters.language) });
   if (filters.subs !== "all") chips.push({ key: "subs", label: labelOf(SUBS_OPTIONS, filters.subs) });
+  if (filters.age !== "all") chips.push({ key: "age", label: labelOf(AGE_OPTIONS, filters.age) });
+  if (filters.hitRate !== "all") chips.push({ key: "hitRate", label: labelOf(HIT_RATE_OPTIONS, filters.hitRate) });
   if (filters.withOutliers === "true") chips.push({ key: "withOutliers", label: "Avec outliers récents" });
 
   const items = result?.key === queryKey ? result.items : [];
+  const pastedChannelId = CHANNEL_ID.test(search.trim()) ? search.trim() : null;
 
   return (
     <div className="flex min-h-full flex-col">
-      <ExplorerHeader title="Channel Trends" icon={<TrendingUp className="size-4 text-muted-foreground" />} />
+      <ExplorerHeader title={config.title} icon={config.icon} />
 
       <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-5 px-4 py-6 md:px-6">
         <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-semibold tracking-tight">Channel Trends</h2>
-          <p className="text-sm text-muted-foreground">Les chaînes qui prennent de l&apos;élan en ce moment.</p>
+          <h2 className="text-2xl font-semibold tracking-tight">{config.title}</h2>
+          <p className="text-sm text-muted-foreground">{config.description}</p>
         </div>
 
-        <div className="relative">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher une chaîne ou un @handle…"
-            className="h-10 pl-9"
-          />
+        <div className="flex flex-col gap-2">
+          <div className="relative">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Rechercher une chaîne, un @handle ou coller un ID de chaîne (UC…)"
+              className="h-10 pl-9"
+            />
+          </div>
+          {pastedChannelId && (
+            <Button className="w-fit" nativeButton={false} render={<Link href={`/channel/${pastedChannelId}`} />}>
+              Analyser la chaîne {pastedChannelId}
+            </Button>
+          )}
         </div>
 
         <TopicChips
-          topics={TOPICS.map((topic) => ({
+          topics={config.topics.map((topic) => ({
             label: topic.label,
             active: Object.entries(topic.filters).every(([k, v]) => filters[k as Key] === v),
-            onPick: () => update({ ...DEFAULTS, sort: filters.sort, ...topic.filters }),
+            onPick: () => update({ ...defaults, sort: filters.sort, ...topic.filters }),
           }))}
         />
 
@@ -230,6 +308,18 @@ export function ChannelTrendsExplorer() {
               onChange={(v) => set("subs", v)}
               icon={<Users className="size-3.5 text-muted-foreground" />}
             />
+            <FilterSelect
+              value={filters.age}
+              options={AGE_OPTIONS}
+              onChange={(v) => set("age", v)}
+              icon={<CalendarClock className="size-3.5 text-muted-foreground" />}
+            />
+            <FilterSelect
+              value={filters.hitRate}
+              options={HIT_RATE_OPTIONS}
+              onChange={(v) => set("hitRate", v)}
+              icon={<Target className="size-3.5 text-muted-foreground" />}
+            />
             <Toggle
               variant="outline"
               pressed={filters.withOutliers === "true"}
@@ -245,7 +335,7 @@ export function ChannelTrendsExplorer() {
           chips={chips}
           onRemove={(key) => {
             if (key === "q") setSearch("");
-            set(key as Key, DEFAULTS[key as Key]);
+            set(key as Key, defaults[key as Key]);
           }}
           onClear={reset}
         />
@@ -256,7 +346,7 @@ export function ChannelTrendsExplorer() {
           noun={["chaîne trouvée", "chaînes trouvées"]}
           updatedAt={result?.updatedAt ?? null}
           sort={
-            <FilterSelect value={filters.sort} options={SORT_OPTIONS} onChange={(v) => set("sort", v)} className="w-auto" />
+            <FilterSelect value={filters.sort} options={config.sortOptions} onChange={(v) => set("sort", v)} className="w-auto" />
           }
         />
 
@@ -280,7 +370,7 @@ export function ChannelTrendsExplorer() {
         ) : loading ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
             {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-[380px] rounded-xl" />
+              <Skeleton key={i} className="h-[440px] rounded-xl" />
             ))}
           </div>
         ) : items.length === 0 ? (
@@ -293,7 +383,13 @@ export function ChannelTrendsExplorer() {
           <>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
               {items.map((channel, i) => (
-                <ChannelCard key={channel.id} channel={channel} rank={i + 1} />
+                <ChannelCard
+                  key={channel.id}
+                  channel={channel}
+                  rank={i + 1}
+                  variant={variant}
+                  onSimilar={() => setSimilarOf({ id: channel.id, name: channel.name })}
+                />
               ))}
             </div>
             {result?.hasMore && (
@@ -307,6 +403,8 @@ export function ChannelTrendsExplorer() {
           </>
         )}
       </div>
+
+      <SimilarChannelsSheet channel={similarOf} onOpenChange={(open) => !open && setSimilarOf(null)} />
     </div>
   );
 }

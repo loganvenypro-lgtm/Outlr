@@ -415,6 +415,7 @@ async function refreshChannelStats(stats, maxCalls) {
             handle = COALESCE(${item.snippet?.customUrl ?? null}, handle),
             thumbnail_url = COALESCE(${item.snippet?.thumbnails?.default?.url ?? null}, thumbnail_url),
             country = COALESCE(${item.snippet?.country ?? null}, country),
+            channel_created_at = COALESCE(${item.snippet?.publishedAt ?? null}::timestamptz, channel_created_at),
             subscriber_count = ${s.hiddenSubscriberCount ? null : Number(s.subscriberCount ?? 0)},
             total_views = ${Number(s.viewCount ?? 0)},
             video_count = ${Number(s.videoCount ?? 0)},
@@ -690,11 +691,12 @@ async function runDiscovery(stats) {
       await sql`
         INSERT INTO channels (
           id, youtube_channel_id, name, handle, thumbnail_url, subscriber_count, total_views, video_count,
-          country, last_stats_at, discovered_via, discovered_at
+          country, channel_created_at, last_stats_at, discovered_via, discovered_at
         ) VALUES (
           ${`ch-${item.id}`}, ${item.id}, ${item.snippet?.title ?? item.id}, ${item.snippet?.customUrl ?? null},
           ${item.snippet?.thumbnails?.default?.url ?? null}, ${subs}, ${Number(s.viewCount ?? 0)},
-          ${Number(s.videoCount ?? 0)}, ${item.snippet?.country ?? null}, now(), ${source}, now()
+          ${Number(s.videoCount ?? 0)}, ${item.snippet?.country ?? null}, ${item.snippet?.publishedAt ?? null},
+          now(), ${source}, now()
         )
         ON CONFLICT (youtube_channel_id) DO NOTHING`;
       added.add(item.id);
@@ -906,6 +908,64 @@ async function computeChannelTrends() {
       FROM scored s
       WHERE s.channel_id = c.id`;
   });
+  await computeOpportunities();
+}
+
+// Channel Finder metrics.
+//   outlier_rate: share of matured videos (3-180 days) at >= 3x the channel normal (min 5 videos)
+//   opportunity_score /100 — "could I start a channel like this?":
+//     30 pts consistent hits: outlier rate (30 % = max)
+//     25 pts growth speed: subscribers per day since creation (log scale, 1,000/day = max)
+//     20 pts replicable size: 10k subs or less = max, 1M+ = 0
+//     15 pts current momentum: recent videos vs normal (x5 = max)
+//     10 pts low saturation: few channels with the same category and language in the database
+async function computeOpportunities() {
+  await sql`
+    WITH rates AS (
+      SELECT
+        channel_id,
+        count(*) FILTER (WHERE outlier_multiplier >= 3)::float8 / count(*) AS rate
+      FROM videos
+      WHERE outlier_multiplier IS NOT NULL
+        AND published_at BETWEEN now() - interval '180 days' AND now() - interval '3 days'
+      GROUP BY channel_id
+      HAVING count(*) >= 5
+    ),
+    niche AS (
+      SELECT
+        channel_id,
+        mode() WITHIN GROUP (ORDER BY category_id) AS category_id,
+        mode() WITHIN GROUP (ORDER BY split_part(lower(language), '-', 1)) AS language
+      FROM videos
+      WHERE published_at > now() - interval '90 days'
+      GROUP BY channel_id
+    ),
+    saturation AS (
+      SELECT category_id, language, count(*)::float8 AS channels
+      FROM niche
+      GROUP BY category_id, language
+    ),
+    scored AS (
+      SELECT
+        r.channel_id,
+        r.rate,
+        COALESCE(s.channels, 0) AS niche_channels
+      FROM rates r
+      LEFT JOIN niche n ON n.channel_id = r.channel_id
+      LEFT JOIN saturation s ON s.category_id IS NOT DISTINCT FROM n.category_id AND s.language IS NOT DISTINCT FROM n.language
+    )
+    UPDATE channels c SET
+      outlier_rate = s.rate,
+      opportunity_score = CASE WHEN COALESCE(c.subscriber_count, 0) >= ${CONFIG.minSubscribers} THEN round((
+          30 * LEAST(1, s.rate / 0.3)
+        + 25 * CASE WHEN c.channel_created_at IS NULL THEN 0 ELSE LEAST(1, log(1 + c.subscriber_count::float8
+            / GREATEST(EXTRACT(EPOCH FROM now() - c.channel_created_at) / 86400, 1)) / 3) END
+        + 20 * LEAST(1, GREATEST(0, (6 - log(GREATEST(c.subscriber_count, 1)::float8)) / 2))
+        + 15 * LEAST(1, ln(1 + GREATEST(0, COALESCE(c.recent_ratio, 0) - 1)) / ln(5::float8))
+        + 10 * (1 - LEAST(1, s.niche_channels / 300))
+      )::numeric, 1) END
+    FROM scored s
+    WHERE s.channel_id = c.id`;
 }
 
 // ---------------------------------------------------------------------------
