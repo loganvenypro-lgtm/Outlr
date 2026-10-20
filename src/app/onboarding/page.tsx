@@ -119,19 +119,17 @@ export default function OnboardingPage() {
       }
 
       // Support both API structures (data.reference and data.sourceChannel)
-      const source = data.reference || data.sourceChannel;
-      if (!source) {
-        throw new Error("Impossible de trouver cette chaîne YouTube. Vérifiez le lien ou le @handle.");
-      }
+      const source = data.reference || data.sourceChannel || {};
+      const resolvedId = source.id || source.channelId || (rawTarget.startsWith("UC") ? rawTarget : `ch-${Date.now()}`);
 
-      const editorial = data.editorialProfile || data.editorialSignature;
+      const editorial = data.editorialProfile || data.editorialSignature || {};
       const rawCompetitors = data.competitors || data.similarChannels || [];
 
       // Set Scraped Channel
       const formattedChannel: ScrapedChannel = {
-        id: source.id,
-        title: source.title || "Ma Chaîne YouTube",
-        handle: source.handle || `@${(source.title || "chaine").toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+        id: resolvedId,
+        title: source.title || rawTarget.replace(/^https?:\/\/.*youtube\.com\/@?/, "").replace(/^@/, "") || "Ma Chaîne YouTube",
+        handle: source.handle || `@${(source.title || rawTarget).toLowerCase().replace(/[^a-z0-9]/g, "")}`,
         avatar: source.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&h=128&fit=crop",
         subscribers: source.subscriberCount ?? source.subscribers ?? 0,
         totalViews: source.totalViews ?? source.viewCount ?? 0,

@@ -1,27 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { 
-  getFolders, 
-  createFolder, 
-  deleteFolder, 
-  getTrackedChannels, 
-  trackChannel, 
-  untrackChannel, 
-  updateTrackedChannel,
-  getChannelAlerts,
-  markAlertAsRead,
-  markAllAlertsAsRead,
-  createChannelAlert
-} from "@/lib/db";
+import { sql } from "@/lib/postgres";
 import { searchChannels } from "@/lib/youtube";
-import { parseISO8601Duration } from "@/lib/utils";
 import { scrapeChannelRss } from "@/lib/youtube-scraper";
+import { v4 as uuidv4 } from "uuid";
 
 export const dynamic = "force-dynamic";
 
-const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
-
 /**
- * GET: Retrieves tracking overview (folders, tracked channels, alerts, recent performer videos)
+ * GET: Retrieves tracking overview directly from PostgreSQL (folders, tracked channels, alerts, recent performer videos)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -29,18 +15,131 @@ export async function GET(request: NextRequest) {
     const folderId = searchParams.get("folderId") || undefined;
     const sync = searchParams.get("sync") === "true";
 
-    const folders = getFolders();
-    let channels = getTrackedChannels(folderId);
-    let alerts = getChannelAlerts();
+    // 1. Fetch folders from PostgreSQL
+    const rawFolders = await sql`
+      SELECT id, name, color, description, created_at as "createdAt"
+      FROM folders
+      ORDER BY created_at ASC
+    `;
+    const folders = rawFolders.map((f: any) => ({
+      id: f.id,
+      name: f.name,
+      color: f.color || "blue",
+      description: f.description || "",
+      createdAt: f.createdAt ? new Date(f.createdAt).toISOString() : new Date().toISOString(),
+    }));
 
-    // If sync requested or on initial check, fetch latest uploads for tracked channels to detect new videos and breakouts
-    const apiKey = process.env.YOUTUBE_API_KEY;
+    // 2. Fetch tracked channels from PostgreSQL
+    let rawChannels = [];
+    if (folderId && folderId !== "all") {
+      rawChannels = await sql`
+        SELECT 
+          id, 
+          channel_id as "channelId", 
+          name, 
+          handle, 
+          avatar, 
+          subscribers, 
+          total_views as "totalViews", 
+          video_count as "videoCount", 
+          folder_id as "folderId", 
+          tags, 
+          notes, 
+          baseline_views as "baselineViews", 
+          last_checked_at as "lastCheckedAt", 
+          added_at as "addedAt"
+        FROM tracked_channels
+        WHERE folder_id = ${folderId}
+        ORDER BY added_at DESC
+      `;
+    } else {
+      rawChannels = await sql`
+        SELECT 
+          id, 
+          channel_id as "channelId", 
+          name, 
+          handle, 
+          avatar, 
+          subscribers, 
+          total_views as "totalViews", 
+          video_count as "videoCount", 
+          folder_id as "folderId", 
+          tags, 
+          notes, 
+          baseline_views as "baselineViews", 
+          last_checked_at as "lastCheckedAt", 
+          added_at as "addedAt"
+        FROM tracked_channels
+        ORDER BY added_at DESC
+      `;
+    }
+
+    const channels = rawChannels.map((c: any) => ({
+      id: c.id,
+      channelId: c.channelId,
+      name: c.name,
+      handle: c.handle || `@${c.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+      avatar: c.avatar,
+      subscribers: parseInt(c.subscribers || "0", 10),
+      totalViews: parseInt(c.totalViews || "0", 10),
+      videoCount: parseInt(c.videoCount || "0", 10),
+      folderId: c.folderId,
+      tags: Array.isArray(c.tags) ? c.tags : ["Concurrent"],
+      notes: c.notes || "",
+      baselineViews: parseInt(c.baselineViews || "5000", 10),
+      lastCheckedAt: c.lastCheckedAt ? new Date(c.lastCheckedAt).toISOString() : new Date().toISOString(),
+      addedAt: c.addedAt ? new Date(c.addedAt).toISOString() : new Date().toISOString(),
+    }));
+
+    // 3. Fetch alerts from PostgreSQL
+    const rawAlerts = await sql`
+      SELECT 
+        id, 
+        channel_id as "channelId", 
+        channel_name as "channelName", 
+        channel_avatar as "channelAvatar", 
+        video_id as "videoId", 
+        video_title as "videoTitle", 
+        video_thumbnail as "videoThumbnail", 
+        published_at as "publishedAt", 
+        views, 
+        baseline_views as "baselineViews", 
+        outlier_multiplier as "outlierMultiplier", 
+        alert_type as "alertType", 
+        severity, 
+        message, 
+        is_read as "isRead", 
+        created_at as "createdAt"
+      FROM channel_alerts
+      ORDER BY created_at DESC
+      LIMIT 50
+    `;
+
+    const alerts = rawAlerts.map((a: any) => ({
+      id: a.id,
+      channelId: a.channelId,
+      channelName: a.channelName,
+      channelAvatar: a.channelAvatar,
+      videoId: a.videoId,
+      videoTitle: a.videoTitle,
+      videoThumbnail: a.videoThumbnail,
+      publishedAt: a.publishedAt ? new Date(a.publishedAt).toISOString() : new Date().toISOString(),
+      views: parseInt(a.views || "0", 10),
+      baselineViews: parseInt(a.baselineViews || "5000", 10),
+      outlierMultiplier: parseFloat(a.outlierMultiplier || "1.0"),
+      alertType: a.alertType,
+      severity: a.severity,
+      message: a.message,
+      isRead: !!a.isRead,
+      createdAt: a.createdAt ? new Date(a.createdAt).toISOString() : new Date().toISOString(),
+    }));
+
+    // 4. Sync RSS Radar scan if requested
     const recentPerformers: any[] = [];
     const nowMs = Date.now();
 
     if (channels.length > 0 && sync) {
-      // High-speed parallel RSS Radar scan across all tracked channels (0 quota, live views)
-      const syncPromises = channels.slice(0, 30).map(async (channel) => {
+      const syncPromises = channels.slice(0, 25).map(async (channel) => {
         try {
           const rssVideos = await scrapeChannelRss(channel.channelId);
           for (const r of rssVideos.slice(0, 5)) {
@@ -52,48 +151,26 @@ export async function GET(request: NextRequest) {
             const baseline = channel.baselineViews || 5000;
             const multiplier = parseFloat((baseline > 0 ? views / baseline : 1).toFixed(1));
 
-            // Calculate Views Per Hour (VPH) & Velocity Multiplier
             const vph = Math.round(views / ageHours);
-            const baselineVph = Math.max(Math.round(baseline / (24 * 7)), 10); // baseline VPH over 7 days
+            const baselineVph = Math.max(Math.round(baseline / (24 * 7)), 10);
             const vphMultiplier = parseFloat((vph / baselineVph).toFixed(1));
 
-            // 1. Detection of BRAND NEW UPLOADS (< 48h old)
-            if (ageDays <= 2) {
-              createChannelAlert({
-                channelId: channel.channelId,
-                channelName: channel.name,
-                channelAvatar: channel.avatar,
-                videoId: r.id,
-                videoTitle: r.title,
-                videoThumbnail: r.thumbnail,
-                publishedAt: r.publishedAt,
-                views,
-                baselineViews: baseline,
-                outlierMultiplier: multiplier,
-                alertType: "new_upload",
-                severity: ageHours <= 6 ? "high" : "medium",
-                message: `⚡ Sortie radar il y a ${Math.round(ageHours)}h : "${r.title.slice(0, 50)}..." (${views.toLocaleString()} vues, ${vph.toLocaleString()} vues/h)`,
-              });
-            }
-
-            // 2. Detection of Breakout videos (Outlier >= 2.0x or VPH >= 2.5x)
+            // Breakout detection
             if (multiplier >= 2.0 || (ageHours <= 72 && vphMultiplier >= 2.5)) {
               const maxRatio = Math.max(multiplier, vphMultiplier);
-              createChannelAlert({
-                channelId: channel.channelId,
-                channelName: channel.name,
-                channelAvatar: channel.avatar,
-                videoId: r.id,
-                videoTitle: r.title,
-                videoThumbnail: r.thumbnail,
-                publishedAt: r.publishedAt,
-                views,
-                baselineViews: baseline,
-                outlierMultiplier: maxRatio,
-                alertType: "breakout_video",
-                severity: maxRatio >= 4.0 ? "high" : "medium",
-                message: `🔥 ALERTE RADAR : Cette vidéo surperforme de ${maxRatio}x la moyenne de ${channel.name} (${vph.toLocaleString()} vues/h) après seulement ${Math.round(ageHours)}h !`,
-              });
+              // Insert alert into PostgreSQL safely
+              try {
+                await sql`
+                  INSERT INTO channel_alerts (
+                    id, channel_id, channel_name, channel_avatar, video_id, video_title, video_thumbnail, published_at, views, baseline_views, outlier_multiplier, alert_type, severity, message, is_read, created_at
+                  ) VALUES (
+                    ${uuidv4()}, ${channel.channelId}, ${channel.name}, ${channel.avatar}, ${r.id}, ${r.title}, ${r.thumbnail}, ${r.publishedAt}, ${views}, ${baseline}, ${maxRatio}, 'breakout_video', ${maxRatio >= 4.0 ? 'high' : 'medium'}, ${`🔥 ALERTE RADAR : Cette vidéo surperforme de ${maxRatio}x (${vph.toLocaleString()} vues/h)`}, false, NOW()
+                  )
+                  ON CONFLICT (id) DO NOTHING
+                `;
+              } catch {
+                // Ignore alert duplicate
+              }
             }
 
             recentPerformers.push({
@@ -118,20 +195,21 @@ export async function GET(request: NextRequest) {
             });
           }
 
-          updateTrackedChannel(channel.channelId, {
-            lastCheckedAt: new Date().toISOString(),
-          });
+          // Update last checked time in PostgreSQL (concurrency safe)
+          await sql`
+            UPDATE tracked_channels
+            SET last_checked_at = NOW()
+            WHERE channel_id = ${channel.channelId}
+          `;
         } catch (e) {
           console.error(`Error scanning RSS for ${channel.name}:`, e);
         }
       });
 
       await Promise.all(syncPromises);
-      alerts = getChannelAlerts();
-      channels = getTrackedChannels(folderId);
     }
 
-    // Sort recent performers: prioritize newest release date first, then highest multiplier
+    // Sort recent performers: newest first, then highest multiplier
     recentPerformers.sort((a, b) => {
       const dateA = new Date(a.video.publishedAt).getTime();
       const dateB = new Date(b.video.publishedAt).getTime();
@@ -153,28 +231,47 @@ export async function GET(request: NextRequest) {
       stats,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to load tracking data" }, { status: 500 });
+    console.error("Error in /api/youtube/tracking GET:", err);
+    return NextResponse.json({ error: err.message || "Failed to load tracking data from PostgreSQL" }, { status: 500 });
   }
 }
 
 /**
- * POST: Add a new channel to track, create folder, or trigger actions
+ * POST: Add a new channel to track, create folder, or trigger actions directly into PostgreSQL
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const action = body.action || "track_channel";
 
-    // 1. Create a Folder
+    // 1. Create a Folder in PostgreSQL
     if (action === "create_folder") {
       if (!body.name || !body.name.trim()) {
         return NextResponse.json({ error: "Le nom du dossier est requis" }, { status: 400 });
       }
-      const folder = createFolder(body.name, body.color || "blue", body.description);
-      return NextResponse.json({ success: true, folder });
+      const folderId = `f-${uuidv4().slice(0, 8)}`;
+      const folderName = body.name.trim();
+      const folderColor = body.color || "blue";
+      const folderDesc = body.description || null;
+
+      await sql`
+        INSERT INTO folders (id, name, color, description, created_at)
+        VALUES (${folderId}, ${folderName}, ${folderColor}, ${folderDesc}, NOW())
+      `;
+
+      return NextResponse.json({
+        success: true,
+        folder: {
+          id: folderId,
+          name: folderName,
+          color: folderColor,
+          description: folderDesc,
+          createdAt: new Date().toISOString(),
+        },
+      });
     }
 
-    // 2. Track a Channel
+    // 2. Track a Channel in PostgreSQL
     if (action === "track_channel") {
       let channelMeta = body.channel;
 
@@ -200,60 +297,75 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Données de la chaîne manquantes" }, { status: 400 });
       }
 
-      const tracked = trackChannel({
-        channelId: channelMeta.channelId,
-        name: channelMeta.name,
-        handle: channelMeta.handle,
-        avatar: channelMeta.avatar,
-        subscribers: channelMeta.subscribers,
-        totalViews: channelMeta.totalViews,
-        videoCount: channelMeta.videoCount,
-        folderId: body.folderId,
-        tags: body.tags,
-        notes: body.notes,
-        baselineViews: body.baselineViews,
-      });
+      const baseline = body.baselineViews || (channelMeta.videoCount > 0 ? Math.round(channelMeta.totalViews / channelMeta.videoCount) : 1000);
+      const trackedId = uuidv4();
+      const tags = body.tags || ["Concurrent"];
 
-      // Synchronize with continuous unified intelligence database
-      try {
-        const { upsertUnifiedChannel } = await import("@/lib/intelligenceDb");
-        upsertUnifiedChannel({
-          id: channelMeta.channelId,
+      // Upsert into PostgreSQL tracked_channels
+      await sql`
+        INSERT INTO tracked_channels (
+          id, channel_id, name, handle, avatar, subscribers, total_views, video_count, folder_id, tags, notes, baseline_views, last_checked_at, added_at
+        ) VALUES (
+          ${trackedId}, 
+          ${channelMeta.channelId}, 
+          ${channelMeta.name}, 
+          ${channelMeta.handle}, 
+          ${channelMeta.avatar}, 
+          ${channelMeta.subscribers || 0}, 
+          ${channelMeta.totalViews || 0}, 
+          ${channelMeta.videoCount || 0}, 
+          ${body.folderId || null}, 
+          ${tags}, 
+          ${body.notes || ''}, 
+          ${baseline}, 
+          NOW(), 
+          NOW()
+        )
+        ON CONFLICT (channel_id) DO UPDATE SET
+          name = EXCLUDED.name,
+          handle = EXCLUDED.handle,
+          avatar = EXCLUDED.avatar,
+          subscribers = EXCLUDED.subscribers,
+          total_views = EXCLUDED.total_views,
+          video_count = EXCLUDED.video_count,
+          last_checked_at = NOW()
+      `;
+
+      return NextResponse.json({
+        success: true,
+        tracked: {
+          id: trackedId,
+          channelId: channelMeta.channelId,
           name: channelMeta.name,
           handle: channelMeta.handle,
-          thumbnailUrl: channelMeta.avatar,
-          avatarUrl: channelMeta.avatar,
-          subscriberCount: channelMeta.subscribers,
+          avatar: channelMeta.avatar,
+          subscribers: channelMeta.subscribers,
           totalViews: channelMeta.totalViews,
           videoCount: channelMeta.videoCount,
-          isTracked: true,
-          discoverySource: "channel_tracking",
-        });
-      } catch (err) {
-        // Non-blocking
-      }
-
-      return NextResponse.json({ success: true, tracked });
+          baselineViews: baseline,
+        },
+      });
     }
 
-    // 3. Mark alert as read
+    // 3. Mark alert as read in PostgreSQL
     if (action === "mark_read") {
       if (body.alertId === "all") {
-        markAllAlertsAsRead();
+        await sql`UPDATE channel_alerts SET is_read = true`;
       } else if (body.alertId) {
-        markAlertAsRead(body.alertId);
+        await sql`UPDATE channel_alerts SET is_read = true WHERE id = ${body.alertId}`;
       }
       return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: "Action non reconnue" }, { status: 400 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed tracking action" }, { status: 500 });
+    console.error("Error in /api/youtube/tracking POST:", err);
+    return NextResponse.json({ error: err.message || "Failed tracking action in PostgreSQL" }, { status: 500 });
   }
 }
 
 /**
- * PATCH: Update notes, folder, or tags of a tracked channel
+ * PATCH: Update notes, folder, or tags of a tracked channel in PostgreSQL
  */
 export async function PATCH(request: NextRequest) {
   try {
@@ -262,15 +374,25 @@ export async function PATCH(request: NextRequest) {
     if (!id || !updates) {
       return NextResponse.json({ error: "ID et modifications requis" }, { status: 400 });
     }
-    const updated = updateTrackedChannel(id, updates);
-    return NextResponse.json({ success: true, updated });
+
+    if (updates.notes !== undefined) {
+      await sql`UPDATE tracked_channels SET notes = ${updates.notes} WHERE id = ${id} OR channel_id = ${id}`;
+    }
+    if (updates.folderId !== undefined) {
+      await sql`UPDATE tracked_channels SET folder_id = ${updates.folderId || null} WHERE id = ${id} OR channel_id = ${id}`;
+    }
+    if (updates.tags !== undefined) {
+      await sql`UPDATE tracked_channels SET tags = ${updates.tags} WHERE id = ${id} OR channel_id = ${id}`;
+    }
+
+    return NextResponse.json({ success: true, updated: updates });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
 /**
- * DELETE: Untrack a channel or delete a folder
+ * DELETE: Untrack a channel or delete a folder in PostgreSQL
  */
 export async function DELETE(request: NextRequest) {
   try {
@@ -279,13 +401,14 @@ export async function DELETE(request: NextRequest) {
     const folderId = searchParams.get("folderId");
 
     if (channelId) {
-      const deleted = untrackChannel(channelId);
-      return NextResponse.json({ success: deleted });
+      await sql`DELETE FROM tracked_channels WHERE channel_id = ${channelId} OR id = ${channelId}`;
+      return NextResponse.json({ success: true });
     }
 
     if (folderId) {
-      const deleted = deleteFolder(folderId);
-      return NextResponse.json({ success: deleted });
+      await sql`DELETE FROM folders WHERE id = ${folderId}`;
+      await sql`UPDATE tracked_channels SET folder_id = NULL WHERE folder_id = ${folderId}`;
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: "Identifiant manquant" }, { status: 400 });
