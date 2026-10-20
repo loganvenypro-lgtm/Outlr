@@ -34,10 +34,11 @@ const DEFAULTS: Filters = {
   language: "all",
   subs: "all",
   withOutliers: "false",
-  sort: "momentum",
+  sort: "trend",
 };
 
 const SORT_OPTIONS: Option[] = [
+  { value: "trend", label: "Score de tendance" },
   { value: "momentum", label: "Vues (24 h)" },
   { value: "views7d", label: "Vues des vidéos (7 j)" },
   { value: "outliers", label: "Nombre d'outliers" },

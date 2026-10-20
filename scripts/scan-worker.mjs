@@ -777,8 +777,80 @@ async function computeScores() {
     FROM scored s
     WHERE s.youtube_video_id = v.youtube_video_id`;
 
+  await computeChannelTrends();
+
   await sql`DELETE FROM video_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
   await sql`DELETE FROM channel_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
+}
+
+// Channel trend score /100 — how much a channel beats its own normal right now:
+//   40 pts recent performance: avg views of the last 14 days' videos vs channel median (log scale, 10x = max)
+//   25 pts recent outliers: relevant >= 3x videos in 30 days (4 = max)
+//   20 pts reach vs size: week's views / subscribers (3x = max)
+//   15 pts growth: subscribers gained in 24 h (+0.5 % = max), or upload activity until a day of history exists
+async function computeChannelTrends() {
+  await sql.begin(async (tx) => {
+    await tx`UPDATE channels SET trend_score = NULL, recent_ratio = NULL WHERE trend_score IS NOT NULL OR recent_ratio IS NOT NULL`;
+    await tx`
+      WITH med AS (
+        SELECT channel_id, is_short, percentile_cont(0.5) WITHIN GROUP (ORDER BY view_count) AS med
+        FROM videos
+        WHERE published_at BETWEEN now() - interval '180 days' AND now() - interval '3 days'
+        GROUP BY channel_id, is_short
+        HAVING count(*) >= 5
+      ),
+      recent AS (
+        SELECT
+          v.channel_id,
+          avg(v.view_count::float8 / GREATEST(
+            m.med,
+            CASE WHEN v.is_short THEN ${CONFIG.medianFloorShort}::float8 ELSE ${CONFIG.medianFloorLong}::float8 END
+          )) AS ratio,
+          COALESCE(sum(v.view_count) FILTER (WHERE v.published_at > now() - interval '7 days'), 0)::float8 AS views_7d,
+          count(*) FILTER (WHERE v.published_at > now() - interval '7 days')::float8 AS uploads_7d
+        FROM videos v
+        JOIN med m ON m.channel_id = v.channel_id AND m.is_short = v.is_short
+        WHERE v.published_at > now() - interval '14 days'
+        GROUP BY v.channel_id
+      ),
+      outliers AS (
+        SELECT channel_id, count(*)::float8 AS n
+        FROM videos
+        WHERE published_at > now() - interval '30 days' AND relevance_score IS NOT NULL AND outlier_multiplier >= 3
+        GROUP BY channel_id
+      ),
+      growth AS (
+        SELECT
+          youtube_channel_id,
+          (array_agg(subscriber_count ORDER BY captured_at DESC))[1]
+            - (array_agg(subscriber_count ORDER BY captured_at DESC) FILTER (WHERE captured_at <= now() - interval '20 hours'))[1]
+            AS subs_24h
+        FROM channel_stat_snapshots
+        WHERE captured_at > now() - interval '4 days'
+        GROUP BY youtube_channel_id
+      ),
+      scored AS (
+        SELECT r.*, COALESCE(o.n, 0) AS outliers, g.subs_24h
+        FROM recent r
+        JOIN channels ch ON ch.id = r.channel_id
+        LEFT JOIN outliers o ON o.channel_id = r.channel_id
+        LEFT JOIN growth g ON g.youtube_channel_id = ch.youtube_channel_id
+      )
+      UPDATE channels c SET
+        recent_ratio = s.ratio,
+        trend_score = CASE WHEN COALESCE(c.subscriber_count, 0) >= ${CONFIG.minSubscribers} THEN round((
+            40 * LEAST(1, ln(1 + GREATEST(0, s.ratio - 1)) / ln(10::float8))
+          + 25 * LEAST(1, s.outliers / 4)
+          + 20 * LEAST(1, log(1 + s.views_7d / GREATEST(c.subscriber_count, 1)) / log(4::float8))
+          + 15 * CASE
+              WHEN s.subs_24h IS NOT NULL AND c.subscriber_count > 0
+                THEN LEAST(1, GREATEST(0, s.subs_24h::float8 / c.subscriber_count * 100 / 0.5))
+              ELSE LEAST(1, s.uploads_7d / 3)
+            END
+        )::numeric, 1) END
+      FROM scored s
+      WHERE s.channel_id = c.id`;
+  });
 }
 
 // ---------------------------------------------------------------------------

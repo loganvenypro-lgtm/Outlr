@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn, formatCompactNumber } from "@/lib/utils";
 import { CATEGORY_LABELS, LANGUAGE_LABELS } from "@/components/outliers/filter-options";
 
@@ -20,6 +21,8 @@ export interface TrendChannel {
   categoryId: number | null;
   language: string | null;
   isShortsChannel: boolean;
+  trendScore: number | null;
+  recentRatio: number | null;
   views24h: number | null;
   viewsPrev24h: number | null;
   subs24h: number | null;
@@ -111,6 +114,31 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
             )}
           </div>
         </div>
+        {channel.trendScore != null && (
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <div
+                  className={cn(
+                    "flex shrink-0 flex-col items-center rounded-lg px-2.5 py-1.5",
+                    channel.trendScore >= 75
+                      ? "bg-emerald-600 text-white"
+                      : channel.trendScore >= 50
+                        ? "bg-emerald-500/10 text-emerald-700"
+                        : "bg-muted text-foreground",
+                  )}
+                >
+                  <span className="text-lg leading-none font-semibold tabular-nums">{Math.round(channel.trendScore)}</span>
+                  <span className="text-[10px] leading-tight opacity-80">tendance</span>
+                </div>
+              }
+            />
+            <TooltipContent className="max-w-64">
+              Score sur 100 : performance des vidéos récentes vs la normale de la chaîne, outliers récents, vues
+              de la semaine vs abonnés et croissance.
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
 
       {channel.videos.length > 0 && (
@@ -163,6 +191,11 @@ export function ChannelCard({ channel, rank }: { channel: TrendChannel; rank: nu
           <span className="text-xs text-muted-foreground">
             {hasDaily ? "Vues · 24 h" : "Vues des vidéos · 7 j"}
           </span>
+          {channel.recentRatio != null && channel.recentRatio >= 1.5 && (
+            <Badge className="w-fit gap-1 bg-emerald-600 text-white">
+              <Flame className="size-3" />×{channel.recentRatio.toFixed(1)} sa normale
+            </Badge>
+          )}
           {dayChange != null && (
             <Badge
               variant="secondary"

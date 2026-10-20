@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const minSubs = toNumber(params.get("minSubs"));
   const maxSubs = toNumber(params.get("maxSubs"));
   const withOutliers = params.get("withOutliers") === "true";
-  const sort = params.get("sort") ?? "momentum";
+  const sort = params.get("sort") ?? "trend";
   const page = Math.max(0, Math.floor(toNumber(params.get("page")) ?? 0));
 
   const where = sql`
@@ -40,7 +40,9 @@ export async function GET(request: NextRequest) {
   `;
 
   const orderBy =
-    sort === "views7d"
+    sort === "trend"
+      ? sql`c.trend_score DESC NULLS LAST, r.views_7d DESC NULLS LAST`
+      : sort === "views7d"
       ? sql`r.views_7d DESC NULLS LAST`
       : sort === "outliers"
         ? sql`r.outliers_30d DESC, r.best_multiplier DESC NULLS LAST`
@@ -87,6 +89,7 @@ export async function GET(request: NextRequest) {
       sql`
         SELECT
           c.id, c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.country,
+          c.trend_score, c.recent_ratio,
           r.views_7d, r.uploads_7d, r.outliers_30d, r.best_multiplier, r.short_share, r.category_id, r.language,
           snap.views_24h, snap.views_prev_24h, snap.subs_24h
         FROM ${from}
@@ -140,6 +143,8 @@ export async function GET(request: NextRequest) {
       categoryId: num(r.category_id),
       language: (r.language as string) ?? null,
       isShortsChannel: Number(r.short_share) >= 0.5,
+      trendScore: num(r.trend_score),
+      recentRatio: num(r.recent_ratio),
       views24h: num(r.views_24h),
       viewsPrev24h: num(r.views_prev_24h),
       subs24h: num(r.subs_24h),
