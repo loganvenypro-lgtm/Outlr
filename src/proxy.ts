@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken } from "@/lib/auth";
+import { getAdminFromToken } from "@/lib/admin";
 
 // API routes reachable without a session (login flow)
 const PUBLIC_API_ROUTES = new Set([
@@ -21,8 +22,29 @@ function hasValidCronSecret(request: NextRequest): boolean {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-export function proxy(request: NextRequest) {
+function isAdminPath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/api/admin/");
+}
+
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const token = request.cookies.get("outlr_session")?.value;
+
+  // Admin area: the role is checked in the database, the handlers check it again
+  if (isAdminPath(pathname)) {
+    const isApi = pathname.startsWith("/api/");
+    if (!token || !verifySessionToken(token)) {
+      return isApi
+        ? NextResponse.json({ error: "Non authentifié." }, { status: 401 })
+        : NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (!(await getAdminFromToken(token))) {
+      return isApi
+        ? NextResponse.json({ error: "Accès réservé aux administrateurs." }, { status: 403 })
+        : NextResponse.redirect(new URL("/", request.url));
+    }
+    return NextResponse.next();
+  }
 
   if (PUBLIC_API_ROUTES.has(pathname)) {
     return NextResponse.next();
@@ -32,7 +54,6 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get("outlr_session")?.value;
   if (token && verifySessionToken(token)) {
     return NextResponse.next();
   }
@@ -41,5 +62,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: ["/api/:path*", "/admin", "/admin/:path*"],
 };

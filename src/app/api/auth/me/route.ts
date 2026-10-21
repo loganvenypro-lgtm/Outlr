@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { createSessionToken, hashPassword, verifyPassword, verifySessionToken } from "@/lib/auth";
 import { getDicebearAvatar, isAllowedAvatarUrl, resolveUserAvatar } from "@/lib/avatar";
+import { isAdminUser } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -21,15 +22,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Name and avatar can be edited in Settings, so read the stored profile
-    let profile: { name: string; avatar: string | null; createdAt: string | null } | null = null;
+    let profile: { name: string; avatar: string | null; createdAt: string | null; role: string | null } | null = null;
     try {
       const rows = await sql`
-        SELECT name, avatar, created_at as "createdAt" FROM users WHERE id = ${payload.userId} LIMIT 1
+        SELECT name, avatar, role, created_at as "createdAt" FROM users WHERE id = ${payload.userId} LIMIT 1
       `;
       if (rows.length > 0) {
         profile = {
           name: rows[0].name,
           avatar: rows[0].avatar,
+          role: rows[0].role,
           createdAt: rows[0].createdAt ? new Date(rows[0].createdAt).toISOString() : null,
         };
       }
@@ -48,6 +50,7 @@ export async function GET(request: NextRequest) {
           ? resolveUserAvatar({ avatar: profile.avatar, email: payload.email })
           : getDicebearAvatar(payload.email || payload.name),
         createdAt: profile?.createdAt || null,
+        isAdmin: isAdminUser({ email: payload.email, role: profile?.role }),
       },
     });
   } catch {

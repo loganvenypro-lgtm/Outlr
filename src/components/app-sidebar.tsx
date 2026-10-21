@@ -22,6 +22,7 @@ import {
   Settings,
   TrendingUp,
   Users,
+  ShieldCheck,
   Wallet,
 } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
@@ -100,6 +101,7 @@ const FALLBACK_USER = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const [currentUser, setCurrentUser] = React.useState(FALLBACK_USER)
+  const [isAdmin, setIsAdmin] = React.useState(false)
 
   React.useEffect(() => {
     fetch("/api/auth/me")
@@ -111,6 +113,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             email: resData.user.email,
             avatar: resData.user.avatar || getDicebearAvatar(resData.user.email || resData.user.name),
           })
+          setIsAdmin(!!resData.user.isAdmin)
         }
       })
       .catch(() => {})
@@ -174,6 +177,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter>
         <SidebarMenu>
+          {isAdmin && (
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip="Admin" isActive={isActive("/admin")} render={<Link href="/admin" />}>
+                <ShieldCheck />
+                <span>Admin</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Paramètres" isActive={isActive("/settings")} render={<Link href="/settings" />}>
               <Settings />

@@ -3,6 +3,9 @@ import { discoverTrueCompetitors } from "@/lib/trueCompetitorService";
 import { explainCompetitors } from "@/lib/competitorInsights";
 import { NICHE_BY_ID, nicheTsQuery, type NicheId } from "@/lib/nicheClassifier";
 import { sql } from "@/lib/postgres";
+import { verifySessionToken } from "@/lib/auth";
+import type { SimilarChannelsEngineResponse } from "@/types/competitorEngine";
+import type { CompetitorInsights } from "@/lib/competitorInsights";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 180;
@@ -24,6 +27,41 @@ async function referenceChannelForNiche(nicheId: NicheId): Promise<{ id: string;
   return row ? { id: row.youtube_channel_id as string, name: row.name as string } : null;
 }
 
+/** Keeps a trace of the analysis for the admin area; never blocks the stream. */
+async function saveAnalysis(entry: {
+  userId: string | null;
+  channel: string;
+  niche: string | null;
+  role: string;
+  result: SimilarChannelsEngineResponse | null;
+  insights: CompetitorInsights | null;
+  error: string | null;
+  durationMs: number;
+}) {
+  const ref = entry.result?.reference;
+  const reference = ref
+    ? { id: ref.id, title: ref.title, handle: ref.handle, avatar: ref.avatar, subscriberCount: ref.subscriberCount, archetypeLabel: ref.archetypeLabel, editorialTags: ref.editorialTags }
+    : null;
+  const competitors = (entry.result?.competitors ?? []).map((c) => ({
+    id: c.channel.id,
+    title: c.channel.title,
+    handle: c.channel.handle,
+    avatar: c.channel.avatar,
+    subscriberCount: c.channel.subscriberCount,
+    typicalViews: c.channel.typicalViews,
+    archetypeLabel: c.channel.archetypeLabel,
+    similarityScore: c.similarityScore,
+  }));
+  try {
+    await sql`
+      INSERT INTO onboarding_analyses (user_id, input_channel, niche, role, reference, competitors, insights, error, duration_ms)
+      VALUES (${entry.userId}, ${entry.channel || null}, ${entry.niche}, ${entry.role}, ${reference ? sql.json(reference) : null},
+              ${sql.json(competitors)}, ${entry.insights ? sql.json(entry.insights as unknown as Parameters<typeof sql.json>[0]) : null}, ${entry.error}, ${entry.durationMs})`;
+  } catch (err) {
+    console.error("Could not save onboarding analysis:", err);
+  }
+}
+
 /**
  * Live onboarding analysis, streamed as NDJSON: one event per line as each stage
  * of the competitor engine lands, then the AI's explanation of the matches.
@@ -33,6 +71,7 @@ export async function GET(request: NextRequest) {
   const channel = searchParams.get("channel")?.trim() ?? "";
   const niche = searchParams.get("niche") as NicheId | null;
   const role = searchParams.get("role") ?? "creator";
+  const userId = verifySessionToken(request.cookies.get("outlr_session")?.value ?? "")?.userId ?? null;
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -43,6 +82,10 @@ export async function GET(request: NextRequest) {
         } catch {}
       };
 
+      const startedAt = Date.now();
+      let result: SimilarChannelsEngineResponse | null = null;
+      let insights: CompetitorInsights | null = null;
+      let error: string | null = null;
       try {
         let target = channel;
         if (!target && niche && NICHE_BY_ID[niche]) {
@@ -54,15 +97,18 @@ export async function GET(request: NextRequest) {
         }
         if (!target) throw new Error("Lien de chaîne manquant.");
 
-        const result = await discoverTrueCompetitors(target, send);
+        result = await discoverTrueCompetitors(target, send);
         send({ type: "done", result });
 
         send({ type: "log", message: "L'IA analyse pourquoi ces chaînes te correspondent…" });
-        send({ type: "insights", insights: await explainCompetitors(result, role) });
+        insights = await explainCompetitors(result, role);
+        send({ type: "insights", insights });
       } catch (err: any) {
-        send({ type: "error", message: err?.message || "Impossible d'analyser cette chaîne." });
+        error = err?.message || "Impossible d'analyser cette chaîne.";
+        send({ type: "error", message: error });
       } finally {
         controller.close();
+        await saveAnalysis({ userId, channel, niche, role, result, insights, error, durationMs: Date.now() - startedAt });
       }
     },
   });
