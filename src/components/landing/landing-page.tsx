@@ -12,8 +12,11 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
+  CircleHelp,
   Compass,
+  Dices,
   Flame,
+  Hourglass,
   Image as ImageIcon,
   Play,
   LayoutGrid,
@@ -21,13 +24,16 @@ import {
   Search,
   Sparkles,
   Telescope,
+  Target,
   TrendingUp,
   Type,
+  Users,
   Wallet,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  ChannelAvatar,
   CountUp,
   Reveal,
   SpotlightCard,
@@ -65,11 +71,14 @@ interface LandingPageProps {
   heroVideos: LandingVideo[];
   creators: LandingCreator[];
   niches: { name: string; videos: LandingVideo[] }[];
+  /** Recent small-channel breakouts, for the proof section. */
+  breakouts: LandingVideo[];
   stats: LandingStats;
 }
 
 const NAV_LINKS = [
   { href: "#fonctionnalites", label: "Fonctionnalités" },
+  { href: "#preuves", label: "Preuves" },
   { href: "#demo", label: "Démo" },
   { href: "#methode", label: "Méthode" },
   { href: "#faq", label: "FAQ" },
@@ -83,14 +92,16 @@ const SEARCH_EXAMPLES = [
   "Le tueur le plus intelligent d'Amérique",
 ];
 
-export function LandingPage({ videos, heroVideos, creators, niches, stats }: LandingPageProps) {
+export function LandingPage({ videos, heroVideos, creators, niches, breakouts, stats }: LandingPageProps) {
   return (
     <div className="lp-root relative min-h-screen overflow-x-clip bg-white text-slate-900 selection:bg-orange-200">
       <Navbar freshWeek={stats.freshWeek} />
       <Hero videos={heroVideos} creators={creators} stats={stats} />
       <ProductPreview videos={videos.slice(0, 6)} />
+      <Problem />
       <OutlierExplainer />
       <Features videos={videos} />
+      <Proof videos={breakouts} />
       <NicheExplorer niches={niches} />
       <Method />
       <Comparison />
@@ -168,7 +179,7 @@ function Navbar({ freshWeek }: { freshWeek: number }) {
             </Link>
             <Link
               href="/login"
-              className="rounded-xl border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-sm font-semibold text-orange-300 transition-colors hover:bg-orange-500/20"
+              className="lp-shine relative rounded-xl border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-sm font-semibold text-orange-300 transition-colors hover:bg-orange-500/20"
             >
               Commencer
             </Link>
@@ -385,7 +396,7 @@ function HeroSearch() {
       </div>
       <button
         type="submit"
-        className="absolute -bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_34px_rgba(249,115,22,0.6)] ring-4 ring-[#0a0a0c] transition-all hover:scale-105 hover:shadow-[0_0_48px_rgba(249,115,22,0.8)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-300"
+        className="lp-shine absolute -bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_34px_rgba(249,115,22,0.6)] ring-4 ring-[#0a0a0c] transition-all hover:scale-105 hover:shadow-[0_0_48px_rgba(249,115,22,0.8)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-300"
       >
         <Sparkles className="size-4" /> Trouver mes premiers outliers
       </button>
@@ -522,6 +533,126 @@ function AppFrame({ videos }: { videos: LandingVideo[] }) {
   );
 }
 
+// --- PROBLEM ---
+
+function Problem() {
+  return (
+    <section className="relative overflow-hidden px-4 py-24">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[radial-gradient(ellipse_45%_60%_at_50%_0%,rgba(251,113,133,0.12),transparent_70%)]" />
+      <div className="relative mx-auto max-w-6xl">
+        <SectionHeader
+          icon={CircleHelp}
+          eyebrow="Le problème"
+          title={
+            <>
+              Le problème n&apos;est pas <span className="lp-gradient-text">votre montage.</span>
+            </>
+          }
+          subtitle="C'est le sujet. Choisi au feeling, trouvé trop tard, ou copié sur des chaînes qui ne jouent pas dans votre catégorie."
+        />
+
+        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Reveal>
+            <ProblemCard
+              icon={Dices}
+              title="Des sujets choisis au feeling"
+              text="Une semaine de tournage misée sur une intuition, sans savoir si le sujet a déjà fait ses preuves quelque part."
+            >
+              <div className="space-y-2">
+                {["L'histoire cachée de Nokia", "J'ai testé le jeûne pendant 7 jours", "Mon setup 2026"].map((idea, i) => (
+                  <div key={idea} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
+                    <span className="truncate text-slate-700">{idea}</span>
+                    <span
+                      className="lp-pulse shrink-0 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500"
+                      style={{ animationDelay: `${i * 400}ms` }}
+                    >
+                      potentiel ?
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </ProblemCard>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <ProblemCard
+              icon={Hourglass}
+              title="Des tendances déjà épuisées"
+              text="Quand un sujet arrive dans l'onglet Tendances, des centaines de chaînes l'ont déjà traité. Vous arrivez après la vague."
+            >
+              <svg viewBox="0 0 220 100" className="w-full overflow-visible" role="img" aria-label="Une tendance qui retombe au moment où vous publiez">
+                <text x="122" y="9" textAnchor="middle" className="fill-slate-400 text-[9px]">pic de la tendance</text>
+                <path
+                  d="M0 92 C40 90 60 80 85 50 S112 16 122 16 S148 40 168 65 S205 88 220 90"
+                  pathLength={260}
+                  fill="none"
+                  stroke="#cbd5e1"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  className="lp-draw"
+                />
+                <circle cx="122" cy="16" r="3.5" fill="#94a3b8" />
+                <circle cx="180" cy="75" r="5" fill="#f43f5e" className="lp-pulse" />
+                <text x="180" y="62" textAnchor="middle" className="fill-rose-500 text-[9px] font-semibold">vous publiez ici</text>
+              </svg>
+            </ProblemCard>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <ProblemCard
+              icon={Users}
+              title="Les mauvais modèles"
+              text="Une chaîne de 20 millions d'abonnés fait des vues avec n'importe quel sujet. Elle ne vous apprend rien sur ce qui marche pour une chaîne comme la vôtre."
+            >
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5">
+                  <span className="size-8 shrink-0 rounded-full bg-slate-200" />
+                  <div className="min-w-0 flex-1 leading-tight">
+                    <p className="text-sm font-medium text-slate-700">Chaîne géante</p>
+                    <p className="text-[11px] text-slate-400">20 M abonnés · vues habituelles</p>
+                  </div>
+                  <span className="text-sm font-semibold text-slate-400">×1</span>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border border-orange-200 bg-orange-50/70 p-2.5">
+                  <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-rose-500 to-orange-400" />
+                  <div className="min-w-0 flex-1 leading-tight">
+                    <p className="text-sm font-medium text-slate-800">Petite chaîne</p>
+                    <p className="text-[11px] text-slate-500">8 k abonnés · un sujet qui a pris</p>
+                  </div>
+                  <span className="lp-gradient-text text-lg font-bold">×28</span>
+                </div>
+                <p className="pt-1 text-center text-[11px] text-slate-400">Exemple : c&apos;est la seconde qui vous apprend quelque chose.</p>
+              </div>
+            </ProblemCard>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProblemCard({
+  icon: Icon,
+  title,
+  text,
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  text: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <SpotlightCard className="flex h-full flex-col p-6">
+      <div className="flex min-h-40 flex-col justify-center rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">{children}</div>
+      <h3 className="mt-6 flex items-center gap-2 text-lg font-semibold tracking-tight">
+        <Icon className="size-4 text-rose-500" /> {title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-500">{text}</p>
+    </SpotlightCard>
+  );
+}
+
 // --- WHY OUTLIERS ---
 
 function OutlierExplainer() {
@@ -530,9 +661,9 @@ function OutlierExplainer() {
 
   return (
     <section className="px-4 py-24">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 lg:grid-cols-2">
         <Reveal>
-          <SectionEyebrow icon={Telescope}>Pourquoi les outliers</SectionEyebrow>
+          <SectionEyebrow icon={Telescope}>La solution</SectionEyebrow>
           <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
             Les mots-clés vous disent ce qu&apos;on cherche. Les outliers, ce qu&apos;on regarde.
           </h2>
@@ -600,27 +731,34 @@ function Features({ videos }: { videos: LandingVideo[] }) {
   const thumbs = videos.slice(0, 4);
 
   return (
-    <section id="fonctionnalites" className="scroll-mt-24 bg-slate-50/70 px-4 py-24">
-      <div className="mx-auto max-w-6xl">
+    <section id="fonctionnalites" className="relative scroll-mt-24 overflow-hidden bg-[#0a0a0c] px-4 py-28 text-white">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-[radial-gradient(ellipse_50%_55%_at_50%_0%,rgba(249,115,22,0.22),rgba(244,63,94,0.06)_50%,transparent_75%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[30rem] bg-[radial-gradient(ellipse_45%_60%_at_50%_100%,rgba(249,115,22,0.14),transparent_70%)]" />
+      <div className="relative mx-auto max-w-6xl">
         <SectionHeader
+          tone="dark"
           icon={Sparkles}
           eyebrow="Fonctionnalités"
-          title="Tout ce qu'il faut pour trouver votre prochaine idée."
-          subtitle="Une seule app pour la recherche, l'analyse des concurrents et l'emballage de vos vidéos."
+          title={
+            <>
+              Sept outils pour une seule question&nbsp;: <span className="lp-gradient-text">quelle vidéo faire ensuite&nbsp;?</span>
+            </>
+          }
+          subtitle="Recherche, veille concurrentielle et emballage, tout est branché sur le même index de vidéos qui surperforment."
         />
 
-        <div className="mt-14 grid gap-4 md:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Outliers */}
           <Reveal className="md:col-span-2">
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={Flame} title="Explorateur d'outliers" text="Des milliers de vidéos classées par score d'outlier. Filtrez par format, durée, taille de chaîne, âge de la chaîne et date." />
               <div className="mt-7 space-y-2">
                 {videos.slice(0, 3).map((v, i) => (
-                  <div key={v.id} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2 pr-3" style={{ opacity: 1 - i * 0.22 }}>
+                  <div key={v.id} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-2 pr-3" style={{ opacity: 1 - i * 0.22 }}>
                     <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-24 shrink-0 rounded-lg object-cover" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm text-slate-800">{v.title}</p>
-                      <p className="text-xs text-slate-500">{v.channelTitle} · {formatCompact(v.channelSubscribers)} abonnés</p>
+                      <p className="truncate text-sm text-white/90">{v.title}</p>
+                      <p className="truncate text-xs text-white/45">{v.channelTitle} · {formatCompact(v.channelSubscribers)} abonnés</p>
                     </div>
                     <span className="lp-gradient-text text-lg font-bold">{formatMultiplier(v.outlierMultiplier)}</span>
                   </div>
@@ -631,12 +769,12 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* Niche finder */}
           <Reveal delay={80}>
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={Radar} title="Niche Finder" text="Les niches qui montent, avec un score d'opportunité, avant qu'elles soient saturées." />
               <div className="mt-8 flex items-center justify-center">
                 <div className="relative size-36">
                   <svg viewBox="0 0 120 120" className="size-full -rotate-90">
-                    <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f5f9" strokeWidth="10" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
                     <circle cx="60" cy="60" r="50" fill="none" stroke="url(#lp-gauge)" strokeWidth="10" strokeLinecap="round" strokeDasharray="314" className="lp-gauge" />
                     <defs>
                       <linearGradient id="lp-gauge" x1="0" x2="1">
@@ -647,7 +785,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-3xl font-semibold">87</span>
-                    <span className="text-[10px] uppercase tracking-wider text-slate-500">opportunité</span>
+                    <span className="text-[10px] uppercase tracking-wider text-white/45">opportunité</span>
                   </div>
                 </div>
               </div>
@@ -656,7 +794,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* Channel trends */}
           <Reveal>
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={TrendingUp} title="Channel Trends" text="Les chaînes qui décollent en ce moment, classées par vitesse de croissance." />
               <svg viewBox="0 0 200 80" className="mt-8 w-full overflow-visible">
                 <defs>
@@ -674,13 +812,13 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* Thumbnails */}
           <Reveal delay={80}>
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={ImageIcon} title="Thumbnail Intelligence" text="Décodez les miniatures qui font cliquer dans votre niche et comparez-les côte à côte." />
               <div className="mt-7 grid grid-cols-2 gap-2">
                 {thumbs.map((v, i) => (
-                  <div key={v.id} className="relative overflow-hidden rounded-lg ring-1 ring-slate-200">
+                  <div key={v.id} className="relative overflow-hidden rounded-lg ring-1 ring-white/10">
                     <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full object-cover" />
-                    <span className="absolute bottom-1 left-1 rounded bg-white/90 px-1 text-[9px] font-medium text-slate-700">
+                    <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 text-[9px] font-medium text-white backdrop-blur">
                       {["Visage", "Texte fort", "Contraste", "Avant/après"][i]}
                     </span>
                   </div>
@@ -691,7 +829,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* Title lab */}
           <Reveal delay={160}>
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={Type} title="Title Lab" text="Les structures de titres qui reviennent dans les vidéos qui explosent, prêtes à adapter." />
               <div className="mt-7 space-y-2 text-sm">
                 {[
@@ -699,10 +837,10 @@ function Features({ videos }: { videos: LandingVideo[] }) {
                   ["J'ai testé ", "[X]", " pendant 30 jours"],
                   ["Pourquoi personne ne parle de ", "[sujet]"],
                 ].map((parts, i) => (
-                  <p key={i} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-700">
+                  <p key={i} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-white/80">
                     {parts.map((p, j) =>
                       p.startsWith("[") ? (
-                        <span key={j} className="rounded bg-orange-100 px-1 text-orange-700">{p}</span>
+                        <span key={j} className="rounded bg-orange-500/15 px-1 text-orange-300">{p}</span>
                       ) : (
                         <span key={j}>{p}</span>
                       )
@@ -715,19 +853,19 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* AI assistant */}
           <Reveal className="md:col-span-2">
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={Bot} title="Assistant IA branché sur les données" text="Posez vos questions sur votre niche. L'assistant répond à partir des vidéos et des chaînes indexées, pas de suppositions." />
               <div className="mt-7 space-y-3">
-                <div className="ml-auto w-fit max-w-md rounded-2xl rounded-br-md bg-slate-900 px-4 py-2.5 text-sm text-white">
+                <div className="ml-auto w-fit max-w-md rounded-2xl rounded-br-md bg-white px-4 py-2.5 text-sm text-slate-900">
                   Donne-moi 3 idées de vidéos qui marchent en ce moment dans le true crime.
                 </div>
                 <div className="flex max-w-lg gap-3">
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-orange-400 text-white">
                     <Sparkles className="size-3.5" />
                   </span>
-                  <div className="rounded-2xl rounded-tl-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+                  <div className="rounded-2xl rounded-tl-md border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/80">
                     Les formats « affaire non résolue + iceberg » sortent fort ce mois-ci. Trois angles à tester :
-                    <span className="mt-2 block text-slate-500">1. L&apos;iceberg des affaires jamais résolues de votre région<br />2. La chronologie minute par minute d&apos;une disparition<br />3. Ce que la police n&apos;a jamais dit sur…</span>
+                    <span className="mt-2 block text-white/50">1. L&apos;iceberg des affaires jamais résolues de votre région<br />2. La chronologie minute par minute d&apos;une disparition<br />3. Ce que la police n&apos;a jamais dit sur…</span>
                   </div>
                 </div>
               </div>
@@ -736,15 +874,15 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 
           {/* Sponsors */}
           <Reveal delay={80}>
-            <SpotlightCard className="h-full p-7">
+            <SpotlightCard tone="dark" className="h-full p-7">
               <FeatureText icon={Wallet} title="Sponsors & revenus" text="Qui sponsorise votre niche, et combien une chaîne peut gagner avec la pub." />
               <div className="mt-7 flex flex-wrap gap-2">
                 {["Tech", "Apps", "VPN", "Formation", "Finance", "Jeux"].map((b) => (
-                  <span key={b} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">{b}</span>
+                  <span key={b} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/70">{b}</span>
                 ))}
               </div>
-              <div className="mt-5 rounded-xl border border-slate-200 bg-white p-3">
-                <p className="text-[11px] text-slate-500">Revenus pub estimés / mois</p>
+              <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.04] p-3">
+                <p className="text-[11px] text-white/45">Revenus pub estimés / mois</p>
                 <p className="mt-1 text-xl font-semibold">1,2 k€ – 3,4 k€</p>
               </div>
             </SpotlightCard>
@@ -758,11 +896,98 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 function FeatureText({ icon: Icon, title, text }: { icon: React.ElementType; title: string; text: string }) {
   return (
     <div>
-      <span className="flex size-9 items-center justify-center rounded-xl border border-orange-200 bg-orange-50">
-        <Icon className="size-4 text-orange-600" />
+      <span className="flex size-9 items-center justify-center rounded-xl border border-orange-400/30 bg-orange-500/10 shadow-[0_0_24px_rgba(249,115,22,0.18)]">
+        <Icon className="size-4 text-orange-400" />
       </span>
       <h3 className="mt-4 text-lg font-semibold tracking-tight">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{text}</p>
+      <p className="mt-1.5 text-sm leading-relaxed text-white/55">{text}</p>
+    </div>
+  );
+}
+
+// --- PROOF (LIVE DATA) ---
+
+function Proof({ videos }: { videos: LandingVideo[] }) {
+  if (videos.length < 3) return null;
+
+  return (
+    <section id="preuves" className="relative scroll-mt-24 overflow-hidden px-4 py-24">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(ellipse_50%_60%_at_50%_0%,rgba(249,115,22,0.10),transparent_70%)]" />
+      <div className="relative mx-auto max-w-6xl">
+        <SectionHeader
+          icon={Target}
+          eyebrow="Preuves"
+          title={
+            <>
+              Petites chaînes, <span className="lp-gradient-text">vues énormes.</span>
+            </>
+          }
+          subtitle="Des vidéos longues repérées par Outlr ces quatre derniers mois, sur des chaînes de moins de 100 000 abonnés. Ce n'est pas l'audience qui a joué."
+        />
+
+        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {videos.map((v, i) => (
+            <Reveal key={v.id} delay={(i % 3) * 100} className="h-full">
+              <BreakoutCard video={v} />
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal className="mt-12 flex justify-center">
+          <Link
+            href="/login"
+            className="lp-shine group relative inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-6 py-3.5 font-semibold text-white shadow-lg shadow-slate-950/20 transition-all hover:shadow-xl hover:shadow-orange-500/20"
+          >
+            Trouver les outliers de ma niche <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function BreakoutCard({ video: v }: { video: LandingVideo }) {
+  const median = v.viewCount / Math.max(v.outlierMultiplier, 1);
+
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10">
+      <div className="relative aspect-video overflow-hidden bg-slate-100">
+        <img src={v.thumbnail} alt="" loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <span className="absolute left-3 top-3 rounded-lg bg-gradient-to-r from-rose-500 to-orange-400 px-2 py-1 text-sm font-bold text-white shadow-lg shadow-rose-500/30">
+          <CountUp value={Math.round(v.outlierMultiplier)} prefix="×" />
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <p className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900">{v.title}</p>
+        <div className="mt-auto space-y-2.5 pt-5">
+          <ProofBar label="Médiane de la chaîne" views={median} width={Math.max(3, 100 / v.outlierMultiplier)} muted />
+          <ProofBar label="Cette vidéo" views={v.viewCount} width={100} />
+        </div>
+        <div className="mt-5 flex items-center gap-2.5 border-t border-slate-100 pt-4">
+          <ChannelAvatar src={v.channelAvatar} />
+          <p className="min-w-0 truncate text-xs text-slate-500">
+            <span className="font-medium text-slate-700">{v.channelTitle}</span> · {formatCompact(v.channelSubscribers)} abonnés ·{" "}
+            {timeAgo(v.publishedAt)}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ProofBar({ label, views, width, muted = false }: { label: string; views: number; width: number; muted?: boolean }) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-3 text-xs">
+        <span className="text-slate-500">{label}</span>
+        <span className={cn("font-semibold tabular-nums", muted ? "text-slate-500" : "text-slate-900")}>{formatCompact(views)} vues</span>
+      </div>
+      <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={cn("lp-grow-x h-full rounded-full", muted ? "bg-slate-300" : "bg-gradient-to-r from-rose-500 to-orange-400")}
+          style={{ width: `${width}%` }}
+        />
+      </div>
     </div>
   );
 }
@@ -771,6 +996,24 @@ function FeatureText({ icon: Icon, title, text }: { icon: React.ElementType; tit
 
 function NicheExplorer({ niches }: { niches: LandingPageProps["niches"] }) {
   const [active, setActive] = useState(0);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+
+  // The white pill slides under the active tab (positioned in the DOM, no re-render)
+  useEffect(() => {
+    const place = () => {
+      const tab = tabsRef.current?.querySelectorAll<HTMLButtonElement>("button")[active];
+      const pill = pillRef.current;
+      if (!tab || !pill) return;
+      pill.style.width = `${tab.offsetWidth}px`;
+      pill.style.transform = `translateX(${tab.offsetLeft}px)`;
+      pill.style.opacity = "1";
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [active, niches.length]);
+
   if (niches.length === 0) return null;
   const current = niches[Math.min(active, niches.length - 1)];
 
@@ -785,14 +1028,20 @@ function NicheExplorer({ niches }: { niches: LandingPageProps["niches"] }) {
         />
 
         <Reveal className="mt-10 flex justify-center">
-          <div className="flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-1">
+          <div ref={tabsRef} className="relative flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-1">
+            <span
+              ref={pillRef}
+              aria-hidden
+              className="absolute bottom-1 left-0 top-1 rounded-xl bg-white opacity-0 shadow-sm ring-1 ring-slate-200 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            />
             {niches.map((n, i) => (
               <button
                 key={n.name}
                 onClick={() => setActive(i)}
+                aria-pressed={i === active}
                 className={cn(
-                  "shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-all",
-                  i === active ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-900"
+                  "relative shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300",
+                  i === active ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
                 )}
               >
                 {n.name}
@@ -801,7 +1050,7 @@ function NicheExplorer({ niches }: { niches: LandingPageProps["niches"] }) {
           </div>
         </Reveal>
 
-        <div key={current.name} className="lp-swap mt-10 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div key={current.name} className="lp-swap mt-10 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           {current.videos.map((v) => (
             <VideoCard key={v.id} video={v} />
           ))}
@@ -839,8 +1088,10 @@ function Method() {
     <section id="methode" className="scroll-mt-24 bg-slate-50/70 px-4 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader icon={Compass} eyebrow="Méthode" title="De zéro idée à un plan de vidéos, en trois étapes." />
-        <div className="relative mt-16 grid gap-6 md:grid-cols-3">
-          <div aria-hidden className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent md:block" />
+        <div className="relative mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <Reveal className="absolute left-0 right-0 top-6 hidden md:block">
+            <div aria-hidden className="lp-grow-x h-px bg-gradient-to-r from-transparent via-orange-300 to-transparent" />
+          </Reveal>
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 120} className="relative">
               <span className="relative z-10 flex size-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold shadow-sm">
@@ -969,7 +1220,7 @@ function FinalCta() {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-slate-900 transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+              className="lp-shine group relative inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-slate-900 transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
             >
               Créer mon compte <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
@@ -1006,10 +1257,17 @@ function Footer() {
 
 // --- SHARED ---
 
-function SectionEyebrow({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
+type Tone = "light" | "dark";
+
+function SectionEyebrow({ icon: Icon, children, tone = "light" }: { icon: React.ElementType; children: React.ReactNode; tone?: Tone }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-      <Icon className="size-3.5 text-orange-500" /> {children}
+    <span
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-sm",
+        tone === "light" ? "border-slate-200 bg-white text-slate-600" : "border-white/15 bg-white/[0.04] text-white/70"
+      )}
+    >
+      <Icon className={cn("size-3.5", tone === "light" ? "text-orange-500" : "text-orange-400")} /> {children}
     </span>
   );
 }
@@ -1019,17 +1277,23 @@ function SectionHeader({
   eyebrow,
   title,
   subtitle,
+  tone = "light",
 }: {
   icon: React.ElementType;
   eyebrow: string;
-  title: string;
+  title: React.ReactNode;
   subtitle?: string;
+  tone?: Tone;
 }) {
   return (
     <Reveal className="mx-auto max-w-3xl text-center">
-      <SectionEyebrow icon={icon}>{eyebrow}</SectionEyebrow>
+      <SectionEyebrow icon={icon} tone={tone}>
+        {eyebrow}
+      </SectionEyebrow>
       <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">{title}</h2>
-      {subtitle && <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-500">{subtitle}</p>}
+      {subtitle && (
+        <p className={cn("mx-auto mt-4 max-w-2xl text-pretty text-lg", tone === "light" ? "text-slate-500" : "text-white/55")}>{subtitle}</p>
+      )}
     </Reveal>
   );
 }

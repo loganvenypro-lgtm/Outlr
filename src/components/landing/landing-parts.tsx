@@ -168,7 +168,15 @@ export function Typewriter({ words }: { words: string[] }) {
 }
 
 /** Card with a soft light that follows the cursor. */
-export function SpotlightCard({ children, className }: { children: React.ReactNode; className?: string }) {
+export function SpotlightCard({
+  children,
+  className,
+  tone = "light",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  tone?: "light" | "dark";
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -184,7 +192,10 @@ export function SpotlightCard({ children, className }: { children: React.ReactNo
       ref={ref}
       onMouseMove={onMove}
       className={cn(
-        "lp-spotlight group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md",
+        "lp-spotlight group relative overflow-hidden rounded-3xl border transition-all duration-300",
+        tone === "light"
+          ? "border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md"
+          : "lp-spotlight-dark border-white/10 bg-white/[0.03] hover:-translate-y-0.5 hover:border-orange-400/30 hover:bg-white/[0.05]",
         className
       )}
     >
@@ -194,6 +205,21 @@ export function SpotlightCard({ children, className }: { children: React.ReactNo
 }
 
 // --- VIDEO CARD ---
+
+/** Stored avatar URLs go stale when a channel changes its picture, so a failed load falls back to a grey disc. */
+export function ChannelAvatar({ src }: { src: string | null }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return <span className="size-7 shrink-0 rounded-full bg-slate-200" />;
+  return (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className="size-7 shrink-0 rounded-full ring-1 ring-slate-200"
+    />
+  );
+}
 
 export function VideoCard({ video, compactCard = false }: { video: LandingVideo; compactCard?: boolean }) {
   return (
@@ -213,13 +239,7 @@ export function VideoCard({ video, compactCard = false }: { video: LandingVideo;
         </span>
       </div>
       <div className="flex gap-2.5">
-        {!compactCard && (
-          video.channelAvatar ? (
-            <img src={video.channelAvatar} alt="" loading="lazy" className="size-7 shrink-0 rounded-full ring-1 ring-slate-200" />
-          ) : (
-            <div className="size-7 shrink-0 rounded-full bg-slate-200" />
-          )
-        )}
+        {!compactCard && <ChannelAvatar src={video.channelAvatar} />}
         <div className="min-w-0">
           <p className={cn("line-clamp-2 font-medium leading-snug text-slate-800", compactCard ? "text-[11px]" : "text-sm")}>
             {video.title}

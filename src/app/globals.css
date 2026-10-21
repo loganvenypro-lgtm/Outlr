@@ -54,11 +54,18 @@ body {
 
 h1, h2, h3 {
   letter-spacing: -0.02em;
-  text-wrap: balance;
 }
 
-p {
-  text-wrap: pretty;
+/* text-wrap also resets text-wrap-mode, so outside a layer it beat Tailwind's truncate and
+   whitespace-nowrap on every heading and paragraph; in the base layer the utilities win */
+@layer base {
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
 }
 
 ::selection {
@@ -309,6 +316,43 @@ p {
   opacity: 1;
 }
 
+.lp-spotlight-dark::before {
+  background: radial-gradient(420px circle at var(--x, 50%) var(--y, 0%), rgba(251, 146, 60, 0.14), transparent 45%);
+}
+
+/* A light sweep across primary buttons every few seconds (the element sets its own position) */
+.lp-shine {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.lp-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.4) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: lpShine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes lpShine {
+  0%, 60% { transform: translateX(-120%); }
+  85%, 100% { transform: translateX(120%); }
+}
+
+/* Proof bars and the method timeline grow once their block is revealed */
+.lp-grow-x {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.lp-reveal-in .lp-grow-x {
+  transform: scaleX(1);
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+
 .lp-glow-border {
   position: relative;
   isolation: isolate;
@@ -436,7 +480,8 @@ p {
 
 @media (prefers-reduced-motion: reduce) {
   .lp-reveal { opacity: 1; transform: none; filter: none; transition: none; }
-  .lp-aurora, .lp-marquee, .lp-float, .lp-caret, .lp-pulse, .lp-glow-border::before, .lp-swap { animation: none; }
+  .lp-aurora, .lp-marquee, .lp-float, .lp-caret, .lp-pulse, .lp-glow-border::before, .lp-swap, .lp-shine::after { animation: none; }
+  .lp-grow-x { transform: none; }
   .lp-gauge { stroke-dashoffset: 41; }
   .lp-draw { stroke-dashoffset: 0; }
   .lp-reveal-in .lp-bar, .lp-reveal-in .lp-gauge, .lp-reveal-in .lp-draw { animation: none; }

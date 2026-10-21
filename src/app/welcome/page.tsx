@@ -81,6 +81,68 @@ function toLandingVideo(v: IndexedViralVideo): LandingVideo {
   };
 }
 
+// Uploads whose views don't come from their packaging: film reuploads, music, test signals, TV episodes.
+const NOT_A_BREAKOUT = /full movie|official|#|cover|bass test|lyrics|trailer|\bmusic\b|S\d+E\d+/i;
+// Titles outside the Latin script read as noise to a French-speaking visitor.
+const NON_LATIN = /[^\p{Script=Latin}\p{N}\p{P}\p{Zs}\p{Sc}\p{Sm}]/u;
+
+const isShowcaseBreakout = (title: string) => !NOT_A_BREAKOUT.test(title) && !NON_LATIN.test(title) && !JUNK_TITLE.test(title);
+
+/** Recent long-form breakouts from small channels (1k–100k subscribers), one per channel, for the proof section. */
+async function loadBreakouts(index: IndexedViralVideo[]): Promise<LandingVideo[]> {
+  try {
+    const rows = await sql`
+      SELECT DISTINCT ON (c.id)
+        v.youtube_video_id, v.title, v.thumbnail_url, v.published_at, v.view_count, v.outlier_multiplier,
+        v.duration_formatted, c.name, c.thumbnail_url AS avatar, c.subscriber_count
+      FROM videos v
+      JOIN channels c ON c.id = v.channel_id
+      WHERE v.relevance_score IS NOT NULL
+        AND NOT v.is_short
+        AND v.duration_seconds >= 180
+        AND c.subscriber_count BETWEEN 1000 AND 100000
+        AND v.outlier_multiplier BETWEEN 10 AND 500
+        AND v.view_count >= 100000
+        AND v.published_at > now() - interval '120 days'
+      ORDER BY c.id, v.outlier_multiplier DESC`;
+    const picked = rows
+      .filter((r) => isShowcaseBreakout(r.title))
+      .sort((a, b) => b.outlier_multiplier - a.outlier_multiplier)
+      .slice(0, 6)
+      .map(
+        (r): LandingVideo => ({
+          id: r.youtube_video_id,
+          title: r.title,
+          thumbnail: r.thumbnail_url || `https://i.ytimg.com/vi/${r.youtube_video_id}/hqdefault.jpg`,
+          channelTitle: r.name,
+          channelAvatar: r.avatar ?? null,
+          channelSubscribers: Number(r.subscriber_count),
+          viewCount: Number(r.view_count),
+          outlierMultiplier: Number(r.outlier_multiplier),
+          publishedAt: new Date(r.published_at).toISOString(),
+          duration: r.duration_formatted ?? "",
+        })
+      );
+    if (picked.length >= 3) return picked;
+  } catch {}
+
+  return pickDistinctChannels(
+    index
+      .filter(
+        (v) =>
+          v.channelSubscribers >= 1_000 &&
+          v.channelSubscribers <= 100_000 &&
+          v.outlierMultiplier >= 10 &&
+          v.outlierMultiplier <= 500 &&
+          v.durationSeconds >= 180 &&
+          v.viewCount >= 100_000 &&
+          isShowcaseBreakout(v.title)
+      )
+      .sort((a, b) => b.outlierMultiplier - a.outlierMultiplier),
+    6
+  );
+}
+
 /** Headline counters from the scan database; the JSON index stands in when it can't be reached. */
 async function loadStats(index: IndexedViralVideo[]): Promise<LandingStats> {
   try {
@@ -153,7 +215,7 @@ export default async function WelcomePage() {
     ),
   })).filter((n) => n.videos.length >= 3);
 
-  const stats = await loadStats(index);
+  const [stats, breakouts] = await Promise.all([loadStats(index), loadBreakouts(index)]);
 
   // Fall back to the general showcase if the curated channels drop out of the index.
   const picked = pickHeroVideos(index);
@@ -163,5 +225,14 @@ export default async function WelcomePage() {
     .sort((a, b) => b.channelSubscribers - a.channelSubscribers)
     .map((v) => ({ name: v.channelTitle, avatar: v.channelAvatar!, subscribers: v.channelSubscribers }));
 
-  return <LandingPage videos={videos} heroVideos={heroVideos} creators={creators} niches={niches} stats={stats} />;
+  return (
+    <LandingPage
+      videos={videos}
+      heroVideos={heroVideos}
+      creators={creators}
+      niches={niches}
+      breakouts={breakouts}
+      stats={stats}
+    />
+  );
 }
