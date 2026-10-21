@@ -10,6 +10,9 @@ const PUBLIC_API_ROUTES = new Set([
   "/api/auth/me",
 ]);
 
+// Claude connects without a cookie: the route checks the user's personal MCP key itself
+const MCP_API_ROUTES = new Set(["/api/mcp"]);
+
 // Routes the background worker may call with the shared CRON_SECRET
 const CRON_API_ROUTES = new Set(["/api/pipeline/sync-outliers"]);
 
@@ -46,7 +49,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (PUBLIC_API_ROUTES.has(pathname)) {
+  if (PUBLIC_API_ROUTES.has(pathname) || MCP_API_ROUTES.has(pathname)) {
     return NextResponse.next();
   }
 

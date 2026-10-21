@@ -17,6 +17,7 @@ import {
   Palette,
   RotateCcw,
   Shield,
+  Sparkles,
   User,
   UserCog,
 } from "lucide-react";
@@ -39,6 +40,7 @@ import { AVATAR_STYLES, getDicebearAvatar } from "@/lib/avatar";
 import { emitUserUpdated } from "@/lib/user-events";
 import { useTheme } from "@/lib/theme";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ClaudeConnect } from "@/components/claude-connect";
 import { cn } from "@/lib/utils";
 
 interface SessionUser {
@@ -94,6 +96,10 @@ export default function SettingsPage() {
   const { theme } = useTheme();
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
+  // `/settings?tab=claude` opens a tab directly; the tabs only render after the session loads, client-side
+  const [initialTab] = useState(() =>
+    typeof window === "undefined" ? "profile" : new URLSearchParams(window.location.search).get("tab") ?? "profile"
+  );
 
   // Profile form
   const [name, setName] = useState("");
@@ -239,7 +245,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         ) : (
-          <Tabs defaultValue="profile" className="gap-5">
+          <Tabs defaultValue={initialTab} className="gap-5">
             <TabsList className="h-10 w-full justify-start bg-white p-1 shadow-xs ring-1 ring-slate-200/80 sm:w-fit">
               <TabsTrigger value="profile" className="px-3">
                 <User />
@@ -252,6 +258,10 @@ export default function SettingsPage() {
               <TabsTrigger value="appearance" className="px-3">
                 <Palette />
                 Apparence
+              </TabsTrigger>
+              <TabsTrigger value="claude" className="px-3">
+                <Sparkles />
+                Claude
               </TabsTrigger>
               <TabsTrigger value="integrations" className="px-3">
                 <Key />
@@ -479,6 +489,10 @@ export default function SettingsPage() {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="claude">
+              <ClaudeConnect />
             </TabsContent>
 
             <TabsContent value="integrations" className="space-y-4">
