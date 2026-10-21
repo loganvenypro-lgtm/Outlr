@@ -1,5 +1,5 @@
 import type * as React from "react"
-import { Bookmark, Clapperboard, Eye, Flame, House, Search, Settings, ShieldCheck, Sparkles } from "lucide-react"
+import { Bookmark, Clapperboard, Eye, Flame, House, Plug, Search, Settings, ShieldCheck, Sparkles } from "lucide-react"
 
 export type NavLink = {
   title: string
@@ -72,6 +72,7 @@ export const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
           { title: "Stratège IA", url: "/viral-chat" },
         ],
       },
+      { title: "Connecter Claude", url: "/claude", icon: Plug },
     ],
   },
 ]

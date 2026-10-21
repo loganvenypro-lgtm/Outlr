@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { AlertCircle, Check, Copy, KeyRound, Loader2, Plus, Sparkles, Terminal, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,9 @@ const EXAMPLE_PROMPTS = [
   "Analyse la chaîne @nintendouk : ses meilleures vidéos et sa croissance.",
 ];
 
-const dateFormat = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+const noopSubscribe = () => () => {};
+
+const dateFormat =new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 
 function CopyField({ label, value, mono = true }: { label: string; value: string; mono?: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -67,8 +69,8 @@ export function ClaudeConnect() {
   const [creating, setCreating] = useState(false);
   const [newKey, setNewKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Only mounted client-side, once the settings page has loaded the session
-  const [origin] = useState(() => (typeof window === "undefined" ? "" : window.location.origin));
+  // Empty during server render, the site's own origin once hydrated
+  const origin = useSyncExternalStore(noopSubscribe, () => window.location.origin, () => "");
 
   useEffect(() => {
     fetch("/api/mcp-keys")
