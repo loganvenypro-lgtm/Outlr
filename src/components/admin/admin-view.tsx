@@ -589,7 +589,7 @@ interface AbTest {
   publishedAt: string | null;
   channelName: string | null;
   channelId: string | null;
-  history: { value: string; setAt: string | null; firstSeenAt: string; lastSeenAt: string }[];
+  history: { value: string; setAt: string | null; firstSeenAt: string; lastSeenAt: string; image: string | null }[];
 }
 
 function AbTestsTab() {
@@ -640,20 +640,35 @@ function AbTestsTab() {
                   </div>
                 </div>
               </div>
-              <ol className="flex flex-col gap-1 border-l pl-3 text-sm">
-                {t.history.map((h, i) => (
-                  <li key={i} className="flex flex-col sm:flex-row sm:gap-3">
-                    <span className="w-40 shrink-0 text-xs text-muted-foreground">{fmtDate(h.setAt ?? h.firstSeenAt)}</span>
-                    {t.kind === "title" ? (
-                      <span>{h.value}</span>
-                    ) : (
+              {t.kind === "thumbnail" ? (
+                <div className="flex flex-wrap gap-3">
+                  {t.history.map((h, i) => (
+                    <div key={i} className="flex w-48 flex-col gap-1">
+                      {h.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={h.image} alt={`Miniature n°${i + 1}`} className="aspect-video w-full rounded-md border object-cover" loading="lazy" />
+                      ) : (
+                        <div className="flex aspect-video w-full items-center justify-center rounded-md border border-dashed px-2 text-center text-xs text-muted-foreground">
+                          Image non enregistrée
+                        </div>
+                      )}
+                      <span className="text-xs font-medium">Version {i + 1}</span>
                       <span className="text-xs text-muted-foreground">
-                        Miniature n°{i + 1} (vue du {fmtDate(h.firstSeenAt)} au {fmtDate(h.lastSeenAt)})
+                        Vue du {fmtDate(h.firstSeenAt)} au {fmtDate(h.lastSeenAt)}
                       </span>
-                    )}
-                  </li>
-                ))}
-              </ol>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <ol className="flex flex-col gap-1 border-l pl-3 text-sm">
+                  {t.history.map((h, i) => (
+                    <li key={i} className="flex flex-col sm:flex-row sm:gap-3">
+                      <span className="w-40 shrink-0 text-xs text-muted-foreground">{fmtDate(h.setAt ?? h.firstSeenAt)}</span>
+                      <span>{h.value}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
             </Card>
           ))}
         </>

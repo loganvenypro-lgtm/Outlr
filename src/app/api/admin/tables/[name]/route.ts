@@ -22,7 +22,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     WHERE table_schema = 'public' AND table_name = ${name} ORDER BY ordinal_position`;
   if (columns.length === 0) return NextResponse.json({ error: "Table inconnue." }, { status: 404 });
 
-  const visible = columns.filter((c) => !HIDDEN_COLUMNS.has(c.name as string)).map((c) => c.name as string);
+  // Binary columns (thumbnail images) are left out: shown on the A/B tests tab instead
+  const shown = columns.filter((c) => !HIDDEN_COLUMNS.has(c.name as string) && c.type !== "bytea");
+  const visible = shown.map((c) => c.name as string);
   const sortColumn = SORT_COLUMNS.find((s) => visible.includes(s));
   const table = sql(name);
   // Search the visible columns only, so hidden values can't be guessed through it
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   return NextResponse.json({
     name,
-    columns: columns.filter((c) => !HIDDEN_COLUMNS.has(c.name as string)),
+    columns: shown,
     total,
     page,
     size,

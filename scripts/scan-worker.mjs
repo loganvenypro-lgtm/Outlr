@@ -346,6 +346,21 @@ async function refreshVideoStats(stats, maxCalls) {
   }
 }
 
+// Saves the picture of thumbnail version `etag` (320x180), since YouTube only serves
+// the current one. Skipped if the thumbnail changed between the two requests.
+async function saveThumbnailImage(id, etag) {
+  try {
+    const res = await fetch(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok || res.headers.get('etag')?.replace(/"/g, '') !== etag) return;
+    const image = Buffer.from(await res.arrayBuffer());
+    await sql`
+      UPDATE video_variants SET image = ${image}
+      WHERE youtube_video_id = ${id} AND kind = 'thumbnail' AND value = ${etag} AND image IS NULL`;
+  } catch {
+    // Retried on the next check: the row still has no image.
+  }
+}
+
 // Thumbnail A/B tests: i.ytimg.com's ETag is the Unix time the current thumbnail
 // was set, so a new ETag means the creator (or a Test & Compare run) changed it.
 // Plain HEAD requests on the public CDN, no API quota.
@@ -377,7 +392,8 @@ async function checkThumbnails(stats) {
         INSERT INTO video_variants (youtube_video_id, kind, value, set_at)
         VALUES (${id}, 'thumbnail', ${etag}, ${setAt})
         ON CONFLICT (youtube_video_id, kind, value) DO UPDATE SET last_seen_at = now()
-        RETURNING (xmax = 0) AS inserted`;
+        RETURNING (xmax = 0) AS inserted, image IS NULL AS needs_image`;
+      if (variant.needs_image) await saveThumbnailImage(id, etag);
       if (variant.inserted) {
         const [{ n }] = await sql`
           SELECT count(*)::int AS n FROM video_variants WHERE youtube_video_id = ${id} AND kind = 'thumbnail'`;

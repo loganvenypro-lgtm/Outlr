@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   const ids = tests.map((t) => t.youtube_video_id as string);
   const variants = ids.length
     ? await sql`
-        SELECT youtube_video_id, kind, value, set_at, first_seen_at, last_seen_at
+        SELECT youtube_video_id, kind, value, set_at, first_seen_at, last_seen_at, image IS NOT NULL AS has_image
         FROM video_variants WHERE youtube_video_id = ANY(${ids}) ${kindFilter}
         ORDER BY COALESCE(set_at, first_seen_at)`
     : [];
@@ -58,7 +58,15 @@ export async function GET(request: NextRequest) {
       channelId: t.youtube_channel_id,
       history: variants
         .filter((v) => v.youtube_video_id === t.youtube_video_id && v.kind === t.kind)
-        .map((v) => ({ value: v.value, setAt: v.set_at, firstSeenAt: v.first_seen_at, lastSeenAt: v.last_seen_at })),
+        .map((v) => ({
+          value: v.value,
+          setAt: v.set_at,
+          firstSeenAt: v.first_seen_at,
+          lastSeenAt: v.last_seen_at,
+          image: v.has_image
+            ? `/api/admin/thumbnails?video=${encodeURIComponent(v.youtube_video_id)}&etag=${encodeURIComponent(v.value)}`
+            : null,
+        })),
     })),
   });
 }

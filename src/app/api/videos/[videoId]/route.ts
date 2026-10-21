@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
+import { saveThumbnailImage } from "@/lib/thumbnailVariants";
 
 export const dynamic = "force-dynamic";
 
@@ -50,10 +51,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       const etag = head.headers.get("etag")?.replace(/"/g, "");
       if (head.ok && etag) {
         const setAt = /^\d{9,11}$/.test(etag) ? new Date(Number(etag) * 1000) : null;
-        await sql`
+        const [variant] = await sql`
           INSERT INTO video_variants (youtube_video_id, kind, value, set_at)
           VALUES (${videoId}, 'thumbnail', ${etag}, ${setAt})
-          ON CONFLICT (youtube_video_id, kind, value) DO UPDATE SET last_seen_at = now()`;
+          ON CONFLICT (youtube_video_id, kind, value) DO UPDATE SET last_seen_at = now()
+          RETURNING image IS NULL AS needs_image`;
+        if (variant.needs_image) await saveThumbnailImage(videoId, etag);
         await sql`UPDATE videos SET thumb_checked_at = now() WHERE youtube_video_id = ${videoId}`;
       }
     } catch {
