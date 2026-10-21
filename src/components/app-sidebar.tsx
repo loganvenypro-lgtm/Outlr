@@ -4,24 +4,22 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  BarChart3,
   Bookmark,
+  ChevronDown,
   Clapperboard,
   Eye,
   Flame,
-  FlaskConical,
-  GitCompareArrows,
   House,
-  Image as ImageIcon,
-  LineChart,
-  MessageSquareText,
-  Radar,
   Search,
   Settings,
-  TrendingUp,
-  Users,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { NavUser } from "@/components/nav-user"
 import { getDicebearAvatar } from "@/lib/avatar"
 import { USER_UPDATED_EVENT, type PublicUser } from "@/lib/user-events"
@@ -34,56 +32,168 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
-type NavItem = {
+type NavLink = {
   title: string
   url: string
   icon: React.ComponentType<{ className?: string }>
   badge?: string
 }
 
-const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+// A folder groups several links under one collapsible entry.
+type NavFolder = {
+  title: string
+  icon: React.ComponentType<{ className?: string }>
+  items: Omit<NavLink, "icon">[]
+}
+
+type NavEntry = NavLink | NavFolder
+
+const isFolder = (entry: NavEntry): entry is NavFolder => "items" in entry
+
+const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
   {
     label: "Découvrir",
     items: [
       { title: "Accueil", url: "/", icon: House },
-      { title: "Vidéos virales", url: "/dashboard", icon: Flame, badge: "Live" },
-      { title: "Channel Trends", url: "/channel-trends", icon: LineChart, badge: "Live" },      { title: "Tendances YouTube", url: "/trending", icon: TrendingUp },
-      { title: "Radar global", url: "/radar", icon: Radar },
-      { title: "Recherche de niche", url: "/niche-finder", icon: BarChart3 },
-      { title: "Trouver une chaîne", url: "/channel-finder", icon: Search },
+      {
+        title: "Tendances",
+        icon: Flame,
+        items: [
+          { title: "Vidéos virales", url: "/dashboard", badge: "Live" },
+          { title: "Channel Trends", url: "/channel-trends", badge: "Live" },
+          { title: "Tendances YouTube", url: "/trending" },
+          { title: "Radar global", url: "/radar" },
+        ],
+      },
+      {
+        title: "Recherche",
+        icon: Search,
+        items: [
+          { title: "Recherche de niche", url: "/niche-finder" },
+          { title: "Trouver une chaîne", url: "/channel-finder" },
+        ],
+      },
     ],
   },
   {
     label: "Suivi",
     items: [
       { title: "Mes dossiers", url: "/folders", icon: Bookmark },
-      { title: "Chaînes suivies", url: "/tracking", icon: Eye },
-      { title: "Chaînes similaires", url: "/dashboard/similar-channels", icon: Users },
-      { title: "Comparer", url: "/compare", icon: GitCompareArrows },
+      {
+        title: "Chaînes",
+        icon: Eye,
+        items: [
+          { title: "Chaînes suivies", url: "/tracking" },
+          { title: "Chaînes similaires", url: "/dashboard/similar-channels" },
+          { title: "Comparer", url: "/compare" },
+        ],
+      },
     ],
   },
   {
     label: "Création",
     items: [
       { title: "Studio", url: "/tubelab", icon: Clapperboard },
-      { title: "Title Lab", url: "/title-lab", icon: FlaskConical },
-      { title: "Miniatures", url: "/thumbnail-intelligence", icon: ImageIcon },
-      { title: "Stratège IA", url: "/viral-chat", icon: MessageSquareText },
+      {
+        title: "Outils IA",
+        icon: Sparkles,
+        items: [
+          { title: "Title Lab", url: "/title-lab" },
+          { title: "Miniatures", url: "/thumbnail-intelligence" },
+          { title: "Stratège IA", url: "/viral-chat" },
+        ],
+      },
     ],
   },
 ]
+
+const NAV_BUTTON =
+  "h-9 rounded-lg px-2.5 text-[14px] font-medium text-sidebar-foreground/85 hover:text-sidebar-foreground [&_svg]:size-[18px] [&_svg]:text-sidebar-foreground/70"
+
+const NAV_BUTTON_ACTIVE =
+  "data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:[&_svg]:text-sidebar-primary-foreground"
 
 const FALLBACK_USER = {
   name: "Logan",
   email: "logan@outlr.io",
   avatar: getDicebearAvatar("logan@outlr.io"),
+}
+
+function NavBadge({ label }: { label: string }) {
+  return (
+    <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 group-data-[collapsible=icon]:hidden dark:text-emerald-400">
+      {label}
+    </span>
+  )
+}
+
+function NavFolderItem({ folder, isActive }: { folder: NavFolder; isActive: (url: string) => boolean }) {
+  const { state, isMobile } = useSidebar()
+  const hasActiveChild = folder.items.some((item) => isActive(item.url))
+  const [open, setOpen] = React.useState(hasActiveChild)
+
+  // Opening a page inside a closed folder reveals it.
+  React.useEffect(() => {
+    if (hasActiveChild) setOpen(true)
+  }, [hasActiveChild])
+
+  // With the sidebar reduced to icons the folder can't unfold, so it links to its first page.
+  if (state === "collapsed" && !isMobile) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          tooltip={folder.title}
+          isActive={hasActiveChild}
+          className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+          render={<Link href={folder.items[0].url} />}
+        >
+          <folder.icon />
+          <span>{folder.title}</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    )
+  }
+
+  return (
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+      className="group/collapsible"
+      render={<SidebarMenuItem />}
+    >
+      <CollapsibleTrigger render={<SidebarMenuButton tooltip={folder.title} className={NAV_BUTTON} />}>
+        <folder.icon />
+        <span>{folder.title}</span>
+        <ChevronDown className="ml-auto size-4! text-sidebar-foreground/45! transition-transform duration-200 group-data-open/collapsible:rotate-180" />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0">
+        <SidebarMenuSub className="mx-0 mt-0.5 ml-[19px] gap-0.5 pr-0 pl-3">
+          {folder.items.map((item) => (
+            <SidebarMenuSubItem key={item.url}>
+              <SidebarMenuSubButton
+                isActive={isActive(item.url)}
+                className="h-9 rounded-lg px-3 text-[13.5px] text-sidebar-foreground/70 hover:text-sidebar-foreground data-active:bg-sidebar-primary data-active:font-medium data-active:text-sidebar-primary-foreground data-active:shadow-sm"
+                render={<Link href={item.url} />}
+              >
+                <span className="truncate">{item.title}</span>
+                {item.badge && !isActive(item.url) && <NavBadge label={item.badge} />}
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          ))}
+        </SidebarMenuSub>
+      </CollapsibleContent>
+    </Collapsible>
+  )
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -117,7 +227,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isActive = (url: string) => (url === "/" ? pathname === "/" : pathname === url)
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" className="font-sidebar" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -136,27 +246,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         {NAV_GROUPS.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+          <SidebarGroup key={group.label} className="py-1.5">
+            <SidebarGroupLabel className="h-7 px-2.5 text-[11px] font-semibold tracking-[0.08em] text-sidebar-foreground/45 uppercase">
+              {group.label}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.url + item.title}>
-                    <SidebarMenuButton
-                      tooltip={item.title}
-                      isActive={isActive(item.url)}
-                      render={<Link href={item.url} />}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                    {item.badge && (
-                      <SidebarMenuBadge className="rounded-md bg-emerald-500/10 text-[10px] font-semibold text-emerald-700">
-                        {item.badge}
-                      </SidebarMenuBadge>
-                    )}
-                  </SidebarMenuItem>
-                ))}
+              <SidebarMenu className="gap-0.5">
+                {group.items.map((entry) =>
+                  isFolder(entry) ? (
+                    <NavFolderItem key={entry.title} folder={entry} isActive={isActive} />
+                  ) : (
+                    <SidebarMenuItem key={entry.url}>
+                      <SidebarMenuButton
+                        tooltip={entry.title}
+                        isActive={isActive(entry.url)}
+                        className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+                        render={<Link href={entry.url} />}
+                      >
+                        <entry.icon />
+                        <span>{entry.title}</span>
+                        {entry.badge && <NavBadge label={entry.badge} />}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -164,17 +277,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu>
+        <SidebarMenu className="gap-0.5">
           {isAdmin && (
             <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Admin" isActive={isActive("/admin")} render={<Link href="/admin" />}>
+              <SidebarMenuButton
+                tooltip="Admin"
+                isActive={isActive("/admin")}
+                className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+                render={<Link href="/admin" />}
+              >
                 <ShieldCheck />
                 <span>Admin</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Paramètres" isActive={isActive("/settings")} render={<Link href="/settings" />}>
+            <SidebarMenuButton
+              tooltip="Paramètres"
+              isActive={isActive("/settings")}
+              className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+              render={<Link href="/settings" />}
+            >
               <Settings />
               <span>Paramètres</span>
             </SidebarMenuButton>
