@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "vercel": {
+      "type": "http",
+      "url": "https://mcp.vercel.com"
+    },
+    "outlr": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", "scripts/mcp-server.mjs"]
+    }
+  }
+}

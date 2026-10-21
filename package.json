@@ -9,7 +9,8 @@
     "lint": "eslint",
     "worker": "node scripts/outliers-cron-worker.mjs",
     "scan": "node scripts/scan-worker.mjs",
-    "scan:once": "node scripts/scan-worker.mjs --once"
+    "scan:once": "node scripts/scan-worker.mjs --once",
+    "mcp": "node scripts/mcp-server.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -33,6 +34,7 @@
     "uuid": "^14.0.3"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -40,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zod": "^4.6.7"
   }
 }
