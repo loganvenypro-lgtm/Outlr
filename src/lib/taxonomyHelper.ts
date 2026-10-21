@@ -3,6 +3,8 @@
  * Infers Category, Niche, Sub-niche, Clean Subject and Title Format
  */
 
+import { classifyTitle, type NicheId } from "./nicheClassifier";
+
 export const ALGROW_CATEGORIES = [
   "All Categories",
   "Tutorial",
@@ -23,6 +25,8 @@ export const ALGROW_CATEGORIES = [
 
 export const ALGROW_NICHES = [
   "Any niche",
+  "Business & e-commerce",
+  "Finance & investing",
   "News & politics",
   "Stories & drama",
   "Gaming",
@@ -43,11 +47,13 @@ export const ALGROW_SUB_NICHES: Record<string, string[]> = {
     "Minecraft & SMP",
     "True Crime & Mystery",
     "Science Explained",
-    "Supercars & Mechanics",
+    "SupercSars & Mechanics",
     "Reddit Stories",
     "Gaming Documentaries",
     "Historical Deep Dives",
   ],
+  "Business & e-commerce": ["Dropshipping & E-commerce", "Ads & Media Buying", "Marketing & Copywriting", "Make Money Online", "Agency & Entrepreneurship"],
+  "Finance & investing": ["Stock Market", "Crypto", "Real Estate", "Personal Finance", "Economy"],
   "News & politics": ["Global Politics", "Elections", "War & Conflicts", "Geopolitics", "Law & Court"],
   "Stories & drama": ["Reddit Stories", "Confessions", "Family Drama", "Cheating & Relationships", "Mysteries"],
   "Gaming": ["Minecraft & SMP", "Roblox & Challenges", "Gaming Documentaries", "Speedruns & Lore", "FPS & Esports"],
@@ -77,10 +83,35 @@ export function inferVideoCategory(title: string): string {
   if (/story|reddit|stories|confession|what happened|historia|conte/i.test(t)) return "Stories";
   if (/science|physics|math|biology|history|ancient|learn|explained|cours/i.test(t)) return "Educational";
   if (/minecraft|roblox|gta|fortnite|game|gaming|speedrun|pokemon|zelda|smp/i.test(t)) return "Gaming";
+  // Business / money / tech advice without a "how to" is still educational, not a documentary.
+  const niche = classifyTitle(title);
+  if (niche === "business_ecommerce" || niche === "finance_investing" || niche === "tech_ai") return "Educational";
   return "Documentary";
 }
 
+const NICHE_TO_ALGROW: Partial<Record<NicheId, string>> = {
+  business_ecommerce: "Business & e-commerce",
+  finance_investing: "Finance & investing",
+  tech_ai: "Education & science",
+  science_education: "Education & science",
+  true_crime: "True crime",
+  documentary_history: "History",
+  gaming: "Gaming",
+  challenge_entertainment: "Celebrity & entertainment",
+  sports: "Sports",
+  news_politics: "News & politics",
+  autos: "Autos",
+  comedy: "Comedy & memes",
+  stories_drama: "Stories & drama",
+};
+
 export function inferVideoNiche(title: string, rawQuery?: string): string {
+  // Weighted, word-boundary classifier first (the regexes below match substrings,
+  // e.g. "ai" in "said" or "war" in "software"), the title alone before its context.
+  const classified = classifyTitle(title) ?? classifyTitle(title, rawQuery);
+  const mapped = classified ? NICHE_TO_ALGROW[classified] : undefined;
+  if (mapped) return mapped;
+
   const t = `${title || ""} ${rawQuery || ""}`.toLowerCase();
   if (/crime|mystery|killer|dark|murder|unsolved|police|detective|investigation|creepy/i.test(t)) return "True crime";
   if (/politics|election|president|war|government|news|court|senate|trump|biden|putin|geopolitics/i.test(t)) return "News & politics";
@@ -129,6 +160,8 @@ export function inferVideoTaxonomy(video: {
   else if (niche === "Sports") subNiche = "Sports Highlights & Stories";
   else if (niche === "Comedy & memes") subNiche = "Memes & Viral Humor";
   else if (niche === "Religion & spirituality") subNiche = "Spiritual Philosophy";
+  else if (niche === "Business & e-commerce") subNiche = /drop ?ship|shopify|e-?com|fba|store/i.test(t) ? "Dropshipping & E-commerce" : /ads?|roas|cpm|media buy/i.test(t) ? "Ads & Media Buying" : "Make Money Online";
+  else if (niche === "Finance & investing") subNiche = /crypto|bitcoin|ethereum/i.test(t) ? "Crypto" : /real estate|immobilier/i.test(t) ? "Real Estate" : "Stock Market";
 
   // Clean Subject Extraction
   let subject = title

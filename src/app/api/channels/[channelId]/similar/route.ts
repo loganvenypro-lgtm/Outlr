@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
+import { classifyChannel, titleMatchesNiche } from "@/lib/nicheClassifier";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const { channelId } = await params;
 
   try {
-    const [channel] = await sql`SELECT id FROM channels WHERE youtube_channel_id = ${channelId}`;
+    const [channel] = await sql`SELECT id, name FROM channels WHERE youtube_channel_id = ${channelId}`;
     if (!channel) return NextResponse.json({ error: "Chaîne introuvable." }, { status: 404 });
 
     const titles = await sql`
@@ -54,6 +55,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const category = mode(titles.map((t) => t.category_id as number | null));
     const language = mode(titles.map((t) => t.language as string | null));
     const query = keywords.join(" | ");
+    const niche = classifyChannel({ titles: titles.map((t) => t.title as string), name: channel.name as string });
 
     const rows = await sql`
       WITH matches AS (
@@ -73,17 +75,35 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.country,
         c.channel_created_at, c.outlier_rate, c.opportunity_score, c.trend_score,
         m.matching_videos,
+        (SELECT array_agg(title) FROM (
+          SELECT title FROM videos WHERE channel_id = c.id ORDER BY published_at DESC LIMIT 20
+        ) recent) AS recent_titles,
         m.relevance * (CASE WHEN m.same_category THEN 1.5 ELSE 1 END) * (CASE WHEN m.same_language THEN 1.5 ELSE 1 END) AS score
       FROM matches m
       JOIN channels c ON c.id = m.channel_id
       WHERE c.rss_error_count < 5 AND m.matching_videos >= 2 AND COALESCE(c.subscriber_count, 0) >= 1000
       ORDER BY score DESC
-      LIMIT 12`;
+      LIMIT 40`;
+
+    // Keep channels in the same niche: a shared word ("ads", "story") is not enough
+    // for a documentary channel to count as similar to a dropshipping one.
+    const ranked = niche.id
+      ? rows
+          .map((r) => {
+            const recent = (r.recent_titles as string[] | null) ?? [];
+            const share = recent.length ? recent.filter((t) => titleMatchesNiche(t, niche.id!)).length / recent.length : 0;
+            return { r, share, score: Number(r.score) * (0.5 + share * 2) };
+          })
+          .filter((x) => x.share >= 0.2)
+          .sort((a, b) => b.score - a.score)
+          .map((x) => x.r)
+      : rows;
 
     const num = (value: unknown) => (value != null ? Number(value) : null);
     return NextResponse.json({
       keywords,
-      items: rows.map((r) => ({
+      niche: niche.id ? { id: niche.id, label: niche.label } : null,
+      items: ranked.slice(0, 12).map((r) => ({
         id: r.youtube_channel_id as string,
         name: r.name as string,
         handle: (r.handle as string) ?? null,

@@ -7,6 +7,8 @@ import {
 } from "@/types/competitorEngine";
 import { parseISO8601Duration } from "./utils";
 import { resolveChannelId } from "./similarityEngine";
+import { classifyChannel, nicheTsQuery, type NicheId } from "./nicheClassifier";
+import { sql } from "./postgres";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 
@@ -35,104 +37,116 @@ function tokenize(text: string): string[] {
     .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
 }
 
+type ArchetypeInfo = { archetype: NicheEditorialArchetype; label: string; tags: string[]; titlePatterns: string[] };
+
+const ARCHETYPES: Record<NicheId, ArchetypeInfo> = {
+  business_ecommerce: {
+    archetype: "ecommerce_online_business",
+    label: "Business en ligne, E-commerce & Marketing",
+    tags: ["E-commerce & Dropshipping", "Publicité & Acquisition", "Marketing & Copywriting", "Argent en ligne"],
+    titlePatterns: ['"How I Made $[X]/Month With...", "[N] Ways to Scale..."', '"Stop Doing [X], Start Doing [Y]"'],
+  },
+  finance_investing: {
+    archetype: "finance_business_economics",
+    label: "Business, Finance & Économie",
+    tags: ["Finance", "Investissement", "Business Breakdown", "Marchés"],
+    titlePatterns: ['"How [Company] Makes Money", "The Collapse of..."'],
+  },
+  tech_ai: {
+    archetype: "tech_ai_software_reviews",
+    label: "Tech, Intelligence Artificielle & Ingénierie",
+    tags: ["Tech Review", "IA & Outils", "Ingénierie", "Futurisme"],
+    titlePatterns: ['"I Tested...", "The Future of [Tech]"'],
+  },
+  true_crime: {
+    archetype: "investigation_true_crime_mystery",
+    label: "Documentaires Enquête, Crime & Mystères Internet",
+    tags: ["Mini-documentaire", "Investigation", "True Crime", "Mystères", "Rabbit Hole"],
+    titlePatterns: ['"The [Subject]" Definitive Title', "Unsolved / Cold Case Mystery"],
+  },
+  documentary_history: {
+    archetype: "video_essay_documentary",
+    label: "Video Essay & Documentaire Long-Format",
+    tags: ["Video Essay", "Documentaire Storytelling", "Histoire & Société", "Production Soignée"],
+    titlePatterns: ['"The Rise and Fall of...", "The Story of..."', '"Why..." Deep Dive'],
+  },
+  science_education: {
+    archetype: "educational_science_engineering",
+    label: "Vulgarisation Scientifique & Éducation",
+    tags: ["Science", "Physique & Maths", "Expériences", "Éducation"],
+    titlePatterns: ['"Why [Phenomenon] Happens", "The Paradox of..."'],
+  },
+  gaming: {
+    archetype: "gaming_challenges_entertainment",
+    label: "Gaming, Défis & Divertissement",
+    tags: ["Gaming", "Défis & Hardcore", "Mods & Gameplay", "Multiplayer"],
+    titlePatterns: ['"100 Days...", "I beat [Game] but..."'],
+  },
+  challenge_entertainment: {
+    archetype: "gaming_challenges_entertainment",
+    label: "Spectacle & Défis Extrêmes (Challenge & Stunt Entertainment)",
+    tags: ["Défis Extrêmes", "Spectacle & Production", "Retention Maximale", "Concept Viral", "Grand Public"],
+    titlePatterns: ['"I Spent [X] Hours in...", "Last to Leave [Place] Wins...", "$1 vs $1,000,000..."'],
+  },
+  fitness_health: {
+    archetype: "fitness_health_lifestyle",
+    label: "Fitness, Santé & Lifestyle",
+    tags: ["Fitness", "Nutrition", "Santé", "Lifestyle"],
+    titlePatterns: ['"I Tried [X] for 30 Days", "The Best [Exercise] for..."'],
+  },
+  sports: {
+    archetype: "general_creator",
+    label: "Sport & Athlètes",
+    tags: ["Sport", "Athlètes", "Highlights", "Analyses"],
+    titlePatterns: ['"The Day [Athlete]...", "Why [Team] Is..."'],
+  },
+  news_politics: {
+    archetype: "storytelling_commentary",
+    label: "Actualité, Politique & Géopolitique",
+    tags: ["Actualité", "Politique", "Géopolitique", "Analyse"],
+    titlePatterns: ['"What Happened in...", "Why [Country]..."'],
+  },
+  autos: {
+    archetype: "general_creator",
+    label: "Automobile & Mécanique",
+    tags: ["Voitures", "Mécanique", "Restaurations", "Supercars"],
+    titlePatterns: ['"I Bought the Cheapest [Car]...", "Rebuilding a..."'],
+  },
+  comedy: {
+    archetype: "storytelling_commentary",
+    label: "Humour, Sketchs & Memes",
+    tags: ["Humour", "Sketchs", "Memes", "Commentaire"],
+    titlePatterns: ["Titres punchline & formats courts"],
+  },
+  stories_drama: {
+    archetype: "storytelling_commentary",
+    label: "Storytelling, Histoires & Drama",
+    tags: ["Storytime", "Reddit Stories", "Drama", "Confessions"],
+    titlePatterns: ['"AITA for...", "My [Relative] Did [X]..."'],
+  },
+};
+
+const GENERAL_ARCHETYPE: ArchetypeInfo = {
+  archetype: "general_creator",
+  label: "Créateur Généraliste & Divertissement",
+  tags: ["Divertissement", "Créateur de Contenu", "Vlog / Lifestyle"],
+  titlePatterns: ["Titres accrocheurs généralistes"],
+};
+
 /**
- * Editorial Archetype Classification based on actual video titles, descriptions & pacing
+ * Editorial Archetype Classification based on actual video titles and description.
+ * Scored across every niche (see nicheClassifier) instead of first-match rules, so
+ * long videos or a word like "secret" no longer turn a business channel into a
+ * documentary or true-crime one.
  */
 export function classifyEditorialArchetype(
   titles: string[],
   description: string,
-  avgDurationSeconds: number
-): { archetype: NicheEditorialArchetype; label: string; tags: string[]; titlePatterns: string[] } {
-  const joinedText = `${titles.join(" ")} ${description}`.toLowerCase();
-
-  // 1. Investigation / Mystery / True Crime
-  if (
-    joinedText.match(/murder|unsolved|killer|mystery|hunt for|disappeared|investigation|crime|cartel|bizarre|rabbit hole|disturbing|conspiracy|dark web|secret/)
-  ) {
-    const patterns = [];
-    if (titles.some((t) => t.toLowerCase().startsWith("the "))) patterns.push('"The [Subject]" Definitive Title');
-    if (titles.some((t) => t.toLowerCase().includes("unsolved") || t.toLowerCase().includes("murder"))) patterns.push('Unsolved / Cold Case Mystery');
-    if (titles.some((t) => t.toLowerCase().includes("hunt for"))) patterns.push('The Hunt / Manhunt Framing');
-
-    return {
-      archetype: "investigation_true_crime_mystery",
-      label: "Documentaires Enquête, Crime & Mystères Internet",
-      tags: ["Mini-documentaire", "Investigation", "True Crime", "Mystères", "Rabbit Hole"],
-      titlePatterns: patterns.length > 0 ? patterns : ["Intrigue & Histoire Non Résolue"],
-    };
-  }
-
-  // 2. Video Essay / High-production Documentary
-  if (
-    avgDurationSeconds >= 900 || // > 15 mins
-    joinedText.match(/documentary|essay|rise and fall|downfall|history of|story of|evolution of|tragedy of|how .* ruined|the truth about/)
-  ) {
-    return {
-      archetype: "video_essay_documentary",
-      label: "Video Essay & Documentaire Long-Format",
-      tags: ["Video Essay", "Documentaire Storytelling", "Histoire & Société", "Production Soignée"],
-      titlePatterns: ['"The Rise and Fall of...", "The Story of..."', '"Why..." Deep Dive'],
-    };
-  }
-
-  // 3. Finance & Business
-  if (joinedText.match(/finance|invest|money|crypto|bitcoin|bourse|trading|economy|business|billionaire|wealth|passive income/)) {
-    return {
-      archetype: "finance_business_economics",
-      label: "Business, Finance & Économie",
-      tags: ["Finance", "Investissement", "Business Breakdown", "Marchés"],
-      titlePatterns: ['"How [Company] Makes Money", "The Collapse of..."'],
-    };
-  }
-
-  // 4. Tech & AI
-  if (joinedText.match(/tech|ai|software|coding|artificial intelligence|hardware|apple|smartphone|gadget|developer|engineering/)) {
-    return {
-      archetype: "tech_ai_software_reviews",
-      label: "Tech, Intelligence Artificielle & Ingénierie",
-      tags: ["Tech Review", "IA & Outils", "Ingénierie", "Futurisme"],
-      titlePatterns: ['"I Tested...", "The Future of [Tech]"'],
-    };
-  }
-
-  // 5. High-Production Challenge, Stunt & Spectacle Entertainment (e.g. MrBeast, Mark Rober, Ryan Trahan, Airrack)
-  if (
-    joinedText.match(/survive|survived|hours in|stunt|challenge|giveaway|last to leave|win \$|prize|trapped|world's|bought|extreme|experiment|mrbeast/)
-  ) {
-    return {
-      archetype: "gaming_challenges_entertainment",
-      label: "Spectacle & Défis Extrêmes (Challenge & Stunt Entertainment)",
-      tags: ["Défis Extrêmes", "Spectacle & Production", "Retention Maximale", "Concept Viral", "Grand Public"],
-      titlePatterns: ['"I Spent [X] Hours in...", "Last to Leave [Place] Wins...", "$1 vs $1,000,000..."'],
-    };
-  }
-
-  // 6. Gaming
-  if (joinedText.match(/gameplay|minecraft|roblox|pokemon|gta|fortnite|hardcore|speedrun|gaming/)) {
-    return {
-      archetype: "gaming_challenges_entertainment",
-      label: "Gaming, Défis & Divertissement",
-      tags: ["Gaming", "Défis & Hardcore", "Mods & Gameplay", "Multiplayer"],
-      titlePatterns: ['"100 Days...", "I beat [Game] but..."'],
-    };
-  }
-
-  // 7. Science & Education
-  if (joinedText.match(/science|physics|math|biology|space|nasa|quantum|experiment|veritasium|education/)) {
-    return {
-      archetype: "educational_science_engineering",
-      label: "Vulgarisation Scientifique & Éducation",
-      tags: ["Science", "Physique & Maths", "Expériences", "Éducation"],
-      titlePatterns: ['"Why [Phenomenon] Happens", "The Paradox of..."'],
-    };
-  }
-
-  return {
-    archetype: "general_creator",
-    label: "Créateur Généraliste & Divertissement",
-    tags: ["Divertissement", "Créateur de Contenu", "Vlog / Lifestyle"],
-    titlePatterns: ['Titres accrocheurs généralistes'],
-  };
+  _avgDurationSeconds: number,
+  name = ""
+): ArchetypeInfo & { nicheId: NicheId | null } {
+  const niche = classifyChannel({ titles, description, name });
+  return { ...(niche.id ? ARCHETYPES[niche.id] : GENERAL_ARCHETYPE), nicheId: niche.id };
 }
 
 /**
@@ -171,7 +185,7 @@ export function estimateAudienceDemographics(
   }
 
   // 3. Finance & Business
-  if (archetype === "finance_business_economics") {
+  if (archetype === "finance_business_economics" || archetype === "ecommerce_online_business") {
     return {
       primaryAgeBracket: "25-34",
       estimatedGenderSplit: { male: 78, female: 22 },
@@ -206,7 +220,9 @@ export function estimateAudienceDemographics(
 }
 
 /**
- * Generate targeted Competitor Graph queries based on Channel Identity
+ * Generate targeted Competitor Graph queries based on Channel Identity.
+ * Only documentary-style channels get "documentary" appended: adding it to a
+ * dropshipping channel's queries used to return documentary channels.
  */
 export function generateCompetitorQueries(
   channelTitle: string,
@@ -215,54 +231,57 @@ export function generateCompetitorQueries(
   dominantKeywords: string[]
 ): string[] {
   const queries = new Set<string>();
+  const isDocumentary = archetype === "investigation_true_crime_mystery" || archetype === "video_essay_documentary";
 
-  // 1. Video-based competitor discovery: Find who else covered the EXACT same subjects/cases
-  for (const title of topVideoTitles.slice(0, 4)) {
-    const tokens = tokenize(title);
-    if (tokens.length >= 3) {
-      queries.add(`${tokens.slice(0, 4).join(" ")} documentary`);
-    }
-  }
-
-  // 2. Archetype & Editorial Niche discovery
-  if (archetype === "investigation_true_crime_mystery") {
+  // 1. Archetype & Editorial Niche discovery (most reliable, so first)
+  if (archetype === "ecommerce_online_business") {
+    queries.add("dropshipping shopify store tutorial");
+    queries.add("facebook ads ecommerce scaling");
+    queries.add("ecommerce brand marketing copywriting");
+    queries.add("make money online business");
+  } else if (archetype === "investigation_true_crime_mystery") {
     queries.add("mini documentary essay channel");
     queries.add("internet mystery documentary youtube");
     queries.add("unsolved case mini documentary");
-    queries.add("Cipher Artium documentary");
     queries.add("creepy internet investigations");
   } else if (archetype === "video_essay_documentary") {
     queries.add("video essay documentary channels");
     queries.add("deep dive video essay storytelling");
-    queries.add("cultural documentary video essay");
     queries.add("rise and fall documentary youtube");
   } else if (archetype === "finance_business_economics") {
-    queries.add("business breakdown documentary");
-    queries.add("company downfall documentary");
-    queries.add("financial mini documentary channel");
+    queries.add("investing personal finance channel");
+    queries.add("stock market investing explained");
+    queries.add("business breakdown how companies make money");
   } else if (archetype === "tech_ai_software_reviews") {
-    queries.add("tech documentary video essay");
-    queries.add("ai tech deep dive channel");
-    queries.add("silicon valley documentary");
+    queries.add("ai tools tech channel");
+    queries.add("tech review gadgets");
   } else if (archetype === "gaming_challenges_entertainment") {
     const isMrBeastStyle = channelTitle.toLowerCase().includes("beast") || topVideoTitles.some((t) => t.toLowerCase().includes("survive") || t.toLowerCase().includes("hours in") || t.toLowerCase().includes("$"));
     if (isMrBeastStyle) {
       queries.add("extreme challenges entertainment channels");
-      queries.add("survive 100 hours challenge youtube");
       queries.add("viral stunt challenge channels");
-      queries.add("high production challenge videos");
     } else {
       queries.add("hardcore challenge gaming");
       queries.add("gaming video essay");
     }
   } else if (archetype === "educational_science_engineering") {
-    queries.add("science documentary video essay");
+    queries.add("science explained channel");
     queries.add("physics engineering deep dive channel");
+  } else if (archetype === "fitness_health_lifestyle") {
+    queries.add("fitness workout nutrition channel");
+  }
+
+  // 2. Video-based competitor discovery: who else covered the same subjects
+  for (const title of topVideoTitles.slice(0, 3)) {
+    const tokens = tokenize(title);
+    if (tokens.length >= 3) {
+      queries.add(`${tokens.slice(0, 4).join(" ")}${isDocumentary ? " documentary" : ""}`);
+    }
   }
 
   // 3. Dominant keywords cross search
   if (dominantKeywords.length >= 2) {
-    queries.add(`${dominantKeywords[0]} ${dominantKeywords[1]} documentary essay`);
+    queries.add(`${dominantKeywords[0]} ${dominantKeywords[1]}${isDocumentary ? " documentary essay" : ""}`);
   }
 
   return Array.from(queries).slice(0, 8);
@@ -288,12 +307,18 @@ export function scoreCompetitorMatch(
   const candArchetype = classifyEditorialArchetype(
     candidate.videoTitles,
     candidate.description,
-    candidate.avgDurationSeconds
+    candidate.avgDurationSeconds,
+    candidate.title
   );
 
   let editorialArchetypeScore = 30;
   if (candArchetype.archetype === ref.archetype) {
     editorialArchetypeScore = 95;
+  } else if (
+    (ref.archetype === "ecommerce_online_business" && candArchetype.archetype === "finance_business_economics") ||
+    (ref.archetype === "finance_business_economics" && candArchetype.archetype === "ecommerce_online_business")
+  ) {
+    editorialArchetypeScore = 65;
   } else if (
     (ref.archetype === "investigation_true_crime_mystery" && candArchetype.archetype === "video_essay_documentary") ||
     (ref.archetype === "video_essay_documentary" && candArchetype.archetype === "investigation_true_crime_mystery")
@@ -481,7 +506,8 @@ export async function discoverTrueCompetitors(
   const archetypeInfo = classifyEditorialArchetype(
     refTitles,
     refItem.snippet?.description || "",
-    avgDuration
+    avgDuration,
+    refItem.snippet?.title || ""
   );
 
   const dominantTokens = tokenize(refTitles.join(" ")).slice(0, 10);
@@ -523,8 +549,32 @@ export async function discoverTrueCompetitors(
 
   const channelCoOccurrenceMap = new Map<string, number>();
 
+  // Channels already in our database whose titles use the niche vocabulary come
+  // first: free, and they keep the search.list quota (100/day) for gaps.
+  const nicheQuery = nicheTsQuery(archetypeInfo.nicheId);
+  if (nicheQuery) {
+    try {
+      const rows = await sql`
+        SELECT c.youtube_channel_id, count(*)::int AS hits
+        FROM videos v JOIN channels c ON c.id = v.channel_id
+        WHERE to_tsvector('simple', v.title) @@ to_tsquery('simple', ${nicheQuery})
+          AND v.published_at > now() - interval '365 days'
+          AND c.youtube_channel_id <> ${channelId}
+          AND COALESCE(c.subscriber_count, 0) >= 1000
+        GROUP BY c.youtube_channel_id
+        HAVING count(*) >= 3
+        ORDER BY hits DESC
+        LIMIT 15`;
+      for (const r of rows) channelCoOccurrenceMap.set(r.youtube_channel_id as string, Math.min(5, Math.ceil(Number(r.hits) / 3)));
+      emit({ type: "log", message: `Base Outlr : ${rows.length} chaînes de la même niche` });
+    } catch (dbErr) {
+      console.error("[SimilarChannels] DB candidates error:", dbErr);
+    }
+  }
+  const searchQueries = queries.slice(0, channelCoOccurrenceMap.size >= 8 ? 2 : 5);
+
   await Promise.all(
-    queries.map(async (q) => {
+    searchQueries.map(async (q) => {
       try {
         const sRes = await fetch(
           `${YOUTUBE_API_BASE}/search?part=snippet&type=video&q=${encodeURIComponent(q)}&maxResults=20&key=${apiKey}`,
@@ -547,7 +597,7 @@ export async function discoverTrueCompetitors(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20)
     .map(([cid]) => cid);
-  emit({ type: "candidates", count: rankedCandidateIds.length, queries });
+  emit({ type: "candidates", count: rankedCandidateIds.length, queries: searchQueries });
 
   // Batch fetch candidate channels info
   let candidateChannelsData: any[] = [];
@@ -614,7 +664,8 @@ export async function discoverTrueCompetitors(
       const candArchetype = classifyEditorialArchetype(
         cVideos.map((v) => v.title),
         cand.snippet?.description || "",
-        cAvgDuration
+        cAvgDuration,
+        cand.snippet?.title || ""
       );
 
       const { score, breakdown } = scoreCompetitorMatch(
@@ -675,6 +726,13 @@ export async function discoverTrueCompetitors(
 
   // Sort descending by Similarity Score
   competitors.sort((a, b) => b.similarityScore - a.similarityScore);
+
+  // Drop candidates from another niche (e.g. documentaries for a dropshipping
+  // channel) as long as enough on-niche competitors remain.
+  if (archetypeInfo.nicheId) {
+    const onNiche = competitors.filter((c) => c.breakdown.editorialArchetypeScore > 30);
+    if (onNiche.length >= 3) competitors.splice(0, competitors.length, ...onNiche);
+  }
 
   // Persist to Continuous Unified Intelligence Database
   try {

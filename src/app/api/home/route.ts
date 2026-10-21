@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { verifySessionToken } from "@/lib/auth";
+import { classifyChannel, nicheTsQuery, titleMatchesNiche, type NicheClassification } from "@/lib/nicheClassifier";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +85,8 @@ export async function GET(request: NextRequest) {
           FROM channels c WHERE c.youtube_channel_id = ${myChannelId}`
       : [];
 
-    // Niche = keywords of my recent titles, plus my main category and language.
+    // Niche = topic classified from my recent titles, plus their keywords, main category and language.
+    let niche: NicheClassification | null = null;
     let keywords: string[] = [];
     let category: number | null = null;
     let language: string | null = null;
@@ -97,6 +99,7 @@ export async function GET(request: NextRequest) {
         ORDER BY v.published_at DESC
         LIMIT 40`;
       keywords = topKeywords(myVideos.map((v) => v.title as string), 10);
+      niche = classifyChannel({ titles: myVideos.map((v) => v.title as string), name: myChannel.name as string });
       const mode = <T,>(values: T[]) => {
         const freq = new Map<T, number>();
         for (const v of values) if (v != null) freq.set(v, (freq.get(v) ?? 0) + 1);
@@ -112,10 +115,36 @@ export async function GET(request: NextRequest) {
       ? myVideos.filter((v) => v.is_short).length / myVideos.length >= 0.5
       : null;
     const myInternalId = (myChannel?.id as string) ?? "";
+    const nicheId = niche?.id ?? null;
+    const nicheQuery = nicheTsQuery(nicheId);
+
+    // With a classified niche, candidates must use its vocabulary and each title is
+    // re-checked on its own: the YouTube category alone is far too broad (business
+    // creators often upload as "Education" or even "Gaming"), which used to fill
+    // the home with documentaries. My keywords only rank the results.
+    const nicheHits = async () => {
+      const rows = await sql`
+        SELECT ${VIDEO_COLUMNS}
+        FROM videos v JOIN channels c ON c.id = v.channel_id
+        WHERE v.relevance_score IS NOT NULL
+          AND v.published_at > now() - interval '14 days'
+          AND v.channel_id <> ${myInternalId}
+          AND to_tsvector('simple', v.title) @@ to_tsquery('simple', ${nicheQuery!})
+        ORDER BY
+          ${query ? sql`ts_rank(to_tsvector('simple', v.title), to_tsquery('simple', ${query})) * 1000 +` : sql``}
+          ${language ? sql`(CASE WHEN split_part(lower(v.language), '-', 1) = ${language} THEN 50 ELSE 0 END) +` : sql``}
+          v.relevance_score DESC
+        LIMIT 120`;
+      const onNiche = rows.filter((r) => titleMatchesNiche(r.title as string, nicheId!));
+      // Prefer the creator's own format (Shorts vs long-form), then fill with the other.
+      const sameFormat = onNiche.filter((r) => isShortsCreator === null || Boolean(r.is_short) === isShortsCreator);
+      const otherFormat = onNiche.filter((r) => !sameFormat.includes(r));
+      return [...sameFormat, ...otherFormat].slice(0, 8);
+    };
 
     const [forYou, competitors, competitorHits, [deltas], [lastScan]] = await Promise.all([
       // Hits in my niche (or, without a channel yet, the best hits overall).
-      sql`
+      nicheQuery ? nicheHits() : sql`
         SELECT ${VIDEO_COLUMNS}
         FROM videos v JOIN channels c ON c.id = v.channel_id
         WHERE v.relevance_score IS NOT NULL
@@ -199,7 +228,7 @@ export async function GET(request: NextRequest) {
             bestRecentVideo: bestRecent ? videoJson(bestRecent) : null,
           }
         : null,
-      niche: { keywords, category, language },
+      niche: { id: nicheId, label: niche?.id ? niche.label : null, keywords, category, language },
       forYou: forYou.map(videoJson),
       competitors: competitors.map((c) => ({
         id: c.youtube_channel_id as string,

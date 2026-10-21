@@ -2,6 +2,7 @@ export type NicheEditorialArchetype =
   | "video_essay_documentary"
   | "investigation_true_crime_mystery"
   | "finance_business_economics"
+  | "ecommerce_online_business"
   | "tech_ai_software_reviews"
   | "gaming_challenges_entertainment"
   | "educational_science_engineering"
