@@ -111,6 +111,110 @@ function Avatar({ src, alt, className = "" }: { src?: string; alt: string; class
   return <img src={src} alt={alt} onError={() => setFailed(true)} referrerPolicy="no-referrer" className={`rounded-full object-cover ${className}`} />;
 }
 
+type StageState = "done" | "active" | "todo";
+
+// One big dopamine bar fed by the streamed events: every piece of data fills it a bit more.
+function AnalysisProgress({
+  hasChannel,
+  channelTitle,
+  videoCount,
+  nicheReady,
+  candidateCount,
+  competitorCount,
+  resultCount,
+  insightsReady,
+}: {
+  hasChannel: boolean;
+  channelTitle?: string;
+  videoCount: number;
+  nicheReady: boolean;
+  candidateCount: number;
+  competitorCount: number;
+  resultCount: number | null;
+  insightsReady: boolean;
+}) {
+  const scanRatio = resultCount != null ? 1 : candidateCount ? Math.min(competitorCount / candidateCount, 0.97) : 0;
+  const raw = [
+    { id: "channel", label: "Chaîne", icon: Search, weight: 10, done: hasChannel, detail: channelTitle },
+    { id: "videos", label: "Vidéos", icon: Video, weight: 10, done: videoCount > 0, detail: videoCount ? `${videoCount} analysées` : undefined },
+    { id: "niche", label: "Niche", icon: Sparkles, weight: 10, done: nicheReady, detail: nicheReady ? "Détectée" : undefined },
+    { id: "candidates", label: "Candidats", icon: Users, weight: 10, done: candidateCount > 0, detail: candidateCount ? `${candidateCount} chaînes` : undefined },
+    { id: "scan", label: "Concurrents", icon: Eye, weight: 45, done: resultCount != null, detail: competitorCount ? `${resultCount ?? competitorCount} trouvés` : undefined, ratio: scanRatio },
+    { id: "ai", label: "Recos IA", icon: Rocket, weight: 15, done: insightsReady, detail: insightsReady ? "Prêtes" : undefined },
+  ];
+  // A later stage being done means every earlier one is too (e.g. no channel → niche first)
+  const lastDone = raw.reduce((acc, st, i) => (st.done ? i : acc), -1);
+  const stages = raw.map((st, i) => ({ ...st, done: i <= lastDone }));
+  const activeIndex = stages.findIndex((st) => !st.done);
+  const total = stages.reduce((acc, st) => acc + st.weight, 0);
+  const filled = stages.reduce((acc, st, i) => acc + (st.done ? st.weight : i === activeIndex ? st.weight * (st.ratio ?? 0.35) : 0), 0);
+  const percent = Math.round((filled / total) * 100);
+  const complete = activeIndex === -1;
+
+  return (
+    <div className="ob-in mb-6 rounded-2xl border border-white/10 bg-[#111114] p-5 sm:p-6">
+      <div className="mb-3 flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40">Progression</p>
+          <p className="mt-1 text-sm font-medium text-white/70">
+            {complete ? "Tout est prêt 🎉" : `${stages[activeIndex].label} en cours…`}
+          </p>
+        </div>
+        <p className={`text-4xl font-black tabular-nums tracking-tight sm:text-5xl ${complete ? "bg-gradient-to-r from-emerald-300 to-teal-400 bg-clip-text text-transparent" : "bg-gradient-to-r from-rose-400 via-orange-400 to-amber-300 bg-clip-text text-transparent"}`}>
+          {percent}<span className="text-2xl">%</span>
+        </p>
+      </div>
+
+      <div className="relative h-4 overflow-hidden rounded-full bg-white/[0.06] ring-1 ring-white/10">
+        <div
+          className={`relative h-full rounded-full transition-[width] duration-700 ease-out ${complete ? "bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_24px_rgba(52,211,153,0.6)]" : "bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 shadow-[0_0_24px_rgba(249,115,22,0.7)]"}`}
+          style={{ width: `${Math.max(percent, 3)}%` }}
+        >
+          <div className="ob-shimmer absolute inset-0 rounded-full" />
+          {!complete && <div className="absolute right-0 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 rounded-full bg-white shadow-[0_0_16px_6px_rgba(251,191,36,0.8)]" />}
+        </div>
+        {/* Stage markers */}
+        {stages.slice(0, -1).map((st, i) => {
+          const at = (stages.slice(0, i + 1).reduce((acc, x) => acc + x.weight, 0) / total) * 100;
+          return <div key={st.id} className="absolute top-0 h-full w-px bg-black/40" style={{ left: `${at}%` }} />;
+        })}
+      </div>
+
+      <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
+        {stages.map((st, i) => {
+          const state: StageState = st.done ? "done" : i === activeIndex ? "active" : "todo";
+          return (
+            <div
+              key={st.id}
+              className={`rounded-xl border p-2.5 transition-all duration-500 ${
+                state === "done"
+                  ? "border-emerald-400/30 bg-emerald-400/[0.07]"
+                  : state === "active"
+                  ? "border-orange-500/50 bg-orange-500/10 shadow-[0_0_20px_rgba(249,115,22,0.25)]"
+                  : "border-white/[0.06] bg-white/[0.02] opacity-50"
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`flex size-5 shrink-0 items-center justify-center rounded-full ${
+                    state === "done" ? "ob-pop bg-emerald-400 text-black" : state === "active" ? "bg-orange-500 text-white" : "bg-white/10 text-white/40"
+                  }`}
+                >
+                  {state === "done" ? <Check className="size-3" strokeWidth={3} /> : state === "active" ? <Loader2 className="size-3 animate-spin" /> : <st.icon className="size-3" />}
+                </span>
+                <span className="truncate text-xs font-semibold">{st.label}</span>
+              </div>
+              <p className={`mt-1 truncate text-[11px] ${state === "done" ? "text-emerald-200/80" : "text-white/40"}`}>
+                {st.detail ?? (state === "active" ? "En cours…" : "En attente")}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("role");
@@ -552,6 +656,17 @@ export default function OnboardingPage() {
                 {result ? "Ton radar est prêt" : "On scanne ta niche…"}
               </h1>
             </div>
+
+            <AnalysisProgress
+              hasChannel={!!channel}
+              channelTitle={channel?.title}
+              videoCount={videos.length}
+              nicheReady={!!profile}
+              candidateCount={candidateCount}
+              competitorCount={liveCompetitors.length}
+              resultCount={result ? result.competitors.length : null}
+              insightsReady={!!insights}
+            />
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
               {/* Channel card filling in */}
