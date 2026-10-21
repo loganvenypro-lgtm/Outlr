@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 import { upsertUnifiedChannel, upsertUnifiedVideo, QuotaManager } from "./intelligenceDb";
 import type { InnerTubeSearchFilters, InnerTubeUploadDate } from "./youtube-scraper";
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, isExpired } from "@/lib/dataDir";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 
@@ -51,6 +51,10 @@ function readJobsMap(): Record<string, SearchJobProgress> {
       Object.assign(map, diskJobs);
     }
   } catch {}
+  // YouTube API data older than 30 days is dropped (see isExpired).
+  for (const [jobId, job] of Object.entries(map)) {
+    if (isExpired(job.updatedAt)) delete map[jobId];
+  }
   return map;
 }
 
@@ -78,6 +82,11 @@ function readVideosCache(): Record<string, DiscoveredVideoRecord[]> {
       Object.assign(map, diskVideos);
     }
   } catch {}
+  // Results live as long as their job: dropped with it after 30 days.
+  const jobs = readJobsMap();
+  for (const jobId of Object.keys(map)) {
+    if (!jobs[jobId]) delete map[jobId];
+  }
   return map;
 }
 

@@ -1,4 +1,4 @@
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, freshEntries, isExpired } from "@/lib/dataDir";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -124,12 +124,13 @@ export function readIntelligenceDatabase(): PersistentIntelligenceSchema {
     // Validate structure
     const db: PersistentIntelligenceSchema = {
       version: parsed.version || "2.0.0",
-      channels: parsed.channels || {},
-      videos: parsed.videos || {},
-      channelSnapshots: parsed.channelSnapshots || [],
-      videoSnapshots: parsed.videoSnapshots || [],
-      channelDna: parsed.channelDna || {},
-      channelRelationships: parsed.channelRelationships || [],
+      // YouTube API data older than 30 days is dropped (see isExpired).
+      channels: freshEntries(parsed.channels || {}, (c) => c.lastMetadataRefresh),
+      videos: freshEntries(parsed.videos || {}, (v) => v.lastMetadataRefresh),
+      channelSnapshots: (parsed.channelSnapshots || []).filter((s) => !isExpired(s.timestamp)),
+      videoSnapshots: (parsed.videoSnapshots || []).filter((s) => !isExpired(s.timestamp)),
+      channelDna: freshEntries(parsed.channelDna || {}, (d) => d.lastAnalysisDate),
+      channelRelationships: (parsed.channelRelationships || []).filter((r) => !isExpired(r.lastCalculated)),
       quotaLog: parsed.quotaLog || getDefaultQuotaLog(),
       scheduledTasks: parsed.scheduledTasks || [],
       discoverySeeds: parsed.discoverySeeds && parsed.discoverySeeds.length > 0

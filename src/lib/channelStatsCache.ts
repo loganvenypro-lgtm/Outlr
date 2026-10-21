@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, isExpired } from "@/lib/dataDir";
 
 export interface ChannelVideoSample {
   id: string;
@@ -49,6 +49,7 @@ function loadCache(): Map<string, CachedChannelRecord> {
       const parsed = JSON.parse(raw);
       if (typeof parsed === "object" && parsed !== null) {
         for (const [key, val] of Object.entries(parsed)) {
+          if (isExpired((val as CachedChannelRecord).cachedAt)) continue;
           memoryCache.set(key, val as CachedChannelRecord);
         }
       }

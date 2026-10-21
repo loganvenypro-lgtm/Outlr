@@ -336,10 +336,12 @@ async function refreshVideoStats(stats, maxCalls) {
         stats.videos.refreshed++;
         if (hotIds.has(item.id)) stats.videos.hot++;
       }
-      // Private/deleted videos: don't retry them every scan.
+      // Private/deleted videos: delete everything we stored about them (API data policy).
       const missing = batch.filter((id) => !returned.has(id));
       if (missing.length) {
-        await tx`UPDATE videos SET last_stats_at = now() WHERE youtube_video_id IN ${tx(missing)}`;
+        await tx`DELETE FROM videos WHERE youtube_video_id IN ${tx(missing)}`;
+        await tx`DELETE FROM video_stat_snapshots WHERE youtube_video_id IN ${tx(missing)}`;
+        await tx`DELETE FROM video_variants WHERE youtube_video_id IN ${tx(missing)}`;
         stats.videos.unavailable += missing.length;
       }
     });
@@ -448,11 +450,12 @@ async function refreshChannelStats(stats, maxCalls) {
           ON CONFLICT DO NOTHING`;
         stats.channels.refreshed++;
       }
-      // Terminated/unknown channels: stop polling them.
+      // Terminated/unknown channels: stop polling them; purgeStaleApiData deletes them
+      // once their last stats are 30 days old.
       const missing = batch.filter((id) => !returned.has(id));
       if (missing.length) {
         await tx`
-          UPDATE channels SET last_stats_at = now(), rss_error_count = 5
+          UPDATE channels SET rss_error_count = 5
           WHERE youtube_channel_id IN ${tx(missing)}`;
         stats.channels.missing += missing.length;
       }
@@ -852,8 +855,51 @@ async function computeScores() {
 
   await computeChannelTrends();
 
+  await purgeStaleApiData();
+}
+
+// YouTube API Services policy: API data is refreshed or deleted within 30 days.
+// Anything not refreshed for 30 days (quota shortfall, deleted channel…) is deleted here.
+async function purgeStaleApiData() {
   await sql`DELETE FROM video_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
   await sql`DELETE FROM channel_stat_snapshots WHERE captured_at < now() - interval '30 days'`;
+  await sql`DELETE FROM video_variants WHERE last_seen_at < now() - interval '30 days'`;
+  await sql`DELETE FROM channel_alerts WHERE created_at < now() - interval '30 days'`;
+  await sql`DELETE FROM onboarding_analyses WHERE created_at < now() - interval '30 days'`;
+  // Deleting a channel cascades to its videos.
+  await sql`DELETE FROM channels WHERE COALESCE(last_stats_at, created_at) < now() - interval '30 days'`;
+  await sql`DELETE FROM videos WHERE COALESCE(last_stats_at, created_at) < now() - interval '30 days'`;
+
+  // Tracked channels keep a copy of the channel's stats: same rule.
+  await sql`
+    UPDATE tracked_channels t SET
+      name = COALESCE(c.name, t.name), handle = COALESCE(c.handle, t.handle), avatar = COALESCE(c.thumbnail_url, t.avatar),
+      subscribers = COALESCE(c.subscriber_count, 0), total_views = COALESCE(c.total_views, 0),
+      video_count = COALESCE(c.video_count, 0), last_checked_at = c.last_stats_at
+    FROM channels c
+    WHERE c.youtube_channel_id = t.channel_id AND c.last_stats_at IS NOT NULL`;
+  await sql`
+    UPDATE tracked_channels t SET name = t.channel_id, handle = NULL, avatar = NULL, subscribers = 0, total_views = 0, video_count = 0
+    WHERE t.last_checked_at < now() - interval '30 days'
+      AND NOT EXISTS (SELECT 1 FROM channels c WHERE c.youtube_channel_id = t.channel_id)`;
+
+  // Folder cards keep a copy of what they showed: refresh it from the tables, and once a
+  // copy with no fresh source is 30 days old, keep only the ID.
+  await sql`
+    UPDATE saved_folder_items i SET snapshot = i.snapshot || jsonb_strip_nulls(jsonb_build_object(
+      'title', v.title, 'thumbnail', v.thumbnail_url, 'views', v.view_count, 'multiplier', v.outlier_multiplier))
+    FROM videos v
+    WHERE i.item_type = 'video' AND v.youtube_video_id = i.item_id`;
+  await sql`
+    UPDATE saved_folder_items i SET snapshot = i.snapshot || jsonb_strip_nulls(jsonb_build_object(
+      'title', c.name, 'thumbnail', c.thumbnail_url, 'handle', c.handle, 'subscribers', c.subscriber_count))
+    FROM channels c
+    WHERE i.item_type = 'channel' AND c.youtube_channel_id = i.item_id`;
+  await sql`
+    UPDATE saved_folder_items i SET snapshot = jsonb_build_object('title', i.item_id)
+    WHERE i.added_at < now() - interval '30 days'
+      AND NOT EXISTS (SELECT 1 FROM videos v WHERE i.item_type = 'video' AND v.youtube_video_id = i.item_id)
+      AND NOT EXISTS (SELECT 1 FROM channels c WHERE i.item_type = 'channel' AND c.youtube_channel_id = i.item_id)`;
 }
 
 // Channel trend score /100 — how much a channel beats its own normal right now:

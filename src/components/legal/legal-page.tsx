@@ -1,17 +1,15 @@
 import Link from "next/link";
 
-/** Contact shown on the legal pages; set NEXT_PUBLIC_CONTACT_EMAIL in the environment. */
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "";
+/** Contact shown on the legal pages; NEXT_PUBLIC_CONTACT_EMAIL overrides it. */
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "loganveny.pro@gmail.com";
 
 export const LAST_UPDATED = "21 octobre 2026";
 
 export function ContactLink() {
-  return CONTACT_EMAIL ? (
+  return (
     <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-slate-900 underline underline-offset-2">
       {CONTACT_EMAIL}
     </a>
-  ) : (
-    <span className="font-medium text-slate-900">l&apos;adresse indiquée dans la page Paramètres</span>
   );
 }
 

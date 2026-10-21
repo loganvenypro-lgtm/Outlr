@@ -3,7 +3,7 @@ import path from "path";
 import { DiscoveredVideoRecord } from "@/types/discoveryEngine";
 import { detectTitlePattern } from "./titlePatternDetector";
 import { inferVideoCategory, inferVideoNiche, ALGROW_NICHES, ALGROW_CATEGORIES } from "./taxonomyHelper";
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, isExpired } from "@/lib/dataDir";
 
 export interface IndexedViralVideo {
   id: string;
@@ -131,7 +131,8 @@ export async function loadViralVideosIndex(): Promise<IndexedViralVideo[]> {
 
   try {
     const raw = await fs.readFile(INDEX_FILE, "utf-8");
-    const parsed: IndexedViralVideo[] = JSON.parse(raw);
+    // YouTube API data older than 30 days is dropped (see isExpired).
+    const parsed = (JSON.parse(raw) as IndexedViralVideo[]).filter((v) => !isExpired(v.indexedAt));
     memoryIndex = parsed;
     lastLoadedTime = now;
     return parsed;

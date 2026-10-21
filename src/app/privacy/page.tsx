@@ -73,19 +73,64 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2>Conservation</h2>
+        <h2>Conservation des données YouTube</h2>
         <p>
-          Les données publiques YouTube sont rafraîchies régulièrement auprès de l&apos;API. Les données de ton compte sont
-          gardées tant que ton compte existe.
+          Nous appliquons les{" "}
+          <a href="https://developers.google.com/youtube/terms/developer-policies" target="_blank" rel="noreferrer">
+            règles pour les développeurs des services d&apos;API YouTube
+          </a>{" "}
+          :
         </p>
+        <ul className="mt-3">
+          <li>
+            Aucune donnée obtenue par l&apos;API YouTube n&apos;est gardée plus de 30 jours sans être actualisée. Selon le
+            quota disponible, les statistiques des vidéos récentes sont actualisées entre toutes les heures et tous les 3
+            jours, celles des chaînes une fois par jour, et celles des autres vidéos tous les 25 jours.
+          </li>
+          <li>
+            Ce qui n&apos;a pas pu être actualisé depuis 30 jours est supprimé automatiquement (vérification toutes les 30
+            minutes). C&apos;est aussi le cas de l&apos;historique des statistiques, des titres et des miniatures, qui ne
+            remonte jamais à plus de 30 jours.
+          </li>
+          <li>
+            Une vidéo supprimée ou passée en privé sur YouTube est effacée de notre base dès que l&apos;API ne la renvoie plus.
+            Une chaîne supprimée est effacée, avec ses vidéos, au plus tard 30 jours après sa dernière actualisation.
+          </li>
+          <li>
+            Les copies affichées dans tes dossiers et ta liste de chaînes suivies sont mises à jour en même temps. Si la vidéo
+            ou la chaîne n&apos;est plus dans notre base depuis 30 jours, seul son identifiant YouTube est gardé.
+          </li>
+          <li>
+            Outlr ne demande aucun accès à ton compte Google ou YouTube : il n&apos;y a donc pas d&apos;autorisation à
+            révoquer. Si tu nous demandes de supprimer ton compte, ta chaîne et tes concurrents enregistrés sont supprimés avec
+            lui.
+          </li>
+        </ul>
+        <p className="mt-3">Les données de ton compte Outlr sont gardées tant que ton compte existe.</p>
       </section>
 
       <section>
         <h2>Supprimer tes données</h2>
         <p>
-          Tu peux supprimer tes dossiers à tout moment depuis l&apos;app. Pour supprimer ton compte et toutes les données qui y
-          sont liées, écris-nous à <ContactLink />. La suppression est faite sous 7 jours. Tu peux aussi consulter les
-          autorisations accordées aux applications sur{" "}
+          Tu peux supprimer tes dossiers et les éléments enregistrés à tout moment depuis l&apos;app. Pour supprimer ton compte
+          et toutes les données qui y sont liées :
+        </p>
+        <ul className="mt-3">
+          <li>
+            Envoie un e-mail à <ContactLink /> avec pour objet « Suppression de mes données », depuis l&apos;adresse de ton
+            compte Outlr (ou en l&apos;indiquant dans le message, pour que nous retrouvions ton compte).
+          </li>
+          <li>Nous confirmons la réception sous 72 heures et la suppression est faite sous 7 jours au plus.</li>
+          <li>
+            Sont supprimés définitivement : ton compte (nom, adresse e-mail, mot de passe chiffré), ta chaîne YouTube et tes
+            concurrents enregistrés, tes dossiers et leur contenu, et l&apos;historique de tes analyses. Nous demandons aussi à
+            PostHog d&apos;effacer les statistiques d&apos;usage liées à ton compte.
+          </li>
+          <li>Nous t&apos;envoyons un e-mail quand la suppression est terminée.</li>
+        </ul>
+        <p className="mt-3">
+          Les données publiques YouTube sur les chaînes et vidéos ne sont pas liées à ton compte : elles suivent les règles de
+          conservation ci-dessus. Tu peux aussi consulter les autorisations accordées aux applications sur{" "}
           <a href="https://security.google.com/settings/security/permissions" target="_blank" rel="noreferrer">
             la page de sécurité de ton compte Google
           </a>{" "}

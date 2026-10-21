@@ -1,4 +1,4 @@
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, freshEntries } from "@/lib/dataDir";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -60,7 +60,8 @@ export function readThumbnailDatabase(): ThumbnailDatabaseSchema {
     const parsed = JSON.parse(raw);
     return {
       version: parsed.version || "1.0.0",
-      monitoredVideos: parsed.monitoredVideos || {},
+      // YouTube API data older than 30 days is dropped (see isExpired).
+      monitoredVideos: freshEntries<MonitoredTrackedVideo>(parsed.monitoredVideos || {}, (v) => v.lastObservedAt),
       monitoredChannels: parsed.monitoredChannels || [],
       lastScanTimestamp: parsed.lastScanTimestamp || new Date().toISOString(),
       nextScheduledScan: parsed.nextScheduledScan || new Date(Date.now() + 60 * 60 * 1000).toISOString(),

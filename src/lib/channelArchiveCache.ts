@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { RecentVideo } from "@/types/youtube";
-import { DATA_DIR } from "@/lib/dataDir";
+import { DATA_DIR, isExpired } from "@/lib/dataDir";
 
 export interface ChannelMedianStats {
   // Longform medians (Shorts strictly excluded)
@@ -46,6 +46,11 @@ export async function getCachedChannelArchive(
     const filePath = path.join(CACHE_DIR, `${channelId}.json`);
     const content = await fs.readFile(filePath, "utf-8");
     const data: CachedChannelArchive = JSON.parse(content);
+    // YouTube API data older than 30 days is deleted (see isExpired).
+    if (isExpired(data.updatedAt)) {
+      await fs.unlink(filePath);
+      return null;
+    }
     return data;
   } catch {
     return null;
