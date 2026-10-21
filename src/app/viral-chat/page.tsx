@@ -156,7 +156,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
   };
 
   return (
-    <div className="h-screen bg-white text-slate-900 font-sans antialiased overflow-hidden">
+    <div className="flex h-full flex-col bg-white text-slate-900 font-sans antialiased overflow-hidden">
       {/* Sidebar */}
       <Sidebar />
 
@@ -224,7 +224,7 @@ J'ai accès direct et en temps réel à **toutes les données de ton pipeline** 
                     className={`max-w-[85%] md:max-w-[78%] rounded-2xl p-4 shadow-xl ${
                       isUser
                         ? "bg-purple-600 text-white rounded-tr-sm"
-                        : "bg-white border border-slate-200 text-slate-200 rounded-tl-sm"
+                        : "bg-slate-50 border border-slate-200 text-slate-700 rounded-tl-sm"
                     }`}
                   >
                     {/* Header info */}

@@ -80,7 +80,7 @@ export default function ThumbnailIntelligencePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -149,7 +149,7 @@ export default function ThumbnailIntelligencePage() {
                     className="w-full bg-transparent text-slate-900 placeholder-slate-400 focus:outline-none"
                   />
                   {query && (
-                    <button type="button" onClick={() => { setQuery(""); fetchGallery(); }} className="text-slate-500 hover:text-slate-300">
+                    <button type="button" onClick={() => { setQuery(""); fetchGallery(); }} className="text-slate-500 hover:text-slate-900">
                       ✕
                     </button>
                   )}

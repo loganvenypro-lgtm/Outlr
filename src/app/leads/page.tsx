@@ -62,7 +62,7 @@ export default function LeadsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -118,7 +118,7 @@ export default function LeadsPage() {
                   className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize whitespace-nowrap transition-all ${
                     statusFilter === st
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-white text-slate-400 hover:text-slate-200 border border-slate-200"
+                      : "bg-white text-slate-500 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   {st === "all" ? "Tous" : st}

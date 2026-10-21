@@ -1515,7 +1515,7 @@ export default function NicheFinderPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-white items-center justify-center">
+        <div className="min-h-full bg-white items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
         </div>
       }

@@ -98,7 +98,7 @@ export default function ChannelSponsorsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -213,7 +213,7 @@ export default function ChannelSponsorsPage() {
                     type="button"
                     onClick={() => setActiveTab("videos")}
                     className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      activeTab === "videos" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      activeTab === "videos" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Par Vidéo ({reports.length})
@@ -222,7 +222,7 @@ export default function ChannelSponsorsPage() {
                     type="button"
                     onClick={() => setActiveTab("brands")}
                     className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      activeTab === "brands" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      activeTab === "brands" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Annuaire des Marques ({brands.length})

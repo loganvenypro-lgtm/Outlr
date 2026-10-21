@@ -193,7 +193,7 @@ export default function SponsorDiscoveryPage() {
   const industriesList = Array.from(new Set(brands.map((b) => b.industry).filter(Boolean)));
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -230,7 +230,7 @@ export default function SponsorDiscoveryPage() {
                 type="button"
                 onClick={() => setSearchMode("creator")}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  searchMode === "creator" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  searchMode === "creator" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Par Créateur
@@ -239,7 +239,7 @@ export default function SponsorDiscoveryPage() {
                 type="button"
                 onClick={() => setSearchMode("brand")}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  searchMode === "brand" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  searchMode === "brand" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Par Marque
@@ -248,7 +248,7 @@ export default function SponsorDiscoveryPage() {
                 type="button"
                 onClick={() => setSearchMode("global")}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  searchMode === "global" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  searchMode === "global" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Tableau Global
@@ -635,7 +635,7 @@ export default function SponsorDiscoveryPage() {
                               <button
                                 type="button"
                                 onClick={() => router.push(`/discovery/brand/${encodeURIComponent(brand.name)}`)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-600 hover:text-white transition-colors text-xs font-semibold"
                               >
                                 <span>Voir fiche</span>
                                 <ArrowRight className="w-3 h-3" />

@@ -41,10 +41,13 @@ export function ClientShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-white font-sans text-slate-900 antialiased">
+      <div className="flex h-svh w-full overflow-hidden bg-sidebar font-sans text-slate-900 antialiased">
         <AppSidebar />
-        <SidebarInset className="flex min-w-0 flex-1 flex-col bg-white">
-          <div className="flex-1 overflow-y-auto bg-white">{children}</div>
+        {/* The page sits on a framed panel that scrolls on its own, so the sidebar and frame stay put. */}
+        <SidebarInset className="h-svh min-w-0 overflow-hidden bg-white md:h-[calc(100svh-1rem)] md:peer-data-[variant=inset]:shadow-[0_1px_3px_rgb(15_23_42/0.06),0_0_0_1px_rgb(15_23_42/0.07)] dark:md:peer-data-[variant=inset]:shadow-[0_0_0_1px_var(--border)]">
+          <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+            {children}
+          </div>
         </SidebarInset>
         <FloatingAiAssistant />
       </div>

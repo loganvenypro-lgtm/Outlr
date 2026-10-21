@@ -9,7 +9,7 @@
   --card-border: #e2e8f0;
   --accent: oklch(0.97 0 0);
   --accent-hover: #f1f5f9;
-  --muted: #f8fafc;
+  --muted: #f5f7fa;
   --background: #ffffff;
   --foreground: #0f172a;
   --card-foreground: #0f172a;
@@ -17,7 +17,7 @@
   --popover-foreground: #0f172a;
   --primary: #0f172a;
   --primary-foreground: #ffffff;
-  --secondary: #f8fafc;
+  --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
   --muted-foreground: #64748b;
   --accent-foreground: #0f172a;
@@ -31,20 +31,21 @@
   --chart-4: #f59e0b;
   --chart-5: #06b6d4;
   --radius: 0.625rem;
-  --sidebar: #ffffff;
+  --sidebar: #f4f5f7;
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
+  --sidebar-accent: #e9ebef;
   --sidebar-accent-foreground: #0f172a;
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #3b82f6;
 }
 
+/* No font-family here: <body> takes Geist from its font-sans class, and so do the menus,
+   dialogs and tooltips that portal into it. */
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

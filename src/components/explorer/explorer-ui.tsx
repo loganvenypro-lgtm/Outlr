@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { LogIn, SearchX, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronRight, LogIn, Search, SearchX, X } from "lucide-react";
+import { navTrail, type Crumb } from "@/components/nav-config";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { formatCompactNumber } from "@/lib/utils";
+import { cn, formatCompactNumber } from "@/lib/utils";
 
 export interface Option {
   value: string;
@@ -28,14 +32,80 @@ export async function fetchJson<T>(url: string): Promise<T> {
   return res.json();
 }
 
-export function ExplorerHeader({ title, icon }: { title: string; icon?: React.ReactNode }) {
+/**
+ * The bar on top of every dashboard page. Pages listed in the sidebar show their place in it
+ * ("Tendances › Vidéos virales"); the others pass their own breadcrumbs.
+ */
+export function ExplorerHeader({
+  title,
+  icon,
+  breadcrumbs,
+  search = false,
+}: {
+  title: string;
+  icon?: React.ReactNode;
+  breadcrumbs?: Crumb[];
+  search?: boolean;
+}) {
+  const pathname = usePathname();
+  const trail = navTrail(pathname);
+  const crumbs = breadcrumbs ?? [...(trail?.crumbs.slice(0, -1) ?? []), { label: title }];
+  const TrailIcon = trail?.icon;
+  const pageIcon = icon ?? (TrailIcon && <TrailIcon />);
+
   return (
-    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-1 data-vertical:h-4 data-vertical:self-auto" />
-      {icon}
-      <h1 className="text-sm font-medium">{title}</h1>
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b border-border/70 bg-background/85 px-4 backdrop-blur-md md:px-6">
+      <SidebarTrigger className="-ml-1.5 text-muted-foreground hover:text-foreground" />
+      <Separator orientation="vertical" className="data-vertical:h-4 data-vertical:self-auto" />
+      <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-1.5 text-sm">
+        {pageIcon && (
+          <span className="flex shrink-0 [&_svg]:size-4 [&_svg]:text-muted-foreground">{pageIcon}</span>
+        )}
+        {crumbs.map((crumb, i) => {
+          const last = i === crumbs.length - 1;
+          return (
+            <span key={`${i}-${crumb.label}`} className={cn("flex items-center gap-1.5", last ? "min-w-0" : "shrink-0 max-sm:hidden")}>
+              {i > 0 && <ChevronRight className="size-3.5 shrink-0 text-muted-foreground/60" />}
+              {last ? (
+                <h1 className="truncate font-semibold text-foreground">{crumb.label}</h1>
+              ) : crumb.href ? (
+                <Link href={crumb.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span className="text-muted-foreground">{crumb.label}</span>
+              )}
+            </span>
+          );
+        })}
+      </nav>
+      {search && <QuickSearch />}
     </header>
+  );
+}
+
+function QuickSearch() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  return (
+    <form
+      role="search"
+      className="relative ml-auto hidden w-72 lg:block"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (query.trim()) router.push(`/niche-finder?q=${encodeURIComponent(query.trim())}`);
+      }}
+    >
+      <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Rechercher une chaîne, une niche…"
+        aria-label="Recherche rapide"
+        className="h-8 border-transparent bg-muted pl-8 shadow-none focus-visible:bg-background"
+      />
+    </form>
   );
 }
 

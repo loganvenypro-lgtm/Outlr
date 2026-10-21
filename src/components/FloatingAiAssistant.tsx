@@ -109,23 +109,27 @@ export function FloatingAiAssistant() {
     <>
       {/* Floating Toggle Button */}
       {!isOpen && (
+        // A round button that unfolds its label on hover, so it doesn't sit on top of the cards.
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-2xl shadow-blue-600/40 border border-blue-400/30 transition-all hover:scale-105"
+          aria-label="Discuter avec l'IA Sponsors"
+          className="group fixed right-5 bottom-5 z-50 flex h-11 items-center rounded-full bg-slate-900 px-3 text-white shadow-lg shadow-slate-900/20 transition-shadow hover:shadow-xl"
         >
-          <div className="relative">
-            <Bot className="w-5 h-5" />
-            <span className="w-2 h-2 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5 animate-pulse" />
-          </div>
-          <span className="hidden sm:inline">Discuter avec l'IA Sponsors</span>
+          <span className="relative">
+            <Bot className="size-5" />
+            <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-emerald-400 ring-2 ring-slate-900" />
+          </span>
+          <span className="max-w-0 overflow-hidden text-[13px] font-semibold whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-52 group-hover:opacity-100 group-focus-visible:ml-2 group-focus-visible:max-w-52 group-focus-visible:opacity-100">
+            {"Discuter avec l'IA Sponsors"}
+          </span>
         </button>
       )}
 
       {/* Floating Chat Drawer */}
       {isOpen && (
         <div
-          className={`fixed bottom-6 right-6 z-50 bg-white border-2 border-blue-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+          className={`fixed bottom-5 right-5 z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-900/15 flex flex-col overflow-hidden transition-all duration-300 ${
             isExpanded ? "w-[92vw] sm:w-[600px] h-[80vh]" : "w-[92vw] sm:w-[420px] h-[550px]"
           }`}
         >
@@ -208,7 +212,7 @@ export function FloatingAiAssistant() {
                   className={`max-w-[85%] p-3.5 rounded-2xl text-xs leading-relaxed ${
                     msg.sender === "user"
                       ? "bg-blue-600 text-white rounded-br-none shadow-md shadow-blue-600/20"
-                      : "bg-white border border-slate-200 text-slate-200 rounded-bl-none shadow-md"
+                      : "bg-slate-50 border border-slate-200 text-slate-700 rounded-bl-none"
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.text}</p>

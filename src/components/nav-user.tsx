@@ -41,7 +41,7 @@ export function NavUser({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-sidebar-accent aria-expanded:text-sidebar-accent-foreground" />
+              <SidebarMenuButton size="lg" className="h-11 aria-expanded:bg-sidebar-accent aria-expanded:text-sidebar-accent-foreground" />
             }
           >
             <Avatar>
@@ -49,10 +49,10 @@ export function NavUser({
               <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs">{user.email}</span>
+              <span className="truncate font-semibold">{user.name}</span>
+              <span className="truncate text-xs text-sidebar-foreground/55">{user.email}</span>
             </div>
-            <ChevronsUpDownIcon className="ml-auto size-4" />
+            <ChevronsUpDownIcon className="ml-auto size-4 text-sidebar-foreground/40" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-fit"
@@ -69,7 +69,7 @@ export function NavUser({
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -77,20 +77,19 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <SparklesIcon
-                />
-                Upgrade to Pro
+                <SparklesIcon />
+                Passer à Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer">
                 <BadgeCheckIcon />
-                Account
+                Mon compte
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/sponsors")} className="cursor-pointer">
                 <CreditCardIcon />
-                Billing
+                Facturation
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -103,7 +102,7 @@ export function NavUser({
               className="cursor-pointer text-rose-600 focus:text-rose-600"
             >
               <LogOutIcon />
-              Log out
+              Se déconnecter
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

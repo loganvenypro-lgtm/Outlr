@@ -233,7 +233,7 @@ export default function ChannelTrackingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -352,11 +352,11 @@ export default function ChannelTrackingPage() {
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 flex items-center gap-1.5 border ${
                   selectedFolderId === "all"
                     ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30"
-                    : "bg-white text-slate-300 hover:text-white border-slate-200"
+                    : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-slate-200"
                 }`}
               >
                 <span>Toutes les chaînes</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-black/40 text-[10px] font-mono">
+                <span className="px-1.5 py-0.2 rounded-full bg-black/10 text-[10px] font-mono">
                   {data.channels.length}
                 </span>
               </button>
@@ -371,12 +371,12 @@ export default function ChannelTrackingPage() {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 flex items-center gap-1.5 border ${
                       selectedFolderId === f.id
                         ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30"
-                        : "bg-white text-slate-300 hover:text-white border-slate-200"
+                        : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-slate-200"
                     }`}
                   >
                     <FolderIcon className="w-3.5 h-3.5" />
                     <span>{f.name}</span>
-                    <span className="px-1.5 py-0.2 rounded-full bg-black/40 text-[10px] font-mono">
+                    <span className="px-1.5 py-0.2 rounded-full bg-black/10 text-[10px] font-mono">
                       {count}
                     </span>
                   </button>

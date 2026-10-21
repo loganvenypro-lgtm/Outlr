@@ -128,7 +128,7 @@ export default function StatsPage() {
   };
 
   return (
-    <div className="flex-1 min-w-0 bg-white min-h-screen text-slate-900 font-sans antialiased">
+    <div className="flex-1 min-w-0 bg-white min-h-full text-slate-900 font-sans antialiased">
       <TopNav />
 
       <main className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8 bg-white">

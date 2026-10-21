@@ -77,7 +77,7 @@ export default function TrendingPage() {
   });
 
   return (
-    <div className="flex-1 min-w-0 bg-white min-h-screen">
+    <div className="flex-1 min-w-0 bg-white min-h-full">
       <TopNav 
         title="Tendances YouTube" 
         breadcrumbs={[

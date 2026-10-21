@@ -214,7 +214,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 type="button"
                 onClick={() => setChartType("area")}
                 className={`p-1.5 rounded-lg transition-all ${
-                  chartType === "area" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  chartType === "area" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
                 title="Trend Area Chart"
               >
@@ -224,7 +224,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 type="button"
                 onClick={() => setChartType("bar")}
                 className={`p-1.5 rounded-lg transition-all ${
-                  chartType === "bar" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  chartType === "bar" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
                 title="Bar Chart"
               >
@@ -240,7 +240,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeMetric === "views"
                     ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Views
@@ -251,7 +251,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeMetric === "likes"
                     ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Likes
@@ -262,7 +262,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeMetric === "comments"
                     ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Comments
@@ -273,7 +273,7 @@ export function PerformanceCharts({ videos }: PerformanceChartsProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeMetric === "engagement"
                     ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Engagement %

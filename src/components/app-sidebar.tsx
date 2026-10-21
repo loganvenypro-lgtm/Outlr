@@ -3,23 +3,13 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  Bookmark,
-  ChevronDown,
-  Clapperboard,
-  Eye,
-  Flame,
-  House,
-  Search,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react"
+import { ChevronDown, Settings, ShieldCheck } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { NAV_GROUPS, isFolder, type NavFolder } from "@/components/nav-config"
 import { NavUser } from "@/components/nav-user"
 import { getDicebearAvatar } from "@/lib/avatar"
 import { USER_UPDATED_EVENT, type PublicUser } from "@/lib/user-events"
@@ -38,90 +28,15 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-  SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar"
 
-type NavLink = {
-  title: string
-  url: string
-  icon: React.ComponentType<{ className?: string }>
-  badge?: string
-}
-
-// A folder groups several links under one collapsible entry.
-type NavFolder = {
-  title: string
-  icon: React.ComponentType<{ className?: string }>
-  items: Omit<NavLink, "icon">[]
-}
-
-type NavEntry = NavLink | NavFolder
-
-const isFolder = (entry: NavEntry): entry is NavFolder => "items" in entry
-
-const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
-  {
-    label: "Découvrir",
-    items: [
-      { title: "Accueil", url: "/", icon: House },
-      {
-        title: "Tendances",
-        icon: Flame,
-        items: [
-          { title: "Vidéos virales", url: "/dashboard", badge: "Live" },
-          { title: "Channel Trends", url: "/channel-trends", badge: "Live" },
-          { title: "Tendances YouTube", url: "/trending" },
-          { title: "Radar global", url: "/radar" },
-        ],
-      },
-      {
-        title: "Recherche",
-        icon: Search,
-        items: [
-          { title: "Recherche de niche", url: "/niche-finder" },
-          { title: "Trouver une chaîne", url: "/channel-finder" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Suivi",
-    items: [
-      { title: "Mes dossiers", url: "/folders", icon: Bookmark },
-      {
-        title: "Chaînes",
-        icon: Eye,
-        items: [
-          { title: "Chaînes suivies", url: "/tracking" },
-          { title: "Chaînes similaires", url: "/dashboard/similar-channels" },
-          { title: "Comparer", url: "/compare" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Création",
-    items: [
-      { title: "Studio", url: "/tubelab", icon: Clapperboard },
-      {
-        title: "Outils IA",
-        icon: Sparkles,
-        items: [
-          { title: "Title Lab", url: "/title-lab" },
-          { title: "Miniatures", url: "/thumbnail-intelligence" },
-          { title: "Stratège IA", url: "/viral-chat" },
-        ],
-      },
-    ],
-  },
-]
-
 const NAV_BUTTON =
-  "h-9 rounded-lg px-2.5 text-[14px] font-medium text-sidebar-foreground/85 hover:text-sidebar-foreground [&_svg]:size-[18px] [&_svg]:text-sidebar-foreground/70"
+  "h-8.5 rounded-lg px-2.5 text-[13.5px] font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground [&_svg]:size-[17px] [&_svg]:text-sidebar-foreground/50"
 
-const NAV_BUTTON_ACTIVE =
-  "data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:[&_svg]:text-sidebar-primary-foreground"
+// The current page reads as a raised white tab on the grey sidebar.
+const NAV_ACTIVE =
+  "data-active:bg-background data-active:font-semibold data-active:text-sidebar-foreground data-active:shadow-[0_1px_2px_rgb(15_23_42/0.06),0_0_0_1px_rgb(15_23_42/0.06)] data-active:hover:bg-background data-active:[&_svg]:text-sidebar-foreground dark:data-active:bg-sidebar-accent dark:data-active:shadow-none"
 
 const FALLBACK_USER = {
   name: "Logan",
@@ -131,7 +46,8 @@ const FALLBACK_USER = {
 
 function NavBadge({ label }: { label: string }) {
   return (
-    <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 group-data-[collapsible=icon]:hidden dark:text-emerald-400">
+    <span className="ml-auto flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 group-data-[collapsible=icon]:hidden dark:text-emerald-400">
+      <span className="size-1.5 rounded-full bg-emerald-500" />
       {label}
     </span>
   )
@@ -154,7 +70,7 @@ function NavFolderItem({ folder, isActive }: { folder: NavFolder; isActive: (url
         <SidebarMenuButton
           tooltip={folder.title}
           isActive={hasActiveChild}
-          className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+          className={`${NAV_BUTTON} ${NAV_ACTIVE}`}
           render={<Link href={folder.items[0].url} />}
         >
           <folder.icon />
@@ -171,22 +87,29 @@ function NavFolderItem({ folder, isActive }: { folder: NavFolder; isActive: (url
       className="group/collapsible"
       render={<SidebarMenuItem />}
     >
-      <CollapsibleTrigger render={<SidebarMenuButton tooltip={folder.title} className={NAV_BUTTON} />}>
+      <CollapsibleTrigger
+        render={
+          <SidebarMenuButton
+            tooltip={folder.title}
+            className={`${NAV_BUTTON} ${hasActiveChild ? "text-sidebar-foreground [&_svg]:text-sidebar-foreground" : ""}`}
+          />
+        }
+      >
         <folder.icon />
         <span>{folder.title}</span>
-        <ChevronDown className="ml-auto size-4! text-sidebar-foreground/45! transition-transform duration-200 group-data-open/collapsible:rotate-180" />
+        <ChevronDown className="ml-auto size-3.5! text-sidebar-foreground/40! transition-transform duration-200 group-data-open/collapsible:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0">
-        <SidebarMenuSub className="mx-0 mt-0.5 ml-[19px] gap-0.5 pr-0 pl-3">
+        <SidebarMenuSub className="mx-0 mt-0.5 ml-[18px] gap-0.5 border-sidebar-foreground/10 pr-0 pl-2.5">
           {folder.items.map((item) => (
             <SidebarMenuSubItem key={item.url}>
               <SidebarMenuSubButton
                 isActive={isActive(item.url)}
-                className="h-9 rounded-lg px-3 text-[13.5px] text-sidebar-foreground/70 hover:text-sidebar-foreground data-active:bg-sidebar-primary data-active:font-medium data-active:text-sidebar-primary-foreground data-active:shadow-sm"
+                className={`h-8 rounded-lg px-2.5 text-[13px] text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground ${NAV_ACTIVE}`}
                 render={<Link href={item.url} />}
               >
                 <span className="truncate">{item.title}</span>
-                {item.badge && !isActive(item.url) && <NavBadge label={item.badge} />}
+                {item.badge && <NavBadge label={item.badge} />}
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>
           ))}
@@ -227,27 +150,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isActive = (url: string) => (url === "/" ? pathname === "/" : pathname === url)
 
   return (
-    <Sidebar collapsible="icon" className="font-sidebar" {...props}>
-      <SidebarHeader>
+    <Sidebar collapsible="icon" variant="inset" className="font-sidebar" {...props}>
+      <SidebarHeader className="pb-1">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Flame className="size-4" />
+            <SidebarMenuButton size="lg" className="hover:bg-transparent active:bg-transparent" render={<Link href="/dashboard" />}>
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-background shadow-[0_1px_2px_rgb(15_23_42/0.08),0_0_0_1px_rgb(15_23_42/0.06)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/outlr-mark.png" alt="" className="size-5 object-contain" />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Outlr</span>
-                <span className="truncate text-xs text-muted-foreground">Radar YouTube</span>
+              <div className="grid flex-1 text-left leading-tight">
+                <span className="truncate text-[15px] font-bold tracking-tight">Outlr</span>
+                <span className="truncate text-[11.5px] text-sidebar-foreground/50">Radar YouTube</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="gap-1">
         {NAV_GROUPS.map((group) => (
-          <SidebarGroup key={group.label} className="py-1.5">
-            <SidebarGroupLabel className="h-7 px-2.5 text-[11px] font-semibold tracking-[0.08em] text-sidebar-foreground/45 uppercase">
+          <SidebarGroup key={group.label} className="py-1">
+            <SidebarGroupLabel className="h-7 px-2.5 text-[11.5px] font-medium text-sidebar-foreground/45">
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -260,7 +184,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuButton
                         tooltip={entry.title}
                         isActive={isActive(entry.url)}
-                        className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+                        className={`${NAV_BUTTON} ${NAV_ACTIVE}`}
                         render={<Link href={entry.url} />}
                       >
                         <entry.icon />
@@ -276,14 +200,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="gap-1.5">
         <SidebarMenu className="gap-0.5">
           {isAdmin && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip="Admin"
                 isActive={isActive("/admin")}
-                className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+                className={`${NAV_BUTTON} ${NAV_ACTIVE}`}
                 render={<Link href="/admin" />}
               >
                 <ShieldCheck />
@@ -295,7 +219,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               tooltip="Paramètres"
               isActive={isActive("/settings")}
-              className={`${NAV_BUTTON} ${NAV_BUTTON_ACTIVE}`}
+              className={`${NAV_BUTTON} ${NAV_ACTIVE}`}
               render={<Link href="/settings" />}
             >
               <Settings />
@@ -303,15 +227,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SidebarSeparator className="mx-0" />
-        <NavUser user={currentUser} />
-        <p className="px-2 text-[11px] leading-4 text-muted-foreground group-data-[collapsible=icon]:hidden">
+        <div className="rounded-xl bg-background p-1 shadow-[0_1px_2px_rgb(15_23_42/0.06),0_0_0_1px_rgb(15_23_42/0.06)] group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:shadow-none dark:bg-sidebar-accent dark:shadow-none">
+          <NavUser user={currentUser} />
+        </div>
+        <p className="px-2.5 text-[11px] leading-4 text-sidebar-foreground/45 group-data-[collapsible=icon]:hidden">
           Données fournies par YouTube ·{" "}
-          <Link href="/privacy" className="hover:text-foreground">
+          <Link href="/privacy" className="hover:text-sidebar-foreground">
             Confidentialité
           </Link>{" "}
           ·{" "}
-          <Link href="/terms" className="hover:text-foreground">
+          <Link href="/terms" className="hover:text-sidebar-foreground">
             Conditions
           </Link>
         </p>

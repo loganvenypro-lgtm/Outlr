@@ -3,7 +3,7 @@ import { VideosGrid } from "@/components/home/VideosGrid";
 
 export default function RadarPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <HeroSearch />
       <VideosGrid />
       <footer className="mx-auto max-w-[1440px] px-6 pb-16 pt-4 md:px-10">

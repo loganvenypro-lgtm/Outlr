@@ -201,7 +201,7 @@ function SimilarChannelsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -735,7 +735,7 @@ function SimilarChannelsContent() {
                           className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border ${
                             isTracked
                               ? "bg-emerald-600/20 text-emerald-400 border-emerald-500/30"
-                              : "bg-white hover:bg-slate-50 text-slate-300 hover:text-white border-slate-200"
+                              : "bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200"
                           }`}
                         >
                           {isTracked ? (
@@ -779,7 +779,7 @@ export default function SimilarChannelsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-white items-center justify-center">
+        <div className="min-h-full bg-white items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
         </div>
       }

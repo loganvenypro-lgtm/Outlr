@@ -70,7 +70,7 @@ export default function TitleLabPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav
@@ -129,7 +129,7 @@ export default function TitleLabPage() {
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                       angle === p.value
                         ? "bg-blue-600 text-white"
-                        : "bg-white text-slate-300 hover:text-white border border-slate-200"
+                        : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200"
                     }`}
                   >
                     {p.label}

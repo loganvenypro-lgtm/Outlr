@@ -74,7 +74,7 @@ export default function ComparePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -171,7 +171,7 @@ export default function ComparePage() {
                   </div>
                   <a
                     href={`/channel/${channel1.id}`}
-                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-600 hover:text-white text-xs font-semibold transition-colors"
                   >
                     Voir Analytics
                   </a>
@@ -194,7 +194,7 @@ export default function ComparePage() {
                   </div>
                   <a
                     href={`/channel/${channel2.id}`}
-                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                    className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-600 hover:text-white text-xs font-semibold transition-colors"
                   >
                     Voir Analytics
                   </a>

@@ -294,7 +294,7 @@ export function RecentVideosList({
               type="button"
               onClick={() => setMedianWindow("12m")}
               className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                medianWindow === "12m" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+                medianWindow === "12m" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               12 Mois (Recommandé)
@@ -303,7 +303,7 @@ export function RecentVideosList({
               type="button"
               onClick={() => setMedianWindow("24m")}
               className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                medianWindow === "24m" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+                medianWindow === "24m" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               24 Mois
@@ -312,7 +312,7 @@ export function RecentVideosList({
               type="button"
               onClick={() => setMedianWindow("lifetime")}
               className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                medianWindow === "lifetime" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+                medianWindow === "lifetime" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Lifetime (Historique)
@@ -394,7 +394,7 @@ export function RecentVideosList({
               className={`px-3 py-1 rounded-lg font-medium transition-all ${
                 sortBy === "newest"
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Plus récentes
@@ -405,7 +405,7 @@ export function RecentVideosList({
               className={`px-3 py-1 rounded-lg font-medium transition-all ${
                 sortBy === "oldest"
                   ? "bg-indigo-600 text-white shadow-sm font-bold"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
               title="Voir les toutes premières vidéos publiées par la chaîne"
             >
@@ -417,7 +417,7 @@ export function RecentVideosList({
               className={`px-3 py-1 rounded-lg font-medium transition-all ${
                 sortBy === "views"
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Plus vues
@@ -428,7 +428,7 @@ export function RecentVideosList({
               className={`px-3 py-1 rounded-lg font-medium transition-all ${
                 sortBy === "outlier"
                   ? "bg-amber-600 text-white shadow-sm font-bold"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
               ⚡ Outliers
@@ -439,7 +439,7 @@ export function RecentVideosList({
               className={`px-3 py-1 rounded-lg font-medium transition-all ${
                 sortBy === "likes"
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Likes
@@ -452,7 +452,7 @@ export function RecentVideosList({
               type="button"
               onClick={() => setViewMode("grid")}
               className={`p-1.5 rounded-lg transition-all ${
-                viewMode === "grid" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+                viewMode === "grid" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-900"
               }`}
               title="Vue Grille Virtualisée"
             >
@@ -462,7 +462,7 @@ export function RecentVideosList({
               type="button"
               onClick={() => setViewMode("table")}
               className={`p-1.5 rounded-lg transition-all ${
-                viewMode === "table" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+                viewMode === "table" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-slate-900"
               }`}
               title="Vue Tableau Virtualisée"
             >

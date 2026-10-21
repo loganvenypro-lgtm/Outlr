@@ -293,7 +293,7 @@ L'équipe commerciale de ${brandName}`
               type="button"
               onClick={() => setSelectedTemplate("standard")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                selectedTemplate === "standard" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                selectedTemplate === "standard" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Intégration
@@ -302,7 +302,7 @@ L'équipe commerciale de ${brandName}`
               type="button"
               onClick={() => setSelectedTemplate("product")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                selectedTemplate === "product" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                selectedTemplate === "product" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Test Produit
@@ -311,7 +311,7 @@ L'équipe commerciale de ${brandName}`
               type="button"
               onClick={() => setSelectedTemplate("cpm")}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                selectedTemplate === "cpm" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                selectedTemplate === "cpm" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Performance

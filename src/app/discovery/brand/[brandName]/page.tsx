@@ -122,7 +122,7 @@ export default function BrandDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -356,7 +356,7 @@ export default function BrandDetailPage() {
                             href={collab.video.videoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-300 hover:text-white transition-colors"
+                            className="p-1.5 rounded-lg bg-white hover:bg-blue-600 text-slate-600 hover:text-white transition-colors"
                             title="Ouvrir sur YouTube"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />

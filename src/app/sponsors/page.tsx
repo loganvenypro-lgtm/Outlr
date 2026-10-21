@@ -129,7 +129,7 @@ export default function GlobalSponsorHunterPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -300,7 +300,7 @@ export default function GlobalSponsorHunterPage() {
                     type="button"
                     onClick={() => setViewTab("brands")}
                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                      viewTab === "brands" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      viewTab === "brands" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Marques Détectées ({brands.length})
@@ -309,7 +309,7 @@ export default function GlobalSponsorHunterPage() {
                     type="button"
                     onClick={() => setViewTab("videos")}
                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                      viewTab === "videos" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      viewTab === "videos" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Vidéos & Séquences ({reports.length})
@@ -318,7 +318,7 @@ export default function GlobalSponsorHunterPage() {
                     type="button"
                     onClick={() => setViewTab("database")}
                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                      viewTab === "database" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                      viewTab === "database" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
                     Base Marques & Décideurs ({Object.keys(KNOWN_SPONSORS).length})
@@ -463,7 +463,7 @@ export default function GlobalSponsorHunterPage() {
                             href={videoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors self-start sm:self-auto"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 text-slate-600 hover:text-white text-xs font-semibold transition-colors self-start sm:self-auto"
                           >
                             <span>Regarder</span>
                             <ExternalLink className="w-3.5 h-3.5" />

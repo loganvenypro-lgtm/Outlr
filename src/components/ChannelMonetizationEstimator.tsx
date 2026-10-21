@@ -266,7 +266,7 @@ export function ChannelMonetizationEstimator({ channel, videos = [] }: ChannelMo
             setCustomMonthlyViews(defaultEstimation.monthlyViews);
             setSelectedNiche(defaultEstimation.detectedNicheKey);
           }}
-          className="text-slate-500 hover:text-slate-300 underline cursor-pointer text-[11px] shrink-0"
+          className="text-slate-500 hover:text-slate-900 underline cursor-pointer text-[11px] shrink-0"
         >
           Réinitialiser aux valeurs détectées
         </button>

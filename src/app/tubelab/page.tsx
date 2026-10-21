@@ -92,7 +92,7 @@ export default function TubeLabPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-full bg-white">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <TopNav 
@@ -129,7 +129,7 @@ export default function TubeLabPage() {
                 type="button"
                 onClick={() => setTab("outliers")}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  tab === "outliers" ? "bg-purple-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  tab === "outliers" ? "bg-purple-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Vidéos Outliers
@@ -138,7 +138,7 @@ export default function TubeLabPage() {
                 type="button"
                 onClick={() => setTab("niches")}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  tab === "niches" ? "bg-purple-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  tab === "niches" ? "bg-purple-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Niche Finder & RPM
@@ -150,7 +150,7 @@ export default function TubeLabPage() {
                   if (!aiConcepts) handleGenerateIdeas(nicheQuery);
                 }}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  tab === "ideation" ? "bg-purple-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+                  tab === "ideation" ? "bg-purple-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 Générateur d'Idées IA
@@ -336,7 +336,7 @@ export default function TubeLabPage() {
                         fetchOutliers(n.tag);
                         setTab("outliers");
                       }}
-                      className="w-full py-2 rounded-xl bg-white hover:bg-purple-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
+                      className="w-full py-2 rounded-xl bg-white hover:bg-purple-600 text-slate-600 hover:text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
                     >
                       <span>Scanner les Outliers</span>
                       <ArrowRight className="w-3.5 h-3.5" />

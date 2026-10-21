@@ -61,7 +61,7 @@ export function OutlierCard({ video }: { video: OutlierVideo }) {
   });
 
   return (
-    <Card className="group gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md">
+    <Card className="group gap-0 overflow-hidden p-0 transition-[box-shadow,translate] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-900/[0.06]">
       <div className="relative">
         <a href={url} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-muted">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -139,7 +139,7 @@ export function OutlierCard({ video }: { video: OutlierVideo }) {
           </span>
         </a>
 
-        <div className="grid grid-cols-3 gap-2 rounded-lg bg-muted/60 p-2 text-center">
+        <div className="grid grid-cols-3 divide-x divide-border/70 rounded-lg bg-muted py-2 text-center">
           <Stat icon={<Eye className="size-3" />} label="Vues" value={formatCompactNumber(video.views)} />
           <Stat
             icon={<Zap className="size-3" />}
@@ -195,8 +195,8 @@ export function OutlierCard({ video }: { video: OutlierVideo }) {
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="min-w-0">
-      <div className="flex items-center justify-center gap-1 text-[10px] tracking-wide text-muted-foreground uppercase">
+    <div className="min-w-0 px-1">
+      <div className="flex items-center justify-center gap-1 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
         {icon}
         {label}
       </div>
