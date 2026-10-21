@@ -1,3 +1,4 @@
+import { DATA_DIR } from "@/lib/dataDir";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -11,7 +12,6 @@ import {
 } from "@/types/thumbnailIntelligence";
 import { readIntelligenceDatabase, upsertUnifiedVideo, upsertUnifiedChannel } from "./intelligenceDb";
 
-const DATA_DIR = path.join(process.cwd(), "data");
 const THUMB_DB_FILE = path.join(DATA_DIR, "thumbnail_intelligence_db.json");
 
 interface ThumbnailDatabaseSchema {

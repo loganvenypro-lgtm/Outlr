@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { upsertUnifiedChannel, upsertUnifiedVideo, QuotaManager } from "./intelligenceDb";
 import type { InnerTubeSearchFilters, InnerTubeUploadDate } from "./youtube-scraper";
+import { DATA_DIR } from "@/lib/dataDir";
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 
@@ -18,10 +19,6 @@ function getApiKey(): string {
  * Storage for asynchronous discovery jobs and results
  * Fully compatible with Vercel Serverless (In-Memory global store + /tmp directory fallback)
  */
-const IS_VERCEL = !!process.env.VERCEL;
-const DATA_DIR = IS_VERCEL
-  ? path.join("/tmp", "data")
-  : path.join(process.cwd(), "data");
 
 const JOBS_FILE = path.join(DATA_DIR, "discovery_jobs.json");
 const CACHE_FILE = path.join(DATA_DIR, "discovered_videos_cache.json");

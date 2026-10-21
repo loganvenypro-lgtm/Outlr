@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export interface DbChannel {
   id: string;
@@ -126,7 +127,7 @@ export interface DatabaseSchema {
   channelAlerts: DbChannelAlert[];
 }
 
-const DB_DIR = path.join(process.cwd(), "data");
+const DB_DIR = DATA_DIR;
 const DB_FILE = path.join(DB_DIR, "sponsor_database.json");
 
 const DEFAULT_DB: DatabaseSchema = {

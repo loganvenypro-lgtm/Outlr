@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getTrackedChannels } from "@/lib/db";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export async function GET() {
       return NextResponse.json(memoryStatsCache.data);
     }
 
-    const dataDir = path.join(process.cwd(), "data");
+    const dataDir = DATA_DIR;
 
     // 1. Lire discovered_videos_cache.json
     let totalDiscoveredRaw = 0;

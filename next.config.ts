@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
       { source: "/ingest/:path*", destination: "https://us.i.posthog.com/:path*" },
     ];
   },
+  // Ship the JSON databases with every server function (copied to /tmp on Vercel)
+  outputFileTracingIncludes: {
+    "/**": ["./data/**/*.json"],
+  },
   // Required by PostHog's API, which uses trailing slashes
   skipTrailingSlashRedirect: true,
 };

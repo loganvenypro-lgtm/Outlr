@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export interface ChannelVideoSample {
   id: string;
@@ -24,7 +25,7 @@ export interface MedianComputationResult {
   sampleCount: number;
 }
 
-const CACHE_FILE = path.join(process.cwd(), "data", "channel_stats_cache.json");
+const CACHE_FILE = path.join(DATA_DIR, "channel_stats_cache.json");
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 heures
 
 let memoryCache: Map<string, CachedChannelRecord> | null = null;

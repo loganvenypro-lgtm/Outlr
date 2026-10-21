@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { RecentVideo } from "@/types/youtube";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export interface ChannelMedianStats {
   // Longform medians (Shorts strictly excluded)
@@ -26,7 +27,7 @@ export interface CachedChannelArchive {
   videos: RecentVideo[];
 }
 
-const CACHE_DIR = path.join(process.cwd(), "data", "channel_archives");
+const CACHE_DIR = path.join(DATA_DIR, "channel_archives");
 
 async function ensureDir() {
   try {

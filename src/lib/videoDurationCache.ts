@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export interface CachedVideoDuration {
   videoId: string;
@@ -13,7 +14,7 @@ export interface CachedVideoDuration {
   updatedAt: number;
 }
 
-const DURATION_CACHE_FILE = path.join(process.cwd(), "data", "video_durations_cache.json");
+const DURATION_CACHE_FILE = path.join(DATA_DIR, "video_durations_cache.json");
 
 let memoryCache: Map<string, CachedVideoDuration> | null = null;
 const inFlightPromises = new Map<string, Promise<CachedVideoDuration>>();

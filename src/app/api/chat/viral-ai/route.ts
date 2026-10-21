@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { detectTitlePattern } from "@/lib/titlePatternDetector";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ function loadViralDatabase(): RAGContextVideo[] {
     return cachedViralIndex;
   }
 
-  const dataDir = path.join(process.cwd(), "data");
+  const dataDir = DATA_DIR;
   const viralPath = path.join(dataDir, "viral_videos_index.json");
   const discoveredPath = path.join(dataDir, "discovered_videos_cache.json");
 

@@ -3,6 +3,7 @@ import path from "path";
 import { DiscoveredVideoRecord } from "@/types/discoveryEngine";
 import { detectTitlePattern } from "./titlePatternDetector";
 import { inferVideoCategory, inferVideoNiche, ALGROW_NICHES, ALGROW_CATEGORIES } from "./taxonomyHelper";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export interface IndexedViralVideo {
   id: string;
@@ -64,14 +65,14 @@ export interface ViralFilterParams {
   limit?: number;
 }
 
-const INDEX_FILE = path.join(process.cwd(), "data", "viral_videos_index.json");
-const DISCOVERED_CACHE_FILE = path.join(process.cwd(), "data", "discovered_videos_cache.json");
+const INDEX_FILE = path.join(DATA_DIR, "viral_videos_index.json");
+const DISCOVERED_CACHE_FILE = path.join(DATA_DIR, "discovered_videos_cache.json");
 
 let memoryIndex: IndexedViralVideo[] | null = null;
 let lastLoadedTime = 0;
 
 async function ensureDataDir() {
-  const dir = path.join(process.cwd(), "data");
+  const dir = DATA_DIR;
   try {
     await fs.mkdir(dir, { recursive: true });
   } catch {}

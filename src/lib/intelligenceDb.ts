@@ -1,3 +1,4 @@
+import { DATA_DIR } from "@/lib/dataDir";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -14,7 +15,6 @@ import {
   DiscoveryTopicSeed,
 } from "@/types/intelligenceEngine";
 
-const DATA_DIR = path.join(process.cwd(), "data");
 const INTEL_DB_FILE = path.join(DATA_DIR, "intelligence_database.json");
 
 // Default initial discovery seeds covering key YouTube niches

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { DATA_DIR } from "@/lib/dataDir";
 
 export const DISCORD_WEBHOOK_URL =
   process.env.DISCORD_OUTLIERS_WEBHOOK_URL || "";
@@ -45,7 +46,7 @@ export interface NotificationLogRecord {
   sentAt: string;
 }
 
-const LOG_FILE = path.join(process.cwd(), "data", "notification_logs.json");
+const LOG_FILE = path.join(DATA_DIR, "notification_logs.json");
 
 function ensureLogFile() {
   const dir = path.dirname(LOG_FILE);

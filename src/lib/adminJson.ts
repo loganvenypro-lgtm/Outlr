@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
+import { DATA_DIR } from "@/lib/dataDir";
 
-const DATA_DIR = path.join(process.cwd(), "data");
 
 // Parsed files, reused until the file changes on disk (some weigh tens of MB)
 const cache = new Map<string, { mtimeMs: number; data: unknown }>();

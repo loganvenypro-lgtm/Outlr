@@ -1,3 +1,4 @@
+import { DATA_DIR } from "@/lib/dataDir";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -233,7 +234,7 @@ function getExtendedChannelPool(limit = 40): ChannelCandidate[] {
   // Compléter avec les chaînes du cache de découverte
   if (poolMap.size < limit) {
     try {
-      const cachePath = path.join(process.cwd(), "data", "discovered_videos_cache.json");
+      const cachePath = path.join(DATA_DIR, "discovered_videos_cache.json");
       if (fs.existsSync(cachePath)) {
         const raw = fs.readFileSync(cachePath, "utf-8");
         const cacheData = JSON.parse(raw);
@@ -313,7 +314,7 @@ async function handleSync(request: NextRequest) {
     // Cache des pépites historiques pour enrichir l'échantillonnage de chaque chaîne
     const cachedGemsMap = new Map<string, any[]>();
     try {
-      const cachePath = path.join(process.cwd(), "data", "discovered_videos_cache.json");
+      const cachePath = path.join(DATA_DIR, "discovered_videos_cache.json");
       if (fs.existsSync(cachePath)) {
         const cacheData = JSON.parse(fs.readFileSync(cachePath, "utf-8"));
         for (const q in cacheData) {
