@@ -150,7 +150,7 @@ export function Typewriter({ words }: { words: string[] }) {
   return (
     <span>
       {words[index % words.length].slice(0, length)}
-      <span className="lp-caret ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-orange-400" />
+      <span className="lp-caret ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-orange-500" />
     </span>
   );
 }
@@ -172,7 +172,7 @@ export function SpotlightCard({ children, className }: { children: React.ReactNo
       ref={ref}
       onMouseMove={onMove}
       className={cn(
-        "lp-spotlight group relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] transition-colors duration-300 hover:border-white/15",
+        "lp-spotlight group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-slate-300 hover:shadow-md",
         className
       )}
     >
@@ -186,14 +186,14 @@ export function SpotlightCard({ children, className }: { children: React.ReactNo
 export function VideoCard({ video, compactCard = false }: { video: LandingVideo; compactCard?: boolean }) {
   return (
     <div className="group/card flex min-w-0 flex-col gap-2.5">
-      <div className="relative aspect-video overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
+      <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
         <img
           src={video.thumbnail}
           alt=""
           loading="lazy"
           className="size-full object-cover transition-transform duration-500 group-hover/card:scale-105"
         />
-        <span className="absolute left-2 top-2 rounded-md bg-gradient-to-r from-rose-500 to-orange-400 px-1.5 py-0.5 text-[11px] font-bold text-white shadow-lg shadow-rose-500/30">
+        <span className="absolute left-2 top-2 rounded-md bg-gradient-to-r from-rose-500 to-orange-400 px-1.5 py-0.5 text-[11px] font-bold text-white shadow-md shadow-rose-500/30">
           {formatMultiplier(video.outlierMultiplier)}
         </span>
         <span className="absolute bottom-2 right-2 rounded bg-black/75 px-1 py-0.5 text-[10px] font-medium text-white">
@@ -203,16 +203,16 @@ export function VideoCard({ video, compactCard = false }: { video: LandingVideo;
       <div className="flex gap-2.5">
         {!compactCard && (
           video.channelAvatar ? (
-            <img src={video.channelAvatar} alt="" loading="lazy" className="size-7 shrink-0 rounded-full ring-1 ring-white/10" />
+            <img src={video.channelAvatar} alt="" loading="lazy" className="size-7 shrink-0 rounded-full ring-1 ring-slate-200" />
           ) : (
-            <div className="size-7 shrink-0 rounded-full bg-white/10" />
+            <div className="size-7 shrink-0 rounded-full bg-slate-200" />
           )
         )}
         <div className="min-w-0">
-          <p className={cn("line-clamp-2 font-medium leading-snug text-white/90", compactCard ? "text-[11px]" : "text-sm")}>
+          <p className={cn("line-clamp-2 font-medium leading-snug text-slate-800", compactCard ? "text-[11px]" : "text-sm")}>
             {video.title}
           </p>
-          <p className={cn("mt-1 truncate text-white/45", compactCard ? "text-[10px]" : "text-xs")}>
+          <p className={cn("mt-1 truncate text-slate-500", compactCard ? "text-[10px]" : "text-xs")}>
             {video.channelTitle} · {formatCompact(video.viewCount)} vues · {timeAgo(video.publishedAt)}
           </p>
         </div>

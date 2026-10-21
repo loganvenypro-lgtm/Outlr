@@ -5,13 +5,16 @@ import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
+  BadgeCheck,
   BarChart3,
   Bot,
   Check,
   ChevronDown,
+  ChevronRight,
   Compass,
   Flame,
   Image as ImageIcon,
+  Play,
   LayoutGrid,
   Radar,
   Search,
@@ -30,14 +33,23 @@ import {
   Typewriter,
   VideoCard,
   formatCompact,
+  formatNumber,
   formatMultiplier,
   type LandingVideo,
 } from "./landing-parts";
 
 export type { LandingVideo };
 
+export interface LandingCreator {
+  name: string;
+  avatar: string;
+  subscribers: number;
+}
+
 interface LandingPageProps {
   videos: LandingVideo[];
+  heroVideos: LandingVideo[];
+  creators: LandingCreator[];
   niches: { name: string; videos: LandingVideo[] }[];
   stats: { videos: number; channels: number; topMultiplier: number };
 }
@@ -49,19 +61,20 @@ const NAV_LINKS = [
   { href: "#faq", label: "FAQ" },
 ];
 
-const SEARCH_EXAMPLES = ["true crime", "minecraft challenge", "rise and fall", "dropshipping", "cuisine facile", "video essay"];
+const SEARCH_EXAMPLES = [
+  "Les ados qui ont piraté la CIA",
+  "L'affaire que personne n'a pu oublier",
+  "Pourquoi les films ne ressemblent plus à rien",
+  "L'iceberg le plus sombre d'internet",
+  "Le tueur le plus intelligent d'Amérique",
+];
 
-export function LandingPage({ videos, niches, stats }: LandingPageProps) {
-  const heroVideos = videos.slice(0, 6);
-  const marqueeTop = videos.slice(6, 22);
-  const marqueeBottom = videos.slice(22, 38);
-
+export function LandingPage({ videos, heroVideos, creators, niches, stats }: LandingPageProps) {
   return (
-    <div className="lp-root relative min-h-screen overflow-x-clip bg-[#07070b] text-white selection:bg-orange-500/30">
+    <div className="lp-root relative min-h-screen overflow-x-clip bg-white text-slate-900 selection:bg-orange-200">
       <Navbar />
-      <Hero videos={heroVideos} />
-      <Marquee top={marqueeTop} bottom={marqueeBottom} />
-      <StatsBand stats={stats} />
+      <Hero videos={heroVideos} creators={creators} stats={stats} />
+      <ProductPreview videos={videos.slice(0, 6)} />
       <OutlierExplainer />
       <Features videos={videos} />
       <NicheExplorer niches={niches} />
@@ -79,7 +92,7 @@ export function LandingPage({ videos, niches, stats }: LandingPageProps) {
 function Logo() {
   return (
     <Link href="/welcome" className="flex items-center gap-2.5">
-      <span className="flex size-8 items-center justify-center rounded-xl bg-white/[0.06] p-1.5 ring-1 ring-white/10">
+      <span className="flex size-8 items-center justify-center rounded-xl bg-slate-950 p-1.5 shadow-sm ring-1 ring-white/10">
         <img src="/outlr-logo.png" alt="" className="size-full object-contain" />
       </span>
       <span className="text-lg font-bold tracking-tight">Outlr</span>
@@ -100,31 +113,44 @@ function Navbar() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3">
+    <header className="fixed inset-x-0 top-0 z-50 text-white">
+      {/* Announcement bar */}
+      <a
+        href="#demo"
+        className="flex h-8 items-center justify-center gap-3 bg-gradient-to-r from-rose-500 to-orange-500 px-4 text-[11px] font-semibold uppercase tracking-wide text-white"
+      >
+        <span className="truncate">Nouveau : la démo en direct de l&apos;explorateur de niches</span>
+        <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 normal-case ring-1 ring-white/40">
+          Voir <ChevronRight className="size-3" />
+        </span>
+      </a>
+
       <nav
         className={cn(
-          "mx-auto flex h-14 max-w-6xl items-center justify-between rounded-2xl px-4 transition-all duration-300",
-          scrolled ? "border border-white/10 bg-[#0b0b12]/70 shadow-2xl shadow-black/40 backdrop-blur-xl" : "border border-transparent"
+          "transition-all duration-300",
+          scrolled ? "border-b border-white/10 bg-[#0a0a0c]/80 backdrop-blur-xl" : "border-b border-transparent bg-transparent"
         )}
       >
-        <Logo />
-        <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="rounded-lg px-3 py-2 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white">
-              {l.label}
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/login" className="hidden rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:text-white sm:block">
-            Se connecter
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-white/90 hover:shadow-[0_0_24px_rgba(255,255,255,0.25)]"
-          >
-            Essayer Outlr
-          </Link>
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+          <Logo />
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href} className="rounded-lg px-3 py-2 text-sm text-white/65 transition-colors hover:text-white">
+                {l.label}
+              </a>
+            ))}
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="hidden text-sm text-white/65 transition-colors hover:text-white sm:block">
+              Se connecter
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-xl border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-sm font-semibold text-orange-300 transition-colors hover:bg-orange-500/20"
+            >
+              Commencer
+            </Link>
+          </div>
         </div>
       </nav>
     </header>
@@ -133,16 +159,161 @@ function Navbar() {
 
 // --- HERO ---
 
-function Hero({ videos }: { videos: LandingVideo[] }) {
+function Hero({
+  videos,
+  creators,
+  stats,
+}: {
+  videos: LandingVideo[];
+  creators: LandingCreator[];
+  stats: LandingPageProps["stats"];
+}) {
+  return (
+    <section className="relative overflow-hidden bg-[#0a0a0c] px-4 pb-52 pt-36 text-white sm:pt-40">
+      {/* Glow rising from the bottom, like a stage light behind the wall */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[44rem] bg-[radial-gradient(ellipse_55%_60%_at_50%_100%,rgba(249,115,22,0.28),rgba(244,63,94,0.08)_45%,transparent_75%)]" />
+      {/* Decorative outlines framing the wall */}
+      <div aria-hidden className="pointer-events-none absolute left-[calc(50%-36rem)] top-[23rem] hidden h-[28rem] w-[36rem] rounded-tl-[3rem] border-l border-t border-white/10 lg:block" />
+      <div aria-hidden className="pointer-events-none absolute left-[calc(50%-48rem)] top-[34rem] hidden h-[20rem] w-[60rem] rounded-tl-[3rem] border-l border-t border-white/[0.06] lg:block" />
+
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
+        <Reveal>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-white/75">
+            Plus de <strong className="font-semibold text-orange-400"><CountUp value={stats.videos} /></strong> outliers indexés
+          </span>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
+            Le <span className="lp-gradient-text">raccourci</span>
+            <br />
+            <span className="sm:whitespace-nowrap">vers des millions de vues</span>
+          </h1>
+        </Reveal>
+
+        <Reveal delay={160}>
+          <p className="mt-4 text-sm font-medium text-white/60 sm:text-base">
+            Des vidéos ignorées aux vidéos virales, grâce aux outliers de votre niche
+          </p>
+        </Reveal>
+      </div>
+
+      {/* Prompt box overlapping the first row of thumbnails */}
+      <div className="relative mt-8">
+        <ThumbnailWall videos={videos} />
+
+        <Reveal delay={240} className="relative z-10 mx-auto w-full max-w-md">
+          <Link href="/login" className="group relative block">
+            <div className="h-28 rounded-2xl border border-white/10 bg-[#141417]/95 p-4 text-left text-sm text-white/80 shadow-2xl shadow-black/60 backdrop-blur">
+              <Typewriter words={SEARCH_EXAMPLES} />
+            </div>
+            <span className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_34px_rgba(249,115,22,0.6)] ring-4 ring-[#0a0a0c] transition-transform group-hover:scale-105">
+              <Sparkles className="size-4" /> Trouver mes premiers outliers
+            </span>
+          </Link>
+        </Reveal>
+
+        <Reveal delay={300} className="relative z-10 mt-9 flex justify-center">
+          <a href="#demo" className="group inline-flex items-center gap-2 rounded-full bg-[#0a0a0c]/80 py-1 pl-1 pr-3 text-sm font-medium text-white/80 ring-1 ring-white/10 backdrop-blur hover:text-white">
+            <span className="flex size-7 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 transition-transform group-hover:scale-110">
+              <Play className="size-3 fill-white text-white" />
+            </span>
+            Voir la démo <span className="text-xs text-white/40">en direct</span>
+          </a>
+        </Reveal>
+
+        {/* Leaves room for the second row of thumbnails under the button */}
+        <div aria-hidden className="h-44 sm:h-48" />
+      </div>
+
+      <Reveal delay={400} className="relative z-10 mx-auto mt-10 flex max-w-2xl flex-wrap items-start justify-center gap-x-20 gap-y-8 text-center">
+        {[
+          { value: <CountUp value={stats.videos} />, label: "Vidéos virales indexées" },
+          { value: <CountUp value={stats.channels} />, label: "Chaînes analysées" },
+        ].map((s) => (
+          <div key={s.label}>
+            <p className="text-6xl font-bold tracking-tight sm:text-7xl">
+              {s.value}
+              <sup className="lp-gradient-text ml-0.5 align-super text-4xl">+</sup>
+            </p>
+            <p className="mt-1 text-sm font-medium text-white/55">{s.label}</p>
+          </div>
+        ))}
+      </Reveal>
+
+      {creators.length >= 4 && (
+        <Reveal delay={480} className="relative z-10 mt-12">
+          <p className="text-center text-sm font-medium text-white/70">Quelques chaînes dont Outlr a repéré les outliers :</p>
+          <div className="lp-marquee-mask mx-auto mt-5 flex max-w-4xl overflow-hidden">
+            <div className="lp-marquee flex shrink-0 gap-8 pr-8" style={{ animationDuration: "50s" }}>
+              {[...creators, ...creators].map((c, i) => (
+                <div key={`${c.name}-${i}`} aria-hidden={i >= creators.length} className="flex shrink-0 items-center gap-2.5">
+                  <img src={c.avatar} alt="" loading="lazy" className="size-9 rounded-full ring-1 ring-white/15" />
+                  <div className="text-left leading-tight">
+                    <p className="flex items-center gap-1 text-sm font-semibold capitalize">
+                      {c.name} <BadgeCheck className="size-3.5 text-white/40" />
+                    </p>
+                    <p className="text-xs text-white/50">{formatCompact(c.subscribers)} abonnés</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      )}
+    </section>
+  );
+}
+
+/** Rounds down to three significant digits, e.g. 15 530 204 → 15 500 000. */
+function roundViews(n: number) {
+  const step = 10 ** Math.max(0, Math.floor(Math.log10(Math.max(n, 1))) - 2);
+  return Math.floor(n / step) * step;
+}
+
+/** Two rows of real outlier thumbnails drifting behind the prompt box. */
+function ThumbnailWall({ videos }: { videos: LandingVideo[] }) {
+  if (videos.length < 8) return null;
+  const half = Math.ceil(videos.length / 2);
+  const rows = [videos.slice(0, half), videos.slice(half)];
+
+  return (
+    <div aria-hidden className="pointer-events-none absolute left-1/2 top-10 flex w-screen -translate-x-1/2 flex-col gap-4">
+      {rows.map((row, r) => (
+        <div key={r} className="lp-marquee-mask flex overflow-hidden">
+          <div
+            className={cn("lp-marquee flex shrink-0 gap-3 pr-3", r === 1 && "lp-marquee-reverse")}
+            style={{ animationDuration: `${r === 0 ? 90 : 110}s` }}
+          >
+            {[...row, ...row].map((v, i) => (
+              <div key={`${v.id}-${i}`} className="w-44 shrink-0 rounded-xl border border-white/[0.07] bg-[#151518] p-1 sm:w-48">
+                <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full rounded-lg object-cover" />
+                <p className="mt-1.5 line-clamp-2 px-1 text-[11px] font-semibold leading-snug text-white/85">{v.title}</p>
+                <p className="px-1 pb-1 pt-0.5 text-[10px] text-white/40">{formatNumber(roundViews(v.viewCount))}+ vues</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      {/* Dim the cards around the prompt box so it reads first */}
+      <div className="lp-wall-shade absolute inset-0" />
+    </div>
+  );
+}
+
+// --- PRODUCT PREVIEW ---
+
+function ProductPreview({ videos }: { videos: LandingVideo[] }) {
   const frameRef = useRef<HTMLDivElement>(null);
 
-  // The product frame starts tilted and flattens as the visitor scrolls.
+  // The frame starts tilted and flattens as it scrolls into view.
   useEffect(() => {
     const el = frameRef.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const onScroll = () => {
-      const p = Math.min(1, window.scrollY / 500);
-      el.style.transform = `perspective(1600px) rotateX(${14 * (1 - p)}deg) scale(${0.94 + 0.06 * p})`;
+      const top = el.parentElement!.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, 1 - top / (window.innerHeight * 0.85)));
+      el.style.transform = `perspective(1600px) rotateX(${16 * (1 - p)}deg) scale(${0.93 + 0.07 * p})`;
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -150,72 +321,13 @@ function Hero({ videos }: { videos: LandingVideo[] }) {
   }, []);
 
   return (
-    <section className="relative px-4 pb-24 pt-36 sm:pt-44">
-      {/* Backdrop */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="lp-grid absolute inset-0" />
-        <div className="lp-aurora absolute left-[calc(50%-35rem)] top-[-18rem] h-[42rem] w-[70rem] rounded-full" />
-      </div>
-
-      <div className="relative mx-auto flex max-w-4xl flex-col items-center text-center">
-        <Reveal>
-          <a
-            href="#demo"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] py-1 pl-1 pr-3 text-xs text-white/70 backdrop-blur transition-colors hover:border-white/20"
-          >
-            <span className="rounded-full bg-gradient-to-r from-rose-500 to-orange-400 px-2 py-0.5 font-semibold text-white">Live</span>
-            Le radar des vidéos qui explosent sur YouTube
-            <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
-          </a>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <h1 className="mt-7 text-balance text-5xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-7xl">
-            Trouvez la vidéo qui fera{" "}
-            <span className="lp-gradient-text">10×</span> votre moyenne.
-          </h1>
-        </Reveal>
-
-        <Reveal delay={160}>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/55">
-            Outlr repère les vidéos qui écrasent la moyenne de leur chaîne. Vous voyez quels sujets, titres et
-            miniatures marchent dans votre niche, avant que tout le monde les copie.
-          </p>
-        </Reveal>
-
-        <Reveal delay={240} className="w-full">
-          <Link
-            href="/login"
-            className="lp-glow-border group mx-auto mt-9 flex w-full max-w-xl items-center gap-3 rounded-2xl bg-[#0d0d14] p-2 pl-4 text-left"
-          >
-            <Search className="size-5 shrink-0 text-white/40" />
-            <span className="flex-1 truncate text-white/80">
-              <Typewriter words={SEARCH_EXAMPLES} />
-            </span>
-            <span className="flex items-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition-transform group-hover:scale-[1.03]">
-              Scanner <ArrowRight className="size-4" />
-            </span>
-          </Link>
-        </Reveal>
-
-        <Reveal delay={320}>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-white/45">
-            {["Long format et Shorts", "Toutes les langues", "Aucun accès à votre compte YouTube"].map((t) => (
-              <span key={t} className="flex items-center gap-1.5">
-                <Check className="size-3.5 text-orange-400" /> {t}
-              </span>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-
-      {/* Product frame */}
-      <Reveal delay={200} className="relative mx-auto mt-20 max-w-6xl">
-        <div aria-hidden className="absolute -inset-x-10 -top-10 bottom-0 rounded-[3rem] bg-gradient-to-b from-orange-500/20 via-rose-500/10 to-transparent blur-3xl" />
+    <section className="relative z-10 -mt-40 px-4 pb-24">
+      <div className="relative mx-auto max-w-6xl">
+        <div aria-hidden className="absolute -inset-x-10 -top-10 bottom-10 rounded-[3rem] bg-gradient-to-b from-orange-500/25 via-rose-500/10 to-transparent blur-3xl" />
         <div ref={frameRef} className="relative origin-top transition-transform duration-150 ease-out will-change-transform">
           <AppFrame videos={videos} />
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }
@@ -224,19 +336,18 @@ function AppFrame({ videos }: { videos: LandingVideo[] }) {
   const sideIcons = [LayoutGrid, Flame, TrendingUp, Compass, ImageIcon, Type, Wallet];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0c0c13]/90 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)] ring-1 ring-white/5 backdrop-blur">
-      {/* Window chrome */}
-      <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-3">
-        <span className="size-2.5 rounded-full bg-white/15" />
-        <span className="size-2.5 rounded-full bg-white/15" />
-        <span className="size-2.5 rounded-full bg-white/15" />
-        <span className="mx-auto rounded-md bg-white/[0.04] px-16 py-1 text-[11px] text-white/35">outlr.app/outliers</span>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_40px_100px_-30px_rgba(15,23,42,0.25)]">
+      <div className="flex items-center gap-2 border-b border-slate-100 px-4 py-3">
+        <span className="size-2.5 rounded-full bg-slate-200" />
+        <span className="size-2.5 rounded-full bg-slate-200" />
+        <span className="size-2.5 rounded-full bg-slate-200" />
+        <span className="mx-auto rounded-md bg-slate-100 px-16 py-1 text-[11px] text-slate-400">outlr.app/outliers</span>
       </div>
 
       <div className="flex">
-        <aside className="hidden w-14 shrink-0 flex-col items-center gap-3 border-r border-white/[0.06] py-5 sm:flex">
+        <aside className="hidden w-14 shrink-0 flex-col items-center gap-3 border-r border-slate-100 py-5 sm:flex">
           {sideIcons.map((Icon, i) => (
-            <span key={i} className={cn("flex size-8 items-center justify-center rounded-lg", i === 1 ? "bg-white/10 text-white" : "text-white/30")}>
+            <span key={i} className={cn("flex size-8 items-center justify-center rounded-lg", i === 1 ? "bg-slate-900 text-white" : "text-slate-400")}>
               <Icon className="size-4" />
             </span>
           ))}
@@ -246,7 +357,7 @@ function AppFrame({ videos }: { videos: LandingVideo[] }) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-sm font-semibold">Outliers</p>
-              <p className="text-xs text-white/40">Vidéos qui surperforment leur chaîne</p>
+              <p className="text-xs text-slate-500">Vidéos qui surperforment leur chaîne</p>
             </div>
             <div className="flex flex-wrap gap-1.5 text-[11px]">
               {["Long format", "Outlier ≥ 10×", "Toutes chaînes", "Tri : score viral"].map((f, i) => (
@@ -254,7 +365,7 @@ function AppFrame({ videos }: { videos: LandingVideo[] }) {
                   key={f}
                   className={cn(
                     "rounded-lg border px-2.5 py-1",
-                    i === 1 ? "border-orange-400/40 bg-orange-400/10 text-orange-200" : "border-white/10 bg-white/[0.03] text-white/55"
+                    i === 1 ? "border-orange-300 bg-orange-50 text-orange-700" : "border-slate-200 bg-white text-slate-600"
                   )}
                 >
                   {f}
@@ -276,66 +387,6 @@ function AppFrame({ videos }: { videos: LandingVideo[] }) {
   );
 }
 
-// --- MARQUEE ---
-
-function Marquee({ top, bottom }: { top: LandingVideo[]; bottom: LandingVideo[] }) {
-  if (top.length < 4) return null;
-
-  const Row = ({ items, reverse }: { items: LandingVideo[]; reverse?: boolean }) => (
-    <div className="lp-marquee-mask flex overflow-hidden">
-      <div className={cn("lp-marquee flex shrink-0 gap-4 pr-4", reverse && "lp-marquee-reverse")}>
-        {[...items, ...items].map((v, i) => (
-          <div key={`${v.id}-${i}`} className="relative w-60 shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10" aria-hidden={i >= items.length}>
-            <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-            <span className="absolute left-2 top-2 rounded-md bg-gradient-to-r from-rose-500 to-orange-400 px-1.5 py-0.5 text-[11px] font-bold">
-              {formatMultiplier(v.outlierMultiplier)}
-            </span>
-            <p className="absolute inset-x-2.5 bottom-2 line-clamp-1 text-xs font-medium text-white/90">{v.title}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  return (
-    <section className="relative py-10">
-      <Reveal>
-        <p className="mb-8 text-center text-xs font-medium uppercase tracking-[0.2em] text-white/35">
-          Quelques outliers repérés par Outlr
-        </p>
-      </Reveal>
-      <div className="flex flex-col gap-4">
-        <Row items={top} />
-        {bottom.length >= 4 && <Row items={bottom} reverse />}
-      </div>
-    </section>
-  );
-}
-
-// --- STATS ---
-
-function StatsBand({ stats }: { stats: LandingPageProps["stats"] }) {
-  const items = [
-    { value: <CountUp value={stats.videos} />, label: "vidéos virales indexées" },
-    { value: <CountUp value={stats.channels} />, label: "chaînes analysées" },
-    { value: <CountUp value={stats.topMultiplier} prefix="×" />, label: "meilleur outlier en vitrine" },
-  ];
-
-  return (
-    <section className="px-4 py-16">
-      <div className="mx-auto grid max-w-5xl gap-px overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.06] sm:grid-cols-3">
-        {items.map((item, i) => (
-          <Reveal key={i} delay={i * 100} className="bg-[#09090f] px-8 py-10 text-center">
-            <p className="lp-gradient-text-soft text-5xl font-semibold tracking-tight">{item.value}</p>
-            <p className="mt-2 text-sm text-white/45">{item.label}</p>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 // --- WHY OUTLIERS ---
 
 function OutlierExplainer() {
@@ -350,20 +401,20 @@ function OutlierExplainer() {
           <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
             Les mots-clés vous disent ce qu&apos;on cherche. Les outliers, ce qu&apos;on regarde.
           </h2>
-          <p className="mt-5 text-lg text-white/55">
+          <p className="mt-5 text-lg text-slate-600">
             Un outlier, c&apos;est une vidéo qui fait bien plus de vues que la médiane de sa propre chaîne. Quand une
             chaîne de 6 000 abonnés sort une vidéo à 500 000 vues, ce n&apos;est pas la taille de la chaîne qui a joué.
             C&apos;est le sujet, le titre et la miniature. C&apos;est exactement ça que vous voulez reproduire.
           </p>
-          <ul className="mt-8 space-y-3 text-white/70">
+          <ul className="mt-8 space-y-3 text-slate-700">
             {[
               "Comparé à la chaîne elle-même, pas à tout YouTube",
               "Les petites chaînes ressortent autant que les géants",
               "Des signaux frais, pas des tendances déjà saturées",
             ].map((t) => (
               <li key={t} className="flex items-start gap-3">
-                <span className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-orange-400/15">
-                  <Check className="size-3 text-orange-300" />
+                <span className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                  <Check className="size-3 text-orange-600" />
                 </span>
                 {t}
               </li>
@@ -373,27 +424,27 @@ function OutlierExplainer() {
 
         <Reveal delay={120}>
           <SpotlightCard className="p-6 sm:p-8">
-            <div className="flex items-center justify-between text-xs text-white/45">
+            <div className="flex items-center justify-between text-xs text-slate-500">
               <span>10 dernières vidéos d&apos;une chaîne</span>
-              <span className="rounded-md bg-white/5 px-2 py-1">Vues</span>
+              <span className="rounded-md bg-slate-100 px-2 py-1">Vues</span>
             </div>
             <div className="relative mt-8 flex h-64 items-end gap-2 sm:gap-3">
-              <div className="absolute inset-x-0 bottom-[36%] border-t border-dashed border-white/25">
-                <span className="absolute -top-6 right-0 text-[11px] text-white/45">médiane de la chaîne</span>
+              <div className="absolute inset-x-0 bottom-[36%] border-t border-dashed border-slate-300">
+                <span className="absolute -top-6 right-0 text-[11px] text-slate-500">médiane de la chaîne</span>
               </div>
               {bars.map((h, i) => {
                 const hot = h === 100;
                 return (
                   <div key={i} className="relative flex h-full flex-1 items-end">
                     {hot && (
-                      <span className="lp-float absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gradient-to-r from-rose-500 to-orange-400 px-2 py-1 text-xs font-bold shadow-lg shadow-orange-500/40">
+                      <span className="lp-float absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gradient-to-r from-rose-500 to-orange-400 px-2 py-1 text-xs font-bold text-white shadow-lg shadow-orange-500/30">
                         ×24 outlier
                       </span>
                     )}
                     <div
                       className={cn(
                         "lp-bar w-full rounded-t-md",
-                        hot ? "bg-gradient-to-t from-rose-600 to-orange-300 shadow-[0_0_40px_rgba(251,146,60,0.45)]" : "bg-white/[0.12]"
+                        hot ? "bg-gradient-to-t from-rose-500 to-orange-300 shadow-[0_0_40px_rgba(251,146,60,0.35)]" : "bg-slate-200"
                       )}
                       style={{ height: `${h}%`, animationDelay: `${i * 70}ms` }}
                     />
@@ -414,7 +465,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
   const thumbs = videos.slice(0, 4);
 
   return (
-    <section id="fonctionnalites" className="scroll-mt-24 px-4 py-24">
+    <section id="fonctionnalites" className="scroll-mt-24 bg-slate-50/70 px-4 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           icon={Sparkles}
@@ -430,11 +481,11 @@ function Features({ videos }: { videos: LandingVideo[] }) {
               <FeatureText icon={Flame} title="Explorateur d'outliers" text="Des milliers de vidéos classées par score d'outlier. Filtrez par format, durée, taille de chaîne, âge de la chaîne et date." />
               <div className="mt-7 space-y-2">
                 {videos.slice(0, 3).map((v, i) => (
-                  <div key={v.id} className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2 pr-3" style={{ opacity: 1 - i * 0.22 }}>
+                  <div key={v.id} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2 pr-3" style={{ opacity: 1 - i * 0.22 }}>
                     <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-24 shrink-0 rounded-lg object-cover" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm text-white/85">{v.title}</p>
-                      <p className="text-xs text-white/40">{v.channelTitle} · {formatCompact(v.channelSubscribers)} abonnés</p>
+                      <p className="truncate text-sm text-slate-800">{v.title}</p>
+                      <p className="text-xs text-slate-500">{v.channelTitle} · {formatCompact(v.channelSubscribers)} abonnés</p>
                     </div>
                     <span className="lp-gradient-text text-lg font-bold">{formatMultiplier(v.outlierMultiplier)}</span>
                   </div>
@@ -450,7 +501,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
               <div className="mt-8 flex items-center justify-center">
                 <div className="relative size-36">
                   <svg viewBox="0 0 120 120" className="size-full -rotate-90">
-                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f5f9" strokeWidth="10" />
                     <circle cx="60" cy="60" r="50" fill="none" stroke="url(#lp-gauge)" strokeWidth="10" strokeLinecap="round" strokeDasharray="314" className="lp-gauge" />
                     <defs>
                       <linearGradient id="lp-gauge" x1="0" x2="1">
@@ -461,7 +512,7 @@ function Features({ videos }: { videos: LandingVideo[] }) {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-3xl font-semibold">87</span>
-                    <span className="text-[10px] uppercase tracking-wider text-white/40">opportunité</span>
+                    <span className="text-[10px] uppercase tracking-wider text-slate-500">opportunité</span>
                   </div>
                 </div>
               </div>
@@ -469,19 +520,19 @@ function Features({ videos }: { videos: LandingVideo[] }) {
           </Reveal>
 
           {/* Channel trends */}
-          <Reveal delay={0}>
+          <Reveal>
             <SpotlightCard className="h-full p-7">
               <FeatureText icon={TrendingUp} title="Channel Trends" text="Les chaînes qui décollent en ce moment, classées par vitesse de croissance." />
               <svg viewBox="0 0 200 80" className="mt-8 w-full overflow-visible">
                 <defs>
                   <linearGradient id="lp-spark" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#fb923c" stopOpacity="0.35" />
+                    <stop offset="0%" stopColor="#fb923c" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="#fb923c" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 <path d="M0 70 C30 68 45 64 70 60 S110 52 130 40 S170 12 200 6 L200 80 L0 80Z" fill="url(#lp-spark)" />
-                <path d="M0 70 C30 68 45 64 70 60 S110 52 130 40 S170 12 200 6" fill="none" stroke="#fb923c" strokeWidth="2.5" className="lp-draw" />
-                <circle cx="200" cy="6" r="4" fill="#fb923c" className="lp-pulse" />
+                <path d="M0 70 C30 68 45 64 70 60 S110 52 130 40 S170 12 200 6" fill="none" stroke="#f97316" strokeWidth="2.5" className="lp-draw" />
+                <circle cx="200" cy="6" r="4" fill="#f97316" className="lp-pulse" />
               </svg>
             </SpotlightCard>
           </Reveal>
@@ -492,9 +543,9 @@ function Features({ videos }: { videos: LandingVideo[] }) {
               <FeatureText icon={ImageIcon} title="Thumbnail Intelligence" text="Décodez les miniatures qui font cliquer dans votre niche et comparez-les côte à côte." />
               <div className="mt-7 grid grid-cols-2 gap-2">
                 {thumbs.map((v, i) => (
-                  <div key={v.id} className="relative overflow-hidden rounded-lg ring-1 ring-white/10">
+                  <div key={v.id} className="relative overflow-hidden rounded-lg ring-1 ring-slate-200">
                     <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full object-cover" />
-                    <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 text-[9px] text-white/80">
+                    <span className="absolute bottom-1 left-1 rounded bg-white/90 px-1 text-[9px] font-medium text-slate-700">
                       {["Visage", "Texte fort", "Contraste", "Avant/après"][i]}
                     </span>
                   </div>
@@ -513,10 +564,10 @@ function Features({ videos }: { videos: LandingVideo[] }) {
                   ["J'ai testé ", "[X]", " pendant 30 jours"],
                   ["Pourquoi personne ne parle de ", "[sujet]"],
                 ].map((parts, i) => (
-                  <p key={i} className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-white/70">
+                  <p key={i} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-700">
                     {parts.map((p, j) =>
                       p.startsWith("[") ? (
-                        <span key={j} className="rounded bg-orange-400/15 px-1 text-orange-200">{p}</span>
+                        <span key={j} className="rounded bg-orange-100 px-1 text-orange-700">{p}</span>
                       ) : (
                         <span key={j}>{p}</span>
                       )
@@ -532,16 +583,16 @@ function Features({ videos }: { videos: LandingVideo[] }) {
             <SpotlightCard className="h-full p-7">
               <FeatureText icon={Bot} title="Assistant IA branché sur les données" text="Posez vos questions sur votre niche. L'assistant répond à partir des vidéos et des chaînes indexées, pas de suppositions." />
               <div className="mt-7 space-y-3">
-                <div className="ml-auto w-fit max-w-md rounded-2xl rounded-br-md bg-white/10 px-4 py-2.5 text-sm">
+                <div className="ml-auto w-fit max-w-md rounded-2xl rounded-br-md bg-slate-900 px-4 py-2.5 text-sm text-white">
                   Donne-moi 3 idées de vidéos qui marchent en ce moment dans le true crime.
                 </div>
                 <div className="flex max-w-lg gap-3">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-orange-400">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-orange-400 text-white">
                     <Sparkles className="size-3.5" />
                   </span>
-                  <div className="rounded-2xl rounded-tl-md border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white/75">
+                  <div className="rounded-2xl rounded-tl-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
                     Les formats « affaire non résolue + iceberg » sortent fort ce mois-ci. Trois angles à tester :
-                    <span className="mt-2 block text-white/55">1. L&apos;iceberg des affaires jamais résolues de votre région<br />2. La chronologie minute par minute d&apos;une disparition<br />3. Ce que la police n&apos;a jamais dit sur…</span>
+                    <span className="mt-2 block text-slate-500">1. L&apos;iceberg des affaires jamais résolues de votre région<br />2. La chronologie minute par minute d&apos;une disparition<br />3. Ce que la police n&apos;a jamais dit sur…</span>
                   </div>
                 </div>
               </div>
@@ -554,11 +605,11 @@ function Features({ videos }: { videos: LandingVideo[] }) {
               <FeatureText icon={Wallet} title="Sponsors & revenus" text="Qui sponsorise votre niche, et combien une chaîne peut gagner avec la pub." />
               <div className="mt-7 flex flex-wrap gap-2">
                 {["Tech", "Apps", "VPN", "Formation", "Finance", "Jeux"].map((b) => (
-                  <span key={b} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60">{b}</span>
+                  <span key={b} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">{b}</span>
                 ))}
               </div>
-              <div className="mt-5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-                <p className="text-[11px] text-white/40">Revenus pub estimés / mois</p>
+              <div className="mt-5 rounded-xl border border-slate-200 bg-white p-3">
+                <p className="text-[11px] text-slate-500">Revenus pub estimés / mois</p>
                 <p className="mt-1 text-xl font-semibold">1,2 k€ – 3,4 k€</p>
               </div>
             </SpotlightCard>
@@ -572,11 +623,11 @@ function Features({ videos }: { videos: LandingVideo[] }) {
 function FeatureText({ icon: Icon, title, text }: { icon: React.ElementType; title: string; text: string }) {
   return (
     <div>
-      <span className="flex size-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
-        <Icon className="size-4 text-orange-300" />
+      <span className="flex size-9 items-center justify-center rounded-xl border border-orange-200 bg-orange-50">
+        <Icon className="size-4 text-orange-600" />
       </span>
       <h3 className="mt-4 text-lg font-semibold tracking-tight">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-white/50">{text}</p>
+      <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{text}</p>
     </div>
   );
 }
@@ -599,14 +650,14 @@ function NicheExplorer({ niches }: { niches: LandingPageProps["niches"] }) {
         />
 
         <Reveal className="mt-10 flex justify-center">
-          <div className="flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03] p-1">
+          <div className="flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-1">
             {niches.map((n, i) => (
               <button
                 key={n.name}
                 onClick={() => setActive(i)}
                 className={cn(
                   "shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-all",
-                  i === active ? "bg-white text-black shadow-lg" : "text-white/55 hover:text-white"
+                  i === active ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-900"
                 )}
               >
                 {n.name}
@@ -622,7 +673,7 @@ function NicheExplorer({ niches }: { niches: LandingPageProps["niches"] }) {
         </div>
 
         <Reveal className="mt-12 flex justify-center">
-          <Link href="/login" className="group inline-flex items-center gap-2 text-sm font-medium text-orange-300 hover:text-orange-200">
+          <Link href="/login" className="group inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700">
             Explorer toutes les niches <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </Reveal>
@@ -650,18 +701,18 @@ function Method() {
   ];
 
   return (
-    <section id="methode" className="scroll-mt-24 px-4 py-24">
+    <section id="methode" className="scroll-mt-24 bg-slate-50/70 px-4 py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeader icon={Compass} eyebrow="Méthode" title="De zéro idée à un plan de vidéos, en trois étapes." />
         <div className="relative mt-16 grid gap-6 md:grid-cols-3">
-          <div aria-hidden className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-white/15 to-transparent md:block" />
+          <div aria-hidden className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent md:block" />
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 120} className="relative">
-              <span className="relative z-10 flex size-12 items-center justify-center rounded-2xl border border-white/10 bg-[#0d0d14] text-sm font-semibold shadow-[0_0_30px_rgba(251,146,60,0.15)]">
+              <span className="relative z-10 flex size-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold shadow-sm">
                 <span className="lp-gradient-text">0{i + 1}</span>
               </span>
               <h3 className="mt-6 text-xl font-semibold tracking-tight">{s.title}</h3>
-              <p className="mt-2 text-white/50">{s.text}</p>
+              <p className="mt-2 text-slate-600">{s.text}</p>
             </Reveal>
           ))}
         </div>
@@ -685,20 +736,20 @@ function Comparison() {
     <section className="px-4 py-24">
       <div className="mx-auto max-w-4xl">
         <SectionHeader icon={Search} eyebrow="La différence" title="Arrêtez de deviner avec des mots-clés." />
-        <Reveal className="mt-12 overflow-hidden rounded-3xl border border-white/[0.08]">
-          <div className="grid grid-cols-[1.1fr_1fr_1fr] bg-white/[0.03] text-xs font-medium uppercase tracking-wider text-white/40 sm:text-sm sm:normal-case sm:tracking-normal">
+        <Reveal className="mt-12 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <div className="grid grid-cols-[1.1fr_1fr_1fr] bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 sm:text-sm sm:normal-case sm:tracking-normal">
             <div className="p-4 sm:p-5" />
             <div className="p-4 sm:p-5">Outils SEO classiques</div>
-            <div className="bg-gradient-to-b from-orange-500/10 to-transparent p-4 text-white sm:p-5">Outlr</div>
+            <div className="bg-orange-50 p-4 text-slate-900 sm:p-5">Outlr</div>
           </div>
           {rows.map(([label, them, us]) => (
-            <div key={label} className="grid grid-cols-[1.1fr_1fr_1fr] border-t border-white/[0.06] text-sm">
-              <div className="p-4 text-white/70 sm:p-5">{label}</div>
-              <div className="flex items-start gap-2 p-4 text-white/40 sm:p-5">
-                <X className="mt-0.5 size-4 shrink-0 text-white/25" /> {them}
+            <div key={label} className="grid grid-cols-[1.1fr_1fr_1fr] border-t border-slate-100 text-sm">
+              <div className="p-4 font-medium text-slate-700 sm:p-5">{label}</div>
+              <div className="flex items-start gap-2 p-4 text-slate-400 sm:p-5">
+                <X className="mt-0.5 size-4 shrink-0 text-slate-300" /> {them}
               </div>
-              <div className="flex items-start gap-2 bg-orange-500/[0.04] p-4 text-white/85 sm:p-5">
-                <Check className="mt-0.5 size-4 shrink-0 text-orange-400" /> {us}
+              <div className="flex items-start gap-2 bg-orange-50/50 p-4 text-slate-800 sm:p-5">
+                <Check className="mt-0.5 size-4 shrink-0 text-orange-500" /> {us}
               </div>
             </div>
           ))}
@@ -736,10 +787,10 @@ function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-24 px-4 py-24">
+    <section id="faq" className="scroll-mt-24 bg-slate-50/70 px-4 py-24">
       <div className="mx-auto max-w-3xl">
         <SectionHeader icon={Sparkles} eyebrow="FAQ" title="Questions fréquentes" />
-        <div className="mt-12 divide-y divide-white/[0.08] rounded-3xl border border-white/[0.08] bg-white/[0.02]">
+        <div className="mt-12 divide-y divide-slate-200 rounded-3xl border border-slate-200 bg-white shadow-sm">
           {items.map((item, i) => {
             const isOpen = open === i;
             return (
@@ -750,10 +801,10 @@ function Faq() {
                   className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left font-medium"
                 >
                   {item.q}
-                  <ChevronDown className={cn("size-4 shrink-0 text-white/40 transition-transform duration-300", isOpen && "rotate-180")} />
+                  <ChevronDown className={cn("size-4 shrink-0 text-slate-400 transition-transform duration-300", isOpen && "rotate-180")} />
                 </button>
                 <div className={cn("grid transition-all duration-300 ease-out", isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
-                  <p className="overflow-hidden px-6 text-white/55">
+                  <p className="overflow-hidden px-6 text-slate-600">
                     <span className="block pb-5">{item.a}</span>
                   </p>
                 </div>
@@ -771,24 +822,23 @@ function Faq() {
 function FinalCta() {
   return (
     <section className="px-4 py-24">
-      <Reveal className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 px-6 py-20 text-center">
-        <div aria-hidden className="lp-aurora absolute left-[calc(50%-25rem)] top-[calc(50%-15rem)] h-[30rem] w-[50rem] rounded-full opacity-70" />
-        <div aria-hidden className="lp-grid absolute inset-0 opacity-60" />
+      <Reveal className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-20 text-center text-white">
+        <div aria-hidden className="lp-aurora absolute left-[calc(50%-25rem)] top-[calc(50%-15rem)] h-[30rem] w-[50rem] rounded-full opacity-90" />
         <div className="relative">
           <h2 className="mx-auto max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-6xl">
             Votre prochaine vidéo virale existe déjà.
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-white/60">
+          <p className="mx-auto mt-5 max-w-xl text-lg text-white/65">
             Quelqu&apos;un l&apos;a juste faite avant vous, dans une autre niche ou une autre langue. Outlr vous la montre.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-black transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-slate-900 transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
             >
               Créer mon compte <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <a href="#demo" className="rounded-2xl border border-white/15 px-6 py-3.5 font-medium text-white/80 transition-colors hover:bg-white/5">
+            <a href="#demo" className="rounded-2xl border border-white/20 px-6 py-3.5 font-medium text-white/85 transition-colors hover:bg-white/10">
               Voir la démo
             </a>
           </div>
@@ -802,16 +852,16 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] px-4 py-12">
+    <footer className="border-t border-slate-200 px-4 py-12">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
         <Logo />
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-white/45">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-500">
           {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-white">{l.label}</a>
+            <a key={l.href} href={l.href} className="hover:text-slate-900">{l.label}</a>
           ))}
-          <Link href="/login" className="hover:text-white">Se connecter</Link>
+          <Link href="/login" className="hover:text-slate-900">Se connecter</Link>
         </div>
-        <p className="text-sm text-white/30">© {new Date().getFullYear()} Outlr</p>
+        <p className="text-sm text-slate-400">© {new Date().getFullYear()} Outlr</p>
       </div>
     </footer>
   );
@@ -821,8 +871,8 @@ function Footer() {
 
 function SectionEyebrow({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/60">
-      <Icon className="size-3.5 text-orange-300" /> {children}
+    <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
+      <Icon className="size-3.5 text-orange-500" /> {children}
     </span>
   );
 }
@@ -842,7 +892,7 @@ function SectionHeader({
     <Reveal className="mx-auto max-w-3xl text-center">
       <SectionEyebrow icon={icon}>{eyebrow}</SectionEyebrow>
       <h2 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">{title}</h2>
-      {subtitle && <p className="mx-auto mt-4 max-w-2xl text-lg text-white/50">{subtitle}</p>}
+      {subtitle && <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-500">{subtitle}</p>}
     </Reveal>
   );
 }

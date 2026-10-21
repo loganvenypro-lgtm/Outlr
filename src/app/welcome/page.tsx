@@ -16,6 +16,53 @@ const NICHES: { name: string; match: RegExp }[] = [
 // Placeholder titles and ambient "background" uploads are noise on a landing page.
 const JUNK_TITLE = /^video [\w-]+$|background|no music|screen saver/i;
 
+// Channels with strong, recognisable packaging (documentaries, true crime, video essays)
+// for the hero wall. Order sets the mix; each contributes its most-watched long-form videos.
+const HERO_CHANNELS: { name: string; take: number }[] = [
+  { name: "fern", take: 4 },
+  { name: "Veritasium", take: 3 },
+  { name: "Nick Crowley", take: 2 },
+  { name: "48 Hours", take: 2 },
+  { name: "Nexpo", take: 2 },
+  { name: "Cybernews", take: 2 },
+  { name: "Real Stories", take: 2 },
+  { name: "Farrell McGuire", take: 2 },
+  { name: "Dr Insanity", take: 2 },
+  { name: "Thomas Flight", take: 2 },
+  { name: "Blackfiles", take: 2 },
+  { name: "Chilling Scares", take: 2 },
+  { name: "Banijay Crime - Crime Documentary", take: 1 },
+  { name: "Beppo", take: 2 },
+  { name: "Abyssal Detective", take: 1 },
+  { name: "Blueprint", take: 1 },
+  { name: "DW Documentary", take: 1 },
+  { name: "Unreal True Crime", take: 1 },
+  { name: "Visual Venture", take: 1 },
+  { name: "Parke Jones", take: 1 },
+];
+
+/** Interleaves the hero channels so no two neighbouring cards share a channel. */
+function pickHeroVideos(index: IndexedViralVideo[]): LandingVideo[] {
+  const perChannel = HERO_CHANNELS.map(({ name, take }) =>
+    index
+      .filter(
+        (v) =>
+          v.channelTitle.toLowerCase() === name.toLowerCase() &&
+          v.durationSeconds >= 180 &&
+          v.thumbnail.includes("maxresdefault") &&
+          !JUNK_TITLE.test(v.title)
+      )
+      .sort((a, b) => b.viewCount - a.viewCount)
+      .slice(0, take)
+  );
+
+  const out: LandingVideo[] = [];
+  for (let round = 0; perChannel.some((list) => list[round]); round++) {
+    for (const list of perChannel) if (list[round]) out.push(toLandingVideo(list[round]));
+  }
+  return out;
+}
+
 function toLandingVideo(v: IndexedViralVideo): LandingVideo {
   return {
     id: v.id,
@@ -75,5 +122,13 @@ export default async function WelcomePage() {
     topMultiplier: Math.round(Math.max(0, ...videos.map((v) => v.outlierMultiplier))),
   };
 
-  return <LandingPage videos={videos} niches={niches} stats={stats} />;
+  // Fall back to the general showcase if the curated channels drop out of the index.
+  const picked = pickHeroVideos(index);
+  const heroVideos = picked.length >= 18 ? picked : videos;
+
+  const creators = [...new Map(heroVideos.filter((v) => v.channelAvatar).map((v) => [v.channelTitle, v])).values()]
+    .sort((a, b) => b.channelSubscribers - a.channelSubscribers)
+    .map((v) => ({ name: v.channelTitle, avatar: v.channelAvatar!, subscribers: v.channelSubscribers }));
+
+  return <LandingPage videos={videos} heroVideos={heroVideos} creators={creators} niches={niches} stats={stats} />;
 }
