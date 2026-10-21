@@ -1,9 +1,11 @@
 import postgres from "postgres";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
+// The build imports every route without querying, so only the running app needs the URL
+const isBuild = process.env.NEXT_PHASE === "phase-production-build";
+if (!process.env.DATABASE_URL && !isBuild) {
   throw new Error("DATABASE_URL is not set (see .env.local)");
 }
+const connectionString = process.env.DATABASE_URL ?? "postgres://build@localhost/build";
 
 // Singleton pool connection for Next.js and high-concurrency Node.js runtime
 declare global {
