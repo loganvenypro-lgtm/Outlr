@@ -1,40 +1,83 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { LoginForm } from "@/components/login-form";
+import { useRouter } from "next/navigation";
+import { SignInPage } from "@/components/ui/sign-in";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const form = new FormData(e.currentTarget);
+    const email = String(form.get("email") ?? "");
+    const password = String(form.get("password") ?? "");
+    const name = String(form.get("name") ?? "");
+
+    try {
+      const endpoint = isSignUp ? "/api/auth/signup" : "/api/auth/login";
+      const body = isSignUp ? { name, email, password } : { email, password };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Une erreur est survenue.");
+        return;
+      }
+
+      router.push(isSignUp ? "/onboarding" : "/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Erreur de connexion.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="grid min-h-svh lg:grid-cols-2 bg-white">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2.5 font-bold group">
+    <div className="bg-background text-foreground">
+      <SignInPage
+        mode={isSignUp ? "signup" : "signin"}
+        logo={
+          <Link href="/" className="inline-flex items-center gap-2.5 font-bold group">
             <div className="flex size-8 items-center justify-center rounded-xl bg-slate-950 p-1.5 shadow-sm group-hover:scale-105 transition-transform">
-              <img
-                src="/outlr-logo.png"
-                alt="Outlr Logo"
-                className="size-full object-contain"
-              />
+              <img src="/outlr-logo.png" alt="Outlr Logo" className="size-full object-contain" />
             </div>
-            <span className="text-xl tracking-tight font-black text-slate-900">
-              Outlr
-            </span>
+            <span className="text-xl tracking-tight font-black">Outlr</span>
           </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
-        </div>
-      </div>
-      <div className="relative hidden bg-slate-950 lg:block overflow-hidden border-l border-slate-900">
-        <img
-          src="/login-banner.jpg"
-          alt="Outlr Platform Showcase"
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
-      </div>
+        }
+        title={
+          <span className="font-light text-foreground tracking-tighter">
+            {isSignUp ? "Créer un compte" : "Bon retour"}
+          </span>
+        }
+        description={
+          isSignUp
+            ? "Rejoignez la plateforme et explorez les niches YouTube virales."
+            : "Entrez votre email et mot de passe pour accéder à votre radar."
+        }
+        heroImageSrc="/login-banner.jpg"
+        error={error}
+        loading={loading}
+        onSignIn={handleSubmit}
+        onToggleMode={() => {
+          setIsSignUp((v) => !v);
+          setError(null);
+        }}
+      />
     </div>
   );
 }
