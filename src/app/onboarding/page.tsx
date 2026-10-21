@@ -425,8 +425,8 @@ export default function OnboardingPage() {
       {/* Header */}
       <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-5 sm:px-6">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-orange-500 p-1.5">
-            <img src="/outlr-logo.png" alt="" className="size-5 object-contain" />
+          <div className="flex size-8 items-center justify-center rounded-lg bg-slate-950 p-1.5">
+            <img src="/outlr-mark.png" alt="" className="size-5 object-contain" />
           </div>
           <span className="text-base font-bold tracking-tight">Outlr</span>
         </div>

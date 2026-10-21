@@ -54,7 +54,7 @@ export default function LoginPage() {
         logo={
           <Link href="/" className="inline-flex items-center gap-2.5 font-bold group">
             <div className="flex size-8 items-center justify-center rounded-xl bg-slate-950 p-1.5 shadow-sm group-hover:scale-105 transition-transform">
-              <img src="/outlr-logo.png" alt="Outlr Logo" className="size-full object-contain" />
+              <img src="/outlr-mark.png" alt="Outlr Logo" className="size-full object-contain" />
             </div>
             <span className="text-xl tracking-tight font-black">Outlr</span>
           </Link>

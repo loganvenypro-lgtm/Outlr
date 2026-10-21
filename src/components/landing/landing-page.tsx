@@ -118,7 +118,7 @@ function Logo() {
   return (
     <Link href="/welcome" className="flex items-center gap-2.5">
       <span className="flex size-8 items-center justify-center rounded-xl bg-slate-950 p-1.5 shadow-sm ring-1 ring-white/10">
-        <img src="/outlr-logo.png" alt="" className="size-full object-contain" />
+        <img src="/outlr-mark.png" alt="" className="size-full object-contain" />
       </span>
       <span className="text-lg font-bold tracking-tight">Outlr</span>
     </Link>
