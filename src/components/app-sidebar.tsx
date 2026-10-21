@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import {
   BarChart3,
   Bookmark,
-  Building2,
   Clapperboard,
   Eye,
   Flame,
@@ -17,13 +16,11 @@ import {
   LineChart,
   MessageSquareText,
   Radar,
-  ScanSearch,
   Search,
   Settings,
   TrendingUp,
   Users,
   ShieldCheck,
-  Wallet,
 } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
 import { getDicebearAvatar } from "@/lib/avatar"
@@ -79,15 +76,6 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { title: "Title Lab", url: "/title-lab", icon: FlaskConical },
       { title: "Miniatures", url: "/thumbnail-intelligence", icon: ImageIcon },
       { title: "Stratège IA", url: "/viral-chat", icon: MessageSquareText },
-    ],
-  },
-  {
-    label: "Business",
-    items: [
-      { title: "Monétisation", url: "/sponsors", icon: Wallet },
-      { title: "Marques & sponsors", url: "/leads", icon: Building2 },
-      { title: "Scraper", url: "/discovery", icon: ScanSearch },
-      { title: "Statistiques", url: "/stats", icon: BarChart3 },
     ],
   },
 ]
