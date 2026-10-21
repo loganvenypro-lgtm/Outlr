@@ -156,6 +156,15 @@ export const SignInPage: React.FC<SignInPageProps> = ({
                 </a>
               </p>
             )}
+
+            <p className="animate-element animate-delay-900 text-center text-xs text-muted-foreground">
+              En continuant, tu acceptes nos <a href="/terms" className="underline hover:text-foreground">conditions</a>, notre{" "}
+              <a href="/privacy" className="underline hover:text-foreground">politique de confidentialité</a> et les{" "}
+              <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="underline hover:text-foreground">
+                conditions de YouTube
+              </a>
+              .
+            </p>
           </div>
         </div>
       </section>

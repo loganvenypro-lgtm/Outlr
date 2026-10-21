@@ -860,8 +860,10 @@ function Footer() {
             <a key={l.href} href={l.href} className="hover:text-slate-900">{l.label}</a>
           ))}
           <Link href="/login" className="hover:text-slate-900">Se connecter</Link>
+          <Link href="/privacy" className="hover:text-slate-900">Confidentialité</Link>
+          <Link href="/terms" className="hover:text-slate-900">Conditions</Link>
         </div>
-        <p className="text-sm text-slate-400">© {new Date().getFullYear()} Outlr</p>
+        <p className="text-sm text-slate-400">© {new Date().getFullYear()} Outlr · Données fournies par YouTube</p>
       </div>
     </footer>
   );

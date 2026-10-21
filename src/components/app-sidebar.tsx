@@ -182,6 +182,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
         <SidebarSeparator className="mx-0" />
         <NavUser user={currentUser} />
+        <p className="px-2 text-[11px] leading-4 text-muted-foreground group-data-[collapsible=icon]:hidden">
+          Données fournies par YouTube ·{" "}
+          <Link href="/privacy" className="hover:text-foreground">
+            Confidentialité
+          </Link>{" "}
+          ·{" "}
+          <Link href="/terms" className="hover:text-foreground">
+            Conditions
+          </Link>
+        </p>
       </SidebarFooter>
 
       <SidebarRail />

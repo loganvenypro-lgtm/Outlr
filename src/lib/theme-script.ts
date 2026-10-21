@@ -3,7 +3,7 @@
 export const THEME_STORAGE_KEY = "outlr-theme";
 
 // Public pages keep their own design whatever the dashboard theme is.
-export const THEMELESS_PATHS = ["/login", "/welcome", "/onboarding"];
+export const THEMELESS_PATHS = ["/login", "/welcome", "/onboarding", "/privacy", "/terms"];
 
 /** Inline script for <head>: applies the saved theme before first paint. */
 export const themeInitScript = `(function(){try{var skip=${JSON.stringify(
