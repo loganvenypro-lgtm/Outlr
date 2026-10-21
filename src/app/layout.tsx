@@ -3,6 +3,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { ClientShell } from "@/app/client-shell";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { themeInitScript } from "@/lib/theme-script";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -17,7 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`h-full antialiased font-sans ${geist.variable}`}>
+    <html lang="fr" className={`h-full antialiased font-sans ${geist.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         <TooltipProvider>
           <ClientShell>{children}</ClientShell>

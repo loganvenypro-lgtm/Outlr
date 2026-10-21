@@ -5,25 +5,31 @@ import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FloatingAiAssistant } from "@/components/FloatingAiAssistant";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { THEMELESS_PATHS, useTheme } from "@/lib/theme";
 
 export function ClientShell({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
+  const { theme } = useTheme();
+
+  // Full-screen pages without sidebar
+  const isAuthOrLanding = THEMELESS_PATHS.includes(pathname);
+
   useEffect(() => {
     setMounted(true);
-    document.documentElement.classList.remove("dark");
-    document.body.style.background = "#ffffff";
-    document.body.style.color = "#0f172a";
   }, []);
+
+  // The dashboard follows the saved theme; public pages keep their own look.
+  useEffect(() => {
+    const dark = theme === "dark" && !isAuthOrLanding;
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
+  }, [theme, isAuthOrLanding]);
 
   if (!mounted) {
     return null;
   }
-
-  // Full-screen pages without sidebar
-  const isAuthOrLanding =
-    pathname === "/login" || pathname === "/welcome" || pathname === "/onboarding";
 
   if (isAuthOrLanding) {
     return (

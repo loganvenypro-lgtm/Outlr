@@ -14,6 +14,7 @@ import {
   Lock,
   LogOut,
   Mail,
+  Palette,
   RotateCcw,
   Shield,
   User,
@@ -36,6 +37,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AVATAR_STYLES, getDicebearAvatar } from "@/lib/avatar";
 import { emitUserUpdated } from "@/lib/user-events";
+import { useTheme } from "@/lib/theme";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 interface SessionUser {
@@ -88,6 +91,7 @@ function StatusMessage({ status }: { status: Status }) {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { theme } = useTheme();
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -244,6 +248,10 @@ export default function SettingsPage() {
               <TabsTrigger value="security" className="px-3">
                 <Lock />
                 Sécurité
+              </TabsTrigger>
+              <TabsTrigger value="appearance" className="px-3">
+                <Palette />
+                Apparence
               </TabsTrigger>
               <TabsTrigger value="integrations" className="px-3">
                 <Key />
@@ -452,6 +460,27 @@ export default function SettingsPage() {
             </TabsContent>
 
             {/* INTÉGRATIONS */}
+            {/* APPARENCE */}
+            <TabsContent value="appearance">
+              <Card className="rounded-2xl shadow-xs ring-slate-200/80">
+                <CardHeader className="px-6">
+                  <CardTitle className="text-[15px] font-semibold">Thème</CardTitle>
+                  <CardDescription className="text-sm">
+                    Choisis l&apos;apparence du tableau de bord. Le choix est gardé sur cet appareil.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-6">
+                  <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{theme === "dark" ? "Mode sombre" : "Mode clair"}</p>
+                      <p className="text-xs text-muted-foreground">Clique pour passer en mode {theme === "dark" ? "clair" : "sombre"}.</p>
+                    </div>
+                    <ThemeToggle />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="integrations" className="space-y-4">
               <Card className="rounded-2xl shadow-xs ring-slate-200/80">
                 <CardHeader className="px-6">
