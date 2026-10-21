@@ -273,13 +273,14 @@ export default function OnboardingPage() {
             tags: [role === "agency" ? "Chaîne gérée" : "Ma chaîne"],
           }),
         });
-        // Drives the personalised home
-        await fetch("/api/me/channel", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ channelId: ownChannel.id }),
-        });
       }
+
+      // Drives the personalised home: my channel and the competitors I picked
+      await fetch("/api/me/channel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...(ownChannel ? { channelId: ownChannel.id } : {}), competitorIds: tracked.map((c) => c.channel.id) }),
+      });
 
       await Promise.all(
         tracked.map((c) =>

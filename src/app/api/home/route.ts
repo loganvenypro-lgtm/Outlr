@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/postgres";
 import { verifySessionToken } from "@/lib/auth";
+import { ensureChannelImported } from "@/lib/channelImport";
 import { classifyChannel, nicheTsQuery, titleMatchesNiche, type NicheClassification } from "@/lib/nicheClassifier";
 
 export const dynamic = "force-dynamic";
@@ -75,8 +76,25 @@ export async function GET(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
 
   try {
-    const [user] = await sql`SELECT name, youtube_channel_id FROM users WHERE id = ${session.userId}`;
+    const [user] = await sql`SELECT name, youtube_channel_id, competitor_channel_ids FROM users WHERE id = ${session.userId}`;
     const myChannelId = (user?.youtube_channel_id as string | null) ?? null;
+    const myCompetitorIds = ((user?.competitor_channel_ids as string[] | null) ?? []).filter((id) => id !== myChannelId);
+
+    // Channels picked at onboarding may be unknown to the scanner: import them once.
+    const wanted = [myChannelId, ...myCompetitorIds].filter((id): id is string => Boolean(id));
+    if (wanted.length) {
+      const known = new Set(
+        (await sql`SELECT youtube_channel_id FROM channels WHERE youtube_channel_id = ANY(${wanted})`).map(
+          (r) => r.youtube_channel_id as string,
+        ),
+      );
+      await Promise.all(wanted.filter((id) => !known.has(id)).map((id) => ensureChannelImported(id)));
+    }
+
+    // My competitors: the ones chosen at onboarding, else every tracked channel.
+    const competitorSource = myCompetitorIds.length
+      ? sql`FROM channels c WHERE c.youtube_channel_id = ANY(${myCompetitorIds})`
+      : sql`FROM tracked_channels tc JOIN channels c ON c.youtube_channel_id = tc.channel_id WHERE c.youtube_channel_id <> ${myChannelId ?? ""}`;
 
     const [myChannel] = myChannelId
       ? await sql`
@@ -164,11 +182,9 @@ export async function GET(request: NextRequest) {
       sql`
         SELECT
           c.youtube_channel_id, c.name, c.handle, c.thumbnail_url, c.subscriber_count, c.trend_score, c.recent_ratio,
-          tc.added_at,
           best.youtube_video_id AS best_video_id, best.title AS best_title, best.view_count AS best_views,
           best.outlier_multiplier AS best_multiplier, best.published_at AS best_published_at
-        FROM tracked_channels tc
-        JOIN channels c ON c.youtube_channel_id = tc.channel_id
+        FROM (SELECT c.* ${competitorSource}) c
         LEFT JOIN LATERAL (
           SELECT v.youtube_video_id, v.title, v.view_count, v.outlier_multiplier, v.published_at
           FROM videos v
@@ -176,16 +192,15 @@ export async function GET(request: NextRequest) {
           ORDER BY v.outlier_multiplier DESC NULLS LAST
           LIMIT 1
         ) best ON true
-        WHERE c.youtube_channel_id <> ${myChannelId ?? ""}
-        ORDER BY c.trend_score DESC NULLS LAST
+        ORDER BY
+          ${myCompetitorIds.length ? sql`array_position(${myCompetitorIds}::text[], c.youtube_channel_id::text),` : sql``}
+          c.trend_score DESC NULLS LAST
         LIMIT 8`,
       sql`
         SELECT ${VIDEO_COLUMNS}
-        FROM tracked_channels tc
-        JOIN channels c ON c.youtube_channel_id = tc.channel_id
+        FROM (SELECT c.* ${competitorSource}) c
         JOIN videos v ON v.channel_id = c.id
-        WHERE c.youtube_channel_id <> ${myChannelId ?? ""}
-          AND v.published_at > now() - interval '14 days'
+        WHERE v.published_at > now() - interval '14 days'
           AND v.outlier_multiplier >= 2
         ORDER BY v.outlier_multiplier DESC
         LIMIT 4`,

@@ -3,6 +3,7 @@ import { sql } from "@/lib/postgres";
 import { searchChannels } from "@/lib/youtube";
 import { scrapeChannelRss } from "@/lib/youtube-scraper";
 import { v4 as uuidv4 } from "uuid";
+import { ensureChannelImported } from "@/lib/channelImport";
 
 export const dynamic = "force-dynamic";
 
@@ -333,6 +334,8 @@ export async function POST(request: NextRequest) {
           video_count = EXCLUDED.video_count,
           last_checked_at = NOW()
       `;
+      // The home and alerts join the scanner tables: import the channel if they lack it.
+      await ensureChannelImported(channelMeta.channelId);
 
       return NextResponse.json({
         success: true,
