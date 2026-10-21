@@ -14,9 +14,11 @@ declare global {
 export const sql =
   global.__postgresSql ||
   postgres(connectionString, {
-    max: 20, // Connection pool size for handling concurrent requests
+    max: process.env.VERCEL ? 5 : 20, // Serverless instances each open their own pool
     idle_timeout: 30,
     connect_timeout: 10,
+    // Neon's pooler (PgBouncer, transaction mode) can't keep prepared statements
+    prepare: !connectionString.includes("-pooler"),
   });
 
 if (process.env.NODE_ENV !== "production") {
