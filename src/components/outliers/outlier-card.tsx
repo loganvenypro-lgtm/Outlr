@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn, formatCompactNumber } from "@/lib/utils";
+import { SaveToFolderMenu } from "@/components/folders/save-to-folder-menu";
 import { CATEGORY_LABELS, LANGUAGE_LABELS } from "./filter-options";
 
 export interface OutlierVideo {
@@ -61,34 +62,55 @@ export function OutlierCard({ video }: { video: OutlierVideo }) {
 
   return (
     <Card className="group gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md">
-      <a href={url} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-muted">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={video.thumbnail}
-          alt=""
-          loading="lazy"
-          className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-        />
-        {video.multiplier != null && video.multiplier >= 1 && (
-          <span
-            className={cn(
-              "absolute top-2 left-2 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold shadow-sm",
-              multiplierTone(video.multiplier),
-            )}
-          >
-            <Flame className="size-3" />
-            {video.multiplier.toFixed(1)}x
+      <div className="relative">
+        <a href={url} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={video.thumbnail}
+            alt=""
+            loading="lazy"
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+          {video.multiplier != null && video.multiplier >= 1 && (
+            <span
+              className={cn(
+                "absolute top-2 left-2 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold shadow-sm",
+                multiplierTone(video.multiplier),
+              )}
+            >
+              <Flame className="size-3" />
+              {video.multiplier.toFixed(1)}x
+            </span>
+          )}
+          <span className="absolute top-2 right-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[11px] font-medium text-white">
+            {video.isShort ? "Short" : "Vidéo longue"}
           </span>
-        )}
-        <span className="absolute top-2 right-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[11px] font-medium text-white">
-          {video.isShort ? "Short" : "Vidéo longue"}
-        </span>
-        {video.duration && (
-          <span className="absolute right-2 bottom-2 rounded bg-black/80 px-1 py-0.5 text-[11px] font-medium text-white tabular-nums">
-            {video.duration}
-          </span>
-        )}
-      </a>
+          {video.duration && (
+            <span className="absolute right-2 bottom-2 rounded bg-black/80 px-1 py-0.5 text-[11px] font-medium text-white tabular-nums">
+              {video.duration}
+            </span>
+          )}
+        </a>
+        <div className="absolute bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-data-[popup-open]:opacity-100">
+          <SaveToFolderMenu
+            variant="overlay"
+            item={{
+              type: "video",
+              id: video.id,
+              snapshot: {
+                title: video.title,
+                thumbnail: video.thumbnail,
+                channelId: video.channel.id,
+                channelName: video.channel.name,
+                views: video.views,
+                multiplier: video.multiplier,
+                publishedAt: video.publishedAt,
+                isShort: video.isShort,
+              },
+            }}
+          />
+        </div>
+      </div>
 
       <div className="flex flex-1 flex-col gap-3 p-3.5">
         <a

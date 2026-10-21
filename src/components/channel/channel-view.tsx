@@ -36,6 +36,8 @@ import { channelAge, DiscoveredBadge, subscribersPerDay } from "@/components/cha
 import { SimilarChannelsSheet } from "@/components/channel-trends/similar-channels-sheet";
 import { RealtimeBars, VideoPerformanceChart } from "./charts";
 import { VideoDialog } from "./video-dialog";
+import { SaveToFolderMenu } from "@/components/folders/save-to-folder-menu";
+import type { SavedItemInput } from "@/lib/saved-folders";
 import { RevenueCard } from "@/components/monetization/revenue";
 import type { AdRevenueEstimate } from "@/lib/revenueEstimator";
 
@@ -226,7 +228,7 @@ export function ChannelView({ channelId }: { channelId: string }) {
         </Button>
 
         {/* Channel header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
           <Avatar className="size-16">
             {channel.avatar && <AvatarImage src={channel.avatar} alt="" />}
             <AvatarFallback className="text-lg">{channel.name.slice(0, 2).toUpperCase()}</AvatarFallback>
@@ -283,6 +285,18 @@ export function ChannelView({ channelId }: { channelId: string }) {
               )}
               {tracked ? "Suivie" : "Suivre"}
             </Button>
+            <SaveToFolderMenu
+              item={{
+                type: "channel",
+                id: channel.id,
+                snapshot: {
+                  title: channel.name,
+                  thumbnail: channel.avatar,
+                  handle: channel.handle,
+                  subscribers: channel.subscribers,
+                },
+              }}
+            />
             <Button
               variant="outline"
               nativeButton={false}
@@ -408,7 +422,7 @@ export function ChannelView({ channelId }: { channelId: string }) {
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 {videos.slice(0, visible).map((video) => (
-                  <ChannelVideoCard key={video.id} video={video} onOpen={() => setOpenVideo(video.id)} />
+                  <ChannelVideoCard key={video.id} video={video} channel={channel} onOpen={() => setOpenVideo(video.id)} />
                 ))}
               </div>
               {visible < videos.length && (
@@ -469,7 +483,24 @@ function KpiCard({
   );
 }
 
-function ChannelVideoCard({ video, onOpen }: { video: ChannelVideo; onOpen: () => void }) {
+function videoItem(video: ChannelVideo, channel: ChannelData["channel"]): SavedItemInput {
+  return {
+    type: "video",
+    id: video.id,
+    snapshot: {
+      title: video.title,
+      thumbnail: video.thumbnail,
+      channelId: channel.id,
+      channelName: channel.name,
+      views: video.views,
+      multiplier: video.multiplier,
+      publishedAt: video.publishedAt,
+      isShort: video.isShort,
+    },
+  };
+}
+
+function ChannelVideoCard({ video, channel, onOpen }: { video: ChannelVideo; channel: ChannelData["channel"]; onOpen: () => void }) {
   return (
     <Card className="group cursor-pointer gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md" onClick={onOpen}>
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -502,6 +533,13 @@ function ChannelVideoCard({ video, onOpen }: { video: ChannelVideo; onOpen: () =
             {video.duration}
           </span>
         )}
+        {/* Stop clicks (also those inside the portaled menu) from opening the video dialog. */}
+        <div
+          className="absolute bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 has-data-[popup-open]:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <SaveToFolderMenu variant="overlay" item={videoItem(video, channel)} />
+        </div>
       </div>
       <div className="flex flex-col gap-2 p-3">
         <p className="line-clamp-2 text-sm leading-snug font-medium">{video.title}</p>

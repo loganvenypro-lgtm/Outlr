@@ -8,6 +8,7 @@ import {
   Bookmark,
   Building2,
   Clapperboard,
+  Eye,
   Flame,
   FlaskConical,
   GitCompareArrows,
@@ -64,7 +65,8 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "Suivi",
     items: [
-      { title: "Chaînes suivies", url: "/tracking", icon: Bookmark },
+      { title: "Mes dossiers", url: "/folders", icon: Bookmark },
+      { title: "Chaînes suivies", url: "/tracking", icon: Eye },
       { title: "Chaînes similaires", url: "/dashboard/similar-channels", icon: Users },
       { title: "Comparer", url: "/compare", icon: GitCompareArrows },
     ],
