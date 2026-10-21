@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -35,6 +36,7 @@ import {
   formatCompact,
   formatNumber,
   formatMultiplier,
+  timeAgo,
   type LandingVideo,
 } from "./landing-parts";
 
@@ -46,12 +48,24 @@ export interface LandingCreator {
   subscribers: number;
 }
 
+export interface LandingStats {
+  videos: number;
+  channels: number;
+  views: number;
+  /** Relevant videos at ×10 or more their channel's median. */
+  bigOutliers: number;
+  /** Videos published in the last 7 days. */
+  freshWeek: number;
+  /** Last successful scan, ISO. */
+  updatedAt: string | null;
+}
+
 interface LandingPageProps {
   videos: LandingVideo[];
   heroVideos: LandingVideo[];
   creators: LandingCreator[];
   niches: { name: string; videos: LandingVideo[] }[];
-  stats: { videos: number; channels: number; topMultiplier: number };
+  stats: LandingStats;
 }
 
 const NAV_LINKS = [
@@ -72,7 +86,7 @@ const SEARCH_EXAMPLES = [
 export function LandingPage({ videos, heroVideos, creators, niches, stats }: LandingPageProps) {
   return (
     <div className="lp-root relative min-h-screen overflow-x-clip bg-white text-slate-900 selection:bg-orange-200">
-      <Navbar />
+      <Navbar freshWeek={stats.freshWeek} />
       <Hero videos={heroVideos} creators={creators} stats={stats} />
       <ProductPreview videos={videos.slice(0, 6)} />
       <OutlierExplainer />
@@ -102,7 +116,7 @@ function Logo() {
 
 // --- NAVBAR ---
 
-function Navbar() {
+function Navbar({ freshWeek }: { freshWeek: number }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -119,7 +133,15 @@ function Navbar() {
         href="#demo"
         className="flex h-8 items-center justify-center gap-3 bg-gradient-to-r from-rose-500 to-orange-500 px-4 text-[11px] font-semibold uppercase tracking-wide text-white"
       >
-        <span className="truncate">Nouveau : la démo en direct de l&apos;explorateur de niches</span>
+        <span className="truncate">
+          {freshWeek >= 1_000 ? (
+            <>
+              +{formatNumber(freshWeek)} <span className="hidden sm:inline">nouvelles </span>vidéos analysées en 7 jours
+            </>
+          ) : (
+            "Nouveau : la démo en direct de l'explorateur de niches"
+          )}
+        </span>
         <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 normal-case ring-1 ring-white/40">
           Voir <ChevronRight className="size-3" />
         </span>
@@ -159,6 +181,26 @@ function Navbar() {
 
 // --- HERO ---
 
+/** Rounds down to two significant digits in k / M / Md, so the "+" stays true (4 658 → 4,6 k). */
+function compactStat(n: number) {
+  const units = [
+    [1e9, "Md"],
+    [1e6, "M"],
+    [1e3, "k"],
+  ] as const;
+  const [div, unit] = units.find(([d]) => n >= d) ?? [1, ""];
+  const scaled = n / div;
+  const step = 10 ** (Math.floor(Math.log10(Math.max(scaled, 1))) - 1);
+  return { value: Math.floor(scaled / step) * step, decimals: step < 1 ? 1 : 0, unit };
+}
+
+function updatedAgo(iso: string) {
+  const minutes = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60_000));
+  if (minutes < 60) return `il y a ${minutes} min`;
+  if (minutes < 48 * 60) return `il y a ${Math.round(minutes / 60)} h`;
+  return timeAgo(iso);
+}
+
 function Hero({
   videos,
   creators,
@@ -166,11 +208,18 @@ function Hero({
 }: {
   videos: LandingVideo[];
   creators: LandingCreator[];
-  stats: LandingPageProps["stats"];
+  stats: LandingStats;
 }) {
+  const statItems = [
+    { ...compactStat(stats.videos), label: "Vidéos analysées" },
+    { ...compactStat(stats.bigOutliers), label: "Outliers à ×10 ou plus" },
+    { ...compactStat(stats.views), label: "Vues passées au crible" },
+  ];
+
   return (
-    <section className="relative overflow-hidden bg-[#0a0a0c] px-4 pb-52 pt-36 text-white sm:pt-40">
-      {/* Glow rising from the bottom, like a stage light behind the wall */}
+    <section className="relative overflow-hidden bg-[#0a0a0c] px-4 pb-52 pt-32 text-white sm:pt-40">
+      {/* Halo centred on the search box, then a warmer glow rising from the bottom behind the wall */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-40 h-[42rem] bg-[radial-gradient(ellipse_42%_45%_at_50%_50%,rgba(249,115,22,0.16),rgba(244,63,94,0.05)_55%,transparent_75%)]" />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[44rem] bg-[radial-gradient(ellipse_55%_60%_at_50%_100%,rgba(249,115,22,0.28),rgba(244,63,94,0.08)_45%,transparent_75%)]" />
       {/* Decorative outlines framing the wall */}
       <div aria-hidden className="pointer-events-none absolute left-[calc(50%-36rem)] top-[23rem] hidden h-[28rem] w-[36rem] rounded-tl-[3rem] border-l border-t border-white/10 lg:block" />
@@ -178,42 +227,35 @@ function Hero({
 
       <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
         <Reveal>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-white/75">
-            Plus de <strong className="font-semibold text-orange-400"><CountUp value={stats.videos} /></strong> outliers indexés
-          </span>
+          <TrustBadge creators={creators} stats={stats} />
         </Reveal>
 
         <Reveal delay={80}>
-          <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
-            Le <span className="lp-gradient-text">raccourci</span>
-            <br />
-            <span className="sm:whitespace-nowrap">vers des millions de vues</span>
+          <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
+            <span className="block text-balance">
+              Les vidéos qui <span className="lp-gradient-text">explosent</span>,
+            </span>
+            <span className="block text-balance">repérées avant les autres</span>
           </h1>
         </Reveal>
 
         <Reveal delay={160}>
-          <p className="mt-4 text-sm font-medium text-white/60 sm:text-base">
-            Des vidéos ignorées aux vidéos virales, grâce aux outliers de votre niche
+          <p className="mx-auto mt-5 max-w-xl text-pretty text-sm font-medium text-white/60 sm:text-base">
+            Outlr compare chaque vidéo à la médiane de sa chaîne pour révéler les outliers et les tendances de votre
+            niche.
           </p>
         </Reveal>
       </div>
 
-      {/* Prompt box overlapping the first row of thumbnails */}
-      <div className="relative mt-8">
+      {/* Search box overlapping the first row of thumbnails */}
+      <div className="relative mt-9">
         <ThumbnailWall videos={videos} />
 
-        <Reveal delay={240} className="relative z-10 mx-auto w-full max-w-md">
-          <Link href="/login" className="group relative block">
-            <div className="h-28 rounded-2xl border border-white/10 bg-[#141417]/95 p-4 text-left text-sm text-white/80 shadow-2xl shadow-black/60 backdrop-blur">
-              <Typewriter words={SEARCH_EXAMPLES} />
-            </div>
-            <span className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_34px_rgba(249,115,22,0.6)] ring-4 ring-[#0a0a0c] transition-transform group-hover:scale-105">
-              <Sparkles className="size-4" /> Trouver mes premiers outliers
-            </span>
-          </Link>
+        <Reveal delay={240} className="relative z-10 mx-auto w-full max-w-xl">
+          <HeroSearch />
         </Reveal>
 
-        <Reveal delay={300} className="relative z-10 mt-9 flex justify-center">
+        <Reveal delay={300} className="relative z-10 mt-10 flex justify-center">
           <a href="#demo" className="group inline-flex items-center gap-2 rounded-full bg-[#0a0a0c]/80 py-1 pl-1 pr-3 text-sm font-medium text-white/80 ring-1 ring-white/10 backdrop-blur hover:text-white">
             <span className="flex size-7 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15 transition-transform group-hover:scale-110">
               <Play className="size-3 fill-white text-white" />
@@ -226,17 +268,14 @@ function Hero({
         <div aria-hidden className="h-44 sm:h-48" />
       </div>
 
-      <Reveal delay={400} className="relative z-10 mx-auto mt-10 flex max-w-2xl flex-wrap items-start justify-center gap-x-20 gap-y-8 text-center">
-        {[
-          { value: <CountUp value={stats.videos} />, label: "Vidéos virales indexées" },
-          { value: <CountUp value={stats.channels} />, label: "Chaînes analysées" },
-        ].map((s) => (
+      <Reveal delay={400} className="relative z-10 mx-auto mt-10 grid max-w-4xl grid-cols-3 gap-2 text-center sm:gap-8">
+        {statItems.map((s) => (
           <div key={s.label}>
-            <p className="text-6xl font-bold tracking-tight sm:text-7xl">
-              {s.value}
-              <sup className="lp-gradient-text ml-0.5 align-super text-4xl">+</sup>
+            <p className="whitespace-nowrap text-[1.75rem] font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <CountUp value={s.value} decimals={s.decimals} suffix={s.unit && ` ${s.unit}`} />
+              <sup className="lp-gradient-text ml-0.5 align-super text-lg sm:text-3xl lg:text-4xl">+</sup>
             </p>
-            <p className="mt-1 text-sm font-medium text-white/55">{s.label}</p>
+            <p className="mt-1 text-[11px] font-medium leading-snug text-white/55 sm:text-sm">{s.label}</p>
           </div>
         ))}
       </Reveal>
@@ -265,6 +304,95 @@ function Hero({
   );
 }
 
+/** Live index status and the number of channels followed, in place of a review score. */
+function TrustBadge({ creators, stats }: { creators: LandingCreator[]; stats: LandingStats }) {
+  const avatars = creators.slice(0, 4);
+
+  return (
+    <div className="flex flex-col items-center gap-2.5">
+      {stats.updatedAt && (
+        <span className="flex items-center gap-2 text-xs font-medium text-white/55">
+          <span className="relative flex size-2">
+            <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/70 motion-reduce:animate-none" />
+            <span className="relative size-2 rounded-full bg-emerald-400" />
+          </span>
+          Index mis à jour {updatedAgo(stats.updatedAt)}
+        </span>
+      )}
+      <span
+        className={cn(
+          "inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] py-1 pr-3.5 text-xs text-white/75 backdrop-blur sm:text-sm",
+          avatars.length >= 3 ? "pl-1" : "pl-3.5"
+        )}
+      >
+        {avatars.length >= 3 && (
+          <span className="flex -space-x-2">
+            {avatars.map((c) => (
+              <img key={c.name} src={c.avatar} alt="" className="size-6 rounded-full bg-white/10 ring-2 ring-[#0a0a0c]" />
+            ))}
+          </span>
+        )}
+        <span>
+          <strong className="font-semibold text-orange-400">{formatNumber(stats.channels)}</strong> chaînes
+          <span className="hidden sm:inline"> YouTube</span> suivies en continu
+        </span>
+      </span>
+    </div>
+  );
+}
+
+/** A real field with rotating example topics; like every CTA on the page, it leads to sign-up. */
+function HeroSearch() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        router.push("/login");
+      }}
+      className="relative"
+    >
+      <div className="relative rounded-2xl border border-white/10 bg-[#141417]/80 px-4 pb-8 pt-4 text-left shadow-2xl shadow-black/60 backdrop-blur-xl transition-colors focus-within:border-orange-400/40">
+        <label htmlFor="lp-hero-query" className="sr-only">
+          Un sujet, une niche ou le lien d&apos;une chaîne YouTube
+        </label>
+        <textarea
+          id="lp-hero-query"
+          rows={2}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              e.currentTarget.form?.requestSubmit();
+            }
+          }}
+          placeholder="Un sujet, une niche ou le lien d'une chaîne"
+          className="peer block h-16 w-full resize-none bg-transparent text-sm text-white outline-none placeholder:text-transparent focus:placeholder:text-white/35"
+        />
+        {/* Example topics type themselves until the field is focused or filled */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-4 top-4 text-sm text-white/80 peer-focus:opacity-0 peer-[:not(:placeholder-shown)]:opacity-0"
+        >
+          <Typewriter words={SEARCH_EXAMPLES} />
+        </span>
+        <p className="flex items-center gap-1.5 text-[11px] text-white/35">
+          <Search className="size-3" /> Sujet, niche ou lien de chaîne
+        </p>
+      </div>
+      <button
+        type="submit"
+        className="absolute -bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_34px_rgba(249,115,22,0.6)] ring-4 ring-[#0a0a0c] transition-all hover:scale-105 hover:shadow-[0_0_48px_rgba(249,115,22,0.8)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-300"
+      >
+        <Sparkles className="size-4" /> Trouver mes premiers outliers
+      </button>
+    </form>
+  );
+}
+
 /** Rounds down to three significant digits, e.g. 15 530 204 → 15 500 000. */
 function roundViews(n: number) {
   const step = 10 ** Math.max(0, Math.floor(Math.log10(Math.max(n, 1))) - 2);
@@ -287,7 +415,12 @@ function ThumbnailWall({ videos }: { videos: LandingVideo[] }) {
           >
             {[...row, ...row].map((v, i) => (
               <div key={`${v.id}-${i}`} className="w-44 shrink-0 rounded-xl border border-white/[0.07] bg-[#151518] p-1 sm:w-48">
-                <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full rounded-lg object-cover" />
+                <div className="relative">
+                  <img src={v.thumbnail} alt="" loading="lazy" className="aspect-video w-full rounded-lg object-cover" />
+                  <span className="absolute left-1.5 top-1.5 rounded-md bg-gradient-to-r from-rose-500 to-orange-400 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md shadow-rose-500/30">
+                    {formatMultiplier(v.outlierMultiplier)}
+                  </span>
+                </div>
                 <p className="mt-1.5 line-clamp-2 px-1 text-[11px] font-semibold leading-snug text-white/85">{v.title}</p>
                 <p className="px-1 pb-1 pt-0.5 text-[10px] text-white/40">{formatNumber(roundViews(v.viewCount))}+ vues</p>
               </div>
@@ -295,8 +428,10 @@ function ThumbnailWall({ videos }: { videos: LandingVideo[] }) {
           </div>
         </div>
       ))}
-      {/* Dim the cards around the prompt box so it reads first */}
+      {/* Dim the cards around the search box so it reads first, and blur them out toward the edges */}
       <div className="lp-wall-shade absolute inset-0" />
+      <div className="lp-wall-edge absolute inset-y-0 left-0" />
+      <div className="lp-wall-edge absolute inset-y-0 right-0 -scale-x-100" />
     </div>
   );
 }

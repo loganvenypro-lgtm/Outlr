@@ -87,7 +87,17 @@ export function Reveal({
 }
 
 /** Counts from 0 to `value` once visible. */
-export function CountUp({ value, prefix = "" }: { value: number; prefix?: string }) {
+export function CountUp({
+  value,
+  prefix = "",
+  suffix = "",
+  decimals = 0,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(0);
 
@@ -105,7 +115,8 @@ export function CountUp({ value, prefix = "" }: { value: number; prefix?: string
       const start = performance.now();
       const tick = (now: number) => {
         const t = Math.min(1, (now - start) / 1600);
-        setDisplay(Math.round(value * (1 - Math.pow(1 - t, 4))));
+        const step = 10 ** decimals;
+        setDisplay(Math.round(value * (1 - Math.pow(1 - t, 4)) * step) / step);
         if (t < 1) frame = requestAnimationFrame(tick);
       };
       frame = requestAnimationFrame(tick);
@@ -115,12 +126,13 @@ export function CountUp({ value, prefix = "" }: { value: number; prefix?: string
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [value]);
+  }, [value, decimals]);
 
   return (
     <span ref={ref} className="tabular-nums">
       {prefix}
       {formatNumber(display)}
+      {suffix}
     </span>
   );
 }

@@ -1,5 +1,6 @@
+import { sql } from "@/lib/postgres";
 import { loadViralVideosIndex, type IndexedViralVideo } from "@/lib/viralVideosIndex";
-import { LandingPage, type LandingVideo } from "@/components/landing/landing-page";
+import { LandingPage, type LandingStats, type LandingVideo } from "@/components/landing/landing-page";
 
 // The showcase uses real outliers from the index; refresh it hourly.
 export const revalidate = 3600;
@@ -17,7 +18,8 @@ const NICHES: { name: string; match: RegExp }[] = [
 const JUNK_TITLE = /^video [\w-]+$|background|no music|screen saver/i;
 
 // Channels with strong, recognisable packaging (documentaries, true crime, video essays)
-// for the hero wall. Order sets the mix; each contributes its most-watched long-form videos.
+// for the hero wall. Order sets the mix; each contributes its most-watched long-form outliers
+// (×3 or more, since the wall shows the multiplier).
 const HERO_CHANNELS: { name: string; take: number }[] = [
   { name: "fern", take: 4 },
   { name: "Veritasium", take: 3 },
@@ -49,6 +51,7 @@ function pickHeroVideos(index: IndexedViralVideo[]): LandingVideo[] {
         (v) =>
           v.channelTitle.toLowerCase() === name.toLowerCase() &&
           v.durationSeconds >= 180 &&
+          v.outlierMultiplier >= 3 &&
           v.thumbnail.includes("maxresdefault") &&
           !JUNK_TITLE.test(v.title)
       )
@@ -76,6 +79,40 @@ function toLandingVideo(v: IndexedViralVideo): LandingVideo {
     publishedAt: v.publishedAt,
     duration: v.durationFormatted,
   };
+}
+
+/** Headline counters from the scan database; the JSON index stands in when it can't be reached. */
+async function loadStats(index: IndexedViralVideo[]): Promise<LandingStats> {
+  try {
+    const [row] = await sql`
+      SELECT
+        (SELECT count(*) FROM videos)::int AS videos,
+        (SELECT count(*) FROM channels)::int AS channels,
+        (SELECT coalesce(sum(view_count), 0) FROM videos)::float8 AS views,
+        (SELECT count(*) FROM videos
+          WHERE relevance_score IS NOT NULL AND outlier_multiplier >= 10)::int AS "bigOutliers",
+        (SELECT count(*) FROM videos WHERE published_at > now() - interval '7 days')::int AS "freshWeek",
+        (SELECT max(finished_at) FROM scan_runs WHERE status = 'ok') AS "updatedAt"`;
+    return {
+      videos: row.videos,
+      channels: row.channels,
+      views: row.views,
+      bigOutliers: row.bigOutliers,
+      freshWeek: row.freshWeek,
+      updatedAt: row.updatedAt ? new Date(row.updatedAt).toISOString() : null,
+    };
+  } catch {
+    const weekAgo = Date.now() - 7 * 86_400_000;
+    const lastIndexed = Math.max(0, ...index.map((v) => new Date(v.indexedAt).getTime() || 0));
+    return {
+      videos: index.length,
+      channels: new Set(index.map((v) => v.channelId)).size,
+      views: index.reduce((sum, v) => sum + v.viewCount, 0),
+      bigOutliers: index.filter((v) => v.outlierMultiplier >= 10).length,
+      freshWeek: index.filter((v) => new Date(v.publishedAt).getTime() > weekAgo).length,
+      updatedAt: lastIndexed ? new Date(lastIndexed).toISOString() : null,
+    };
+  }
 }
 
 function pickDistinctChannels(list: IndexedViralVideo[], limit: number): LandingVideo[] {
@@ -116,11 +153,7 @@ export default async function WelcomePage() {
     ),
   })).filter((n) => n.videos.length >= 3);
 
-  const stats = {
-    videos: index.length,
-    channels: new Set(index.map((v) => v.channelId)).size,
-    topMultiplier: Math.round(Math.max(0, ...videos.map((v) => v.outlierMultiplier))),
-  };
+  const stats = await loadStats(index);
 
   // Fall back to the general showcase if the curated channels drop out of the index.
   const picked = pickHeroVideos(index);
