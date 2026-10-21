@@ -14,7 +14,6 @@ import {
   Rocket,
   Search,
   Sparkles,
-  Terminal,
   Users,
   Video,
   SquarePlay,
@@ -25,6 +24,7 @@ import { NICHES, type NicheId } from "@/lib/nicheClassifier";
 import type { ChannelEditorialProfile, CompetitorChannel, SimilarChannelsEngineResponse } from "@/types/competitorEngine";
 import type { CompetitorInsights } from "@/lib/competitorInsights";
 import posthog from "posthog-js";
+import { identifyCurrentUser } from "@/lib/analytics";
 
 type Role = "creator" | "agency" | "brand" | "aspiring";
 type Step = "role" | "channel" | "analysis" | "result";
@@ -225,7 +225,6 @@ export default function OnboardingPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Live analysis state, filled event by event
-  const [logs, setLogs] = useState<{ at: number; message: string }[]>([]);
   const [channel, setChannel] = useState<ChannelStats | null>(null);
   const [videos, setVideos] = useState<ChannelEditorialProfile["recentVideos"]>([]);
   const [profile, setProfile] = useState<Omit<ChannelEditorialProfile, "recentVideos"> | null>(null);
@@ -235,14 +234,13 @@ export default function OnboardingPage() {
   const [insights, setInsights] = useState<CompetitorInsights | null>(null);
   const [trackedIds, setTrackedIds] = useState<string[]>([]);
   const [isFinishing, setIsFinishing] = useState(false);
-  const [now, setNow] = useState(0);
 
   const startedAt = useRef(0);
   const queue = useRef<StreamEvent[]>([]);
   const abort = useRef<AbortController | null>(null);
-  const logBox = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    identifyCurrentUser();
     return () => abort.current?.abort();
   }, []);
 
@@ -251,29 +249,13 @@ export default function OnboardingPage() {
     posthog.capture("onboarding_step_viewed", { step });
   }, [step]);
 
-  // Ticks while the analysis runs, to show the scan is alive between two events
-  useEffect(() => {
-    if (step !== "analysis" || insights) return;
-    const timer = setInterval(() => setNow(Date.now() - startedAt.current), 1000);
-    return () => clearInterval(timer);
-  }, [step, insights]);
-
-  // Keep the terminal pinned to its latest line
-  useEffect(() => {
-    if (logBox.current) logBox.current.scrollTop = logBox.current.scrollHeight;
-  }, [logs, now]);
-
   // Events land in bursts; reveal them one at a time so every piece of data gets its moment.
   useEffect(() => {
     if (step !== "analysis") return;
     const timer = setInterval(() => {
       const event = queue.current.shift();
       if (!event) return;
-      const at = Date.now() - startedAt.current;
       switch (event.type) {
-        case "log":
-          setLogs((l) => [...l, { at, message: event.message }]);
-          break;
         case "channel":
           setChannel(event.channel);
           break;
@@ -285,11 +267,9 @@ export default function OnboardingPage() {
           break;
         case "candidates":
           setCandidateCount(event.count);
-          setLogs((l) => [...l, { at, message: `${event.count} chaînes candidates à évaluer` }]);
           break;
         case "competitor":
           setLiveCompetitors((c) => [...c, event.competitor]);
-          setLogs((l) => [...l, { at, message: `${event.competitor.channel.title} — ${event.competitor.similarityScore}% de similarité` }]);
           break;
         case "done":
           setResult(event.result);
@@ -298,11 +278,9 @@ export default function OnboardingPage() {
             competitor_count: event.result.competitors.length,
             duration_ms: Date.now() - startedAt.current,
           });
-          setLogs((l) => [...l, { at, message: `Analyse terminée : ${event.result.competitors.length} concurrents retenus` }]);
           break;
         case "insights":
           setInsights(event.insights);
-          setLogs((l) => [...l, { at, message: "Recommandations IA prêtes ✓" }]);
           break;
         case "error":
           posthog.capture("onboarding_analysis_failed", { error: event.message });
@@ -325,7 +303,6 @@ export default function OnboardingPage() {
     queue.current = [];
     startedAt.current = Date.now();
     setError(null);
-    setLogs([]);
     setChannel(null);
     setVideos([]);
     setProfile(null);
@@ -750,30 +727,8 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              {/* Log terminal + competitors appearing */}
+              {/* Competitors appearing */}
               <div className="flex flex-col gap-4">
-                <div className="flex h-64 flex-col rounded-2xl border border-white/10 bg-black/60 font-mono lg:h-72">
-                  <div className="flex items-center gap-1.5 border-b border-white/[0.06] px-4 py-2.5 text-[11px] text-white/45">
-                    <Terminal className="size-3.5" /> outlr — radar
-                    {!insights && <Loader2 className="ml-auto size-3.5 animate-spin text-orange-400" />}
-                  </div>
-                  <div ref={logBox} className="flex-1 space-y-1 overflow-y-auto px-4 py-3 text-[11px] leading-relaxed">
-                    {logs.map((l, i) => (
-                      <p key={i} className="ob-fade text-white/70">
-                        <span className="text-white/30">{(l.at / 1000).toFixed(1).padStart(5, "0")}s</span>{" "}
-                        <span className="text-orange-400">›</span> {l.message}
-                      </p>
-                    ))}
-                    {!insights && logs.length > 0 && now - logs[logs.length - 1].at > 2500 && (
-                      <p className="text-white/40">
-                        <span className="text-white/30">{(now / 1000).toFixed(1).padStart(5, "0")}s</span>{" "}
-                        <span className="text-orange-400">›</span> {liveCompetitors.length ? "Scoring des chaînes candidates" : "Croisement avec les vidéos de la niche"}…
-                      </p>
-                    )}
-                    {!insights && <span className="inline-block h-3 w-1.5 animate-pulse bg-orange-400 align-middle" />}
-                  </div>
-                </div>
-
                 <div className="flex-1 rounded-2xl border border-white/10 bg-[#111114] p-4">
                   <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold text-white/60">
                     <Users className="size-3.5" /> YouTubeurs similaires
