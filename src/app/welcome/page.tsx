@@ -1,63 +1,79 @@
-import { Hero1 } from "@/components/hero1";
-import Link from "next/link";
-import { Flame } from "lucide-react";
+import { loadViralVideosIndex, type IndexedViralVideo } from "@/lib/viralVideosIndex";
+import { LandingPage, type LandingVideo } from "@/components/landing/landing-page";
 
-export default function LandingPage() {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Top Navbar */}
-      <header className="border-b border-border/60 bg-background/95 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-foreground group">
-            <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm group-hover:scale-105 transition-transform">
-              <Flame className="size-4 fill-primary-foreground" />
-            </div>
-            <span className="text-xl tracking-tight font-black">Outlr</span>
-          </Link>
+// The showcase uses real outliers from the index; refresh it hourly.
+export const revalidate = 3600;
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground px-3.5 py-2 rounded-lg hover:bg-muted transition-all"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm font-semibold bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-sm hover:bg-primary/90 transition-all"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </header>
+// Index categories are raw search queries, so the explorer groups them into readable niches.
+const NICHES: { name: string; match: RegExp }[] = [
+  { name: "Rise & Fall", match: /rise|fall|downfall/i },
+  { name: "Tech & IA", match: /hack|cyber|\bai\b|saas|tech/i },
+  { name: "Gaming", match: /minecraft|roblox|gaming|fortnite/i },
+  { name: "Business", match: /business|dropshipping|money|\$|million|empire/i },
+  { name: "Mystère & crime", match: /crime|iceberg|disturbing|horror|myst/i },
+];
 
-      {/* Official Shadcn Hero Block */}
-      <main>
-        <Hero1
-          badge={{
-            text: "YouTube Outlier Radar v2.0",
-            announcement: "Zero-quota AI scraping engine",
-            url: "/channel-trends",
-          }}
-          heading="Discover outlier YouTube videos before everyone else."
-          description="Analyze real-time breakout ratios, track fast-growing channels, and identify saturated vs. blue ocean YouTube niches without API quota limits."
-          buttons={{
-            primary: {
-              text: "Launch Free Trial",
-              url: "/login",
-            },
-            secondary: {
-              text: "Explore Channel Trends",
-              url: "/channel-trends",
-            },
-          }}
-          image={{
-            src: "https://cdn.shadcnblocks.com/shadcnblocks/image-set/modern/saas-details/saas-1-16x9.png",
-            alt: "Outlr YouTube Discovery Platform",
-          }}
-        />
-      </main>
-    </div>
-  );
+// Placeholder titles and ambient "background" uploads are noise on a landing page.
+const JUNK_TITLE = /^video [\w-]+$|background|no music|screen saver/i;
+
+function toLandingVideo(v: IndexedViralVideo): LandingVideo {
+  return {
+    id: v.id,
+    title: v.title,
+    thumbnail: v.thumbnail,
+    channelTitle: v.channelTitle,
+    channelAvatar: v.channelAvatar ?? null,
+    channelSubscribers: v.channelSubscribers,
+    viewCount: v.viewCount,
+    outlierMultiplier: v.outlierMultiplier,
+    publishedAt: v.publishedAt,
+    duration: v.durationFormatted,
+  };
+}
+
+function pickDistinctChannels(list: IndexedViralVideo[], limit: number): LandingVideo[] {
+  const seen = new Set<string>();
+  const out: LandingVideo[] = [];
+  for (const v of list) {
+    if (seen.has(v.channelId)) continue;
+    seen.add(v.channelId);
+    out.push(toLandingVideo(v));
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+export default async function WelcomePage() {
+  const index = await loadViralVideosIndex();
+
+  // Long-form breakouts with a believable multiplier make the best showcase.
+  const showcase = index
+    .filter(
+      (v) =>
+        v.thumbnail &&
+        !JUNK_TITLE.test(v.title) &&
+        v.durationSeconds >= 120 &&
+        v.viewCount >= 50_000 &&
+        v.outlierMultiplier >= 5 &&
+        v.outlierMultiplier <= 2_000
+    )
+    .sort((a, b) => b.viralBreakoutScore - a.viralBreakoutScore);
+
+  const videos = pickDistinctChannels(showcase, 40);
+
+  const niches = NICHES.map(({ name, match }) => ({
+    name,
+    videos: pickDistinctChannels(
+      showcase.filter((v) => match.test(`${v.category} ${v.title}`)),
+      6
+    ),
+  })).filter((n) => n.videos.length >= 3);
+
+  const stats = {
+    videos: index.length,
+    channels: new Set(index.map((v) => v.channelId)).size,
+    topMultiplier: Math.round(Math.max(0, ...videos.map((v) => v.outlierMultiplier))),
+  };
+
+  return <LandingPage videos={videos} niches={niches} stats={stats} />;
 }
