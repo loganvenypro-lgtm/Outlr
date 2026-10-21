@@ -24,6 +24,7 @@ import { formatCompactNumber } from "@/lib/utils";
 import { NICHES, type NicheId } from "@/lib/nicheClassifier";
 import type { ChannelEditorialProfile, CompetitorChannel, SimilarChannelsEngineResponse } from "@/types/competitorEngine";
 import type { CompetitorInsights } from "@/lib/competitorInsights";
+import posthog from "posthog-js";
 
 type Role = "creator" | "agency" | "brand" | "aspiring";
 type Step = "role" | "channel" | "analysis" | "result";
@@ -143,6 +144,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
+    posthog.capture("onboarding_step_viewed", { step });
   }, [step]);
 
   // Ticks while the analysis runs, to show the scan is alive between two events
@@ -188,6 +190,10 @@ export default function OnboardingPage() {
         case "done":
           setResult(event.result);
           setTrackedIds(event.result.competitors.slice(0, 3).map((c) => c.channel.id));
+          posthog.capture("onboarding_analysis_completed", {
+            competitor_count: event.result.competitors.length,
+            duration_ms: Date.now() - startedAt.current,
+          });
           setLogs((l) => [...l, { at, message: `Analyse terminée : ${event.result.competitors.length} concurrents retenus` }]);
           break;
         case "insights":
@@ -195,6 +201,7 @@ export default function OnboardingPage() {
           setLogs((l) => [...l, { at, message: "Recommandations IA prêtes ✓" }]);
           break;
         case "error":
+          posthog.capture("onboarding_analysis_failed", { error: event.message });
           setError(event.message);
           setStep("channel");
           break;
@@ -223,6 +230,7 @@ export default function OnboardingPage() {
     setResult(null);
     setInsights(null);
     setStep("analysis");
+    posthog.capture("onboarding_analysis_started", { role, no_channel: noChannel, niche });
 
     const params = new URLSearchParams({ role: role ?? "creator" });
     if (noChannel && niche) params.set("niche", niche);
@@ -306,6 +314,14 @@ export default function OnboardingPage() {
     } catch {
       // Tracking is a bonus: never block the user out of the dashboard
     }
+    posthog.capture("onboarding_completed", {
+      role,
+      no_channel: noChannel,
+      niche,
+      archetype: profile?.archetype,
+      competitors_tracked: trackedIds.length,
+      competitors_suggested: result?.competitors.length ?? 0,
+    });
     localStorage.setItem("outlr_onboarding_completed", "true");
     router.push("/");
     router.refresh();
@@ -313,6 +329,7 @@ export default function OnboardingPage() {
 
   const skip = () => {
     abort.current?.abort();
+    posthog.capture("onboarding_skipped", { step, role });
     localStorage.setItem("outlr_onboarding_completed", "true");
     router.push("/");
   };
@@ -409,6 +426,7 @@ export default function OnboardingPage() {
               disabled={!role}
               onClick={() => {
                 setNoChannel(role === "aspiring");
+                posthog.capture("onboarding_role_selected", { role });
                 setStep("channel");
               }}
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-7 py-3 text-sm font-semibold shadow-[0_0_34px_rgba(249,115,22,0.45)] transition-all hover:scale-[1.03] disabled:pointer-events-none disabled:opacity-30 disabled:shadow-none"
