@@ -369,11 +369,33 @@ export function scoreCompetitorMatch(
 /**
  * End-to-End Competitor Discovery Engine
  */
-export async function discoverTrueCompetitors(channelInput: string): Promise<SimilarChannelsEngineResponse> {
+type ReferenceProfileStats = Omit<
+  ChannelEditorialProfile,
+  | "recentVideos" | "archetype" | "archetypeLabel" | "editorialTags" | "titleFormulaStyle" | "typicalViews"
+  | "avgDurationSeconds" | "avgDurationFormatted" | "uploadFrequencyDays" | "longformRatio"
+>;
+
+/** Progress of a live analysis, streamed to the onboarding as each stage lands. */
+export type CompetitorDiscoveryEvent =
+  | { type: "log"; message: string }
+  | { type: "channel"; channel: ReferenceProfileStats }
+  | { type: "videos"; videos: ChannelEditorialProfile["recentVideos"] }
+  | { type: "niche"; profile: Omit<ChannelEditorialProfile, "recentVideos"> }
+  | { type: "candidates"; count: number; queries: string[] }
+  | { type: "competitor"; competitor: CompetitorChannel };
+
+export async function discoverTrueCompetitors(
+  channelInput: string,
+  onEvent?: (event: CompetitorDiscoveryEvent) => void
+): Promise<SimilarChannelsEngineResponse> {
   const startTime = Date.now();
   const apiKey = getApiKey();
+  const emit = (event: CompetitorDiscoveryEvent) => {
+    try { onEvent?.(event); } catch {}
+  };
 
   // Stage A: Resolve Channel ID
+  emit({ type: "log", message: `Résolution de « ${channelInput} »` });
   const channelId = await resolveChannelId(channelInput);
 
   // Fetch Reference Channel
@@ -389,6 +411,24 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
   const subs = refItem.statistics?.hiddenSubscriberCount ? -1 : parseInt(refItem.statistics?.subscriberCount || "0", 10);
   const totalViews = parseInt(refItem.statistics?.viewCount || "0", 10);
   const videoCount = parseInt(refItem.statistics?.videoCount || "1", 10);
+
+  emit({
+    type: "channel",
+    channel: {
+      id: refItem.id,
+      title: refItem.snippet?.title || "Chaîne",
+      handle: refItem.snippet?.customUrl || `@${(refItem.snippet?.title || "").toLowerCase().replace(/[^a-z0-9]/g, "")}`,
+      avatar: refItem.snippet?.thumbnails?.medium?.url || refItem.snippet?.thumbnails?.default?.url || "",
+      banner: refItem.brandingSettings?.image?.bannerExternalUrl,
+      description: refItem.snippet?.description || "",
+      publishedAt: refItem.snippet?.publishedAt || "",
+      country: refItem.snippet?.country,
+      subscriberCount: subs,
+      totalViews,
+      videoCount,
+    },
+  });
+  emit({ type: "log", message: `Chaîne trouvée : ${refItem.snippet?.title} (${refItem.id})` });
 
   // Fetch 15 Recent Videos of Reference Channel
   let recentVideos: any[] = [];
@@ -422,6 +462,8 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
       }
     } catch {}
   }
+  emit({ type: "videos", videos: recentVideos });
+  emit({ type: "log", message: `${recentVideos.length} vidéos récentes analysées` });
 
   // Calculate Reference Pacing & Metrics
   const viewCounts = recentVideos.map((v) => v.views);
@@ -467,6 +509,9 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
     longformRatio: recentVideos.filter((v) => v.durationSeconds >= 600).length / Math.max(recentVideos.length, 1),
     recentVideos,
   };
+  const { recentVideos: _recent, ...profileWithoutVideos } = referenceProfile;
+  emit({ type: "niche", profile: profileWithoutVideos });
+  emit({ type: "log", message: `Niche détectée : ${archetypeInfo.label}` });
 
   // Stage C & D: Multi-Query Exploration on Video Topic Clusters (Co-occurrence graph)
   const queries = generateCompetitorQueries(
@@ -486,6 +531,7 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
           { next: { revalidate: 3600 } }
         );
         const sData = await sRes.json();
+        emit({ type: "log", message: `Recherche « ${q} » → ${(sData.items || []).length} vidéos scannées` });
         for (const item of sData.items || []) {
           const cid = item.snippet?.channelId;
           if (cid && cid !== channelId) {
@@ -501,6 +547,7 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20)
     .map(([cid]) => cid);
+  emit({ type: "candidates", count: rankedCandidateIds.length, queries });
 
   // Batch fetch candidate channels info
   let candidateChannelsData: any[] = [];
@@ -584,7 +631,7 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
         coCount
       );
 
-      return {
+      const competitor: CompetitorChannel = {
         channel: {
           id: cand.id,
           title: cand.snippet?.title || "Chaîne",
@@ -613,6 +660,8 @@ export async function discoverTrueCompetitors(channelInput: string): Promise<Sim
         topSimilarVideos: cVideos.slice(0, 3),
         discoverySource: coCount >= 3 ? "co_occurrence" : "editorial_graph",
       };
+      emit({ type: "competitor", competitor });
+      return competitor;
     })
   );
 
